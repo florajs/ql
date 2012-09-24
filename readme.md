@@ -1,0 +1,1 @@
+Alerting Query Language with parser, tests, syntax generators, etc.

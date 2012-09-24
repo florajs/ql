@@ -1,0 +1,23 @@
+{
+  "name": "aql",
+  "version": "0.0.1",
+  "description": "Alerting Query Language with parser, tests, syntax generators, etc.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://git.dc1.boerse-go.de/node-core/aql.git"
+  },
+  "keywords": [
+    "Alerting",
+    "AQL",
+    "query",
+    "language",
+    "parser"
+  ],
+  "author": "Thomas Lukacs",
+  "license": "Commercial License",
+  "private": true
+}
