@@ -354,79 +354,79 @@ describe('Aql', function() {
 
         it('should parse alert successful', function() {
             res = Aql.parse(alerts[0]);
-            assert(res[0][0] === 'quote:{133962>7000}', 'Unexpected result: '+res[0][0]);
-            assert(res[0][1] === 'quote:{133964<6500}', 'Unexpected result: '+res[0][1]);
-            assert(res[1][0] === 'quote:{133962>7000}', 'Unexpected result: '+res[1][0]);
-            assert(res[1][1] === 'quote:{1337>9000}', 'Unexpected result: '+res[1][1]);
-            assert(res[1][2] === 'quote:{12345>6789}', 'Unexpected result: '+res[1][2]);
-            assert(res[1][3] === 'topflop:{1337>9000}', 'Unexpected result: '+res[1][3]);
-            assert(res[1][4] === 'quote:{12345>6789}', 'Unexpected result: '+res[1][4]);
+            assert(res[0]['quote'][0] === '{133962>7000}', 'Unexpected result: '+res[0]['quote'][0]);
+            assert(res[0]['quote'][1] === '{133964<6500}', 'Unexpected result: '+res[0]['quote'][1]);
+            assert(res[1]['quote'][0] === '{133962>7000}', 'Unexpected result: '+res[1]['quote'][0]);
+            assert(res[1]['quote'][1] === '{1337>9000}', 'Unexpected result: '+res[1]['quote'][1]);
+            assert(res[1]['quote'][2] === '{12345>6789}', 'Unexpected result: '+res[1]['quote'][2]);
+            assert(res[1]['quote'][3] === '{12345>6789}', 'Unexpected result: '+res[1]['quote'][3]);
+            assert(res[1]['topflop'][0] === '{1337>9000}', 'Unexpected result: '+res[1]['topflop'][0]);
         });
 
         it('should parse alert successful', function() {
             res = Aql.parse(alerts[1]);
-            assert(res[0][0] === 'quote:{133962>7000}', 'Unexpected result: '+res[0][0]);
-            assert(res[0][1] === 'quote:{133964<6500}', 'Unexpected result: '+res[0][1]);
-            assert(res[1][0] === 'quote:{133962>7000}', 'Unexpected result: '+res[1][0]);
-            assert(res[1][1] === 'quote:{1337>9000}', 'Unexpected result: '+res[1][1]);
-            assert(res[1][2] === 'quote:{12345>6789}', 'Unexpected result: '+res[1][2]);
-            assert(res[1][3] === 'quote:{1337>9000}', 'Unexpected result: '+res[1][3]);
-            assert(res[1][4] === 'quote:{12345>6789}', 'Unexpected result: '+res[1][4]);
+            assert(res[0]['quote'][0] === '{133962>7000}', 'Unexpected result: '+res[0]['quote'][0]);
+            assert(res[0]['quote'][1] === '{133964<6500}', 'Unexpected result: '+res[0]['quote'][1]);
+            assert(res[1]['quote'][0] === '{133962>7000}', 'Unexpected result: '+res[1]['quote'][0]);
+            assert(res[1]['quote'][1] === '{1337>9000}', 'Unexpected result: '+res[1]['quote'][1]);
+            assert(res[1]['quote'][2] === '{12345>6789}', 'Unexpected result: '+res[1]['quote'][2]);
+            assert(res[1]['quote'][3] === '{1337>9000}', 'Unexpected result: '+res[1]['quote'][3]);
+            assert(res[1]['quote'][4] === '{12345>6789}', 'Unexpected result: '+res[1]['quote'][4]);
         });
 
         it('should parse alert successful', function() {
             res = Aql.parse(alerts[2]);
-            assert(res[0][0] === 'quote:{133962>7000}', 'Unexpected result: '+res[0][0]);
-            assert(res[0][1] === 'quote:{133964<6500}', 'Unexpected result: '+res[0][1]);
-            assert(res[1][0] === 'quote:{133962>7000}', 'Unexpected result: '+res[1][0]);
-            assert(res[1][1] === 'quote:{1337>9000}', 'Unexpected result: '+res[1][1]);
-            assert(res[1][2] === 'quote:{12345>6789}', 'Unexpected result: '+res[1][2]);
-            assert(res[1][3] === 'portfolio:{1337>9000}', 'Unexpected result: '+res[1][3]);
-            assert(res[1][4] === 'portfolio:{12345>6789}', 'Unexpected result: '+res[1][4]);
+            assert(res[0]['quote'][0] === '{133962>7000}', 'Unexpected result: '+res[0]['quote'][0]);
+            assert(res[0]['quote'][1] === '{133964<6500}', 'Unexpected result: '+res[0]['quote'][1]);
+            assert(res[1]['quote'][0] === '{133962>7000}', 'Unexpected result: '+res[1]['quote'][0]);
+            assert(res[1]['quote'][1] === '{1337>9000}', 'Unexpected result: '+res[1]['quote'][1]);
+            assert(res[1]['quote'][2] === '{12345>6789}', 'Unexpected result: '+res[1]['quote'][2]);
+            assert(res[1]['portfolio'][0] === '{1337>9000}', 'Unexpected result: '+res[1]['quote'][0]);
+            assert(res[1]['portfolio'][1] === '{12345>6789}', 'Unexpected result: '+res[1]['quote'][1]);
         });
 
         it('should parse alert successful', function() {
             res = Aql.parse(alerts[3]);
-            assert(res[0][0] === 'quote:{133962>7000}', 'Unexpected result: '+res[0][0]);
-            assert(res[0][1] === 'quote:{133964<6500}', 'Unexpected result: '+res[0][1]);
-            assert(res[1][0] === 'quote:{133962>7000}', 'Unexpected result: '+res[1][0]);
-            assert(res[1][1] === 'portfolio:{1337>9000}', 'Unexpected result: '+res[1][1]);
-            assert(res[1][2] === 'portfolio:{12345>6789}', 'Unexpected result: '+res[1][2]);
-            assert(res[1][3] === 'topflop:{1337>9000}', 'Unexpected result: '+res[1][3]);
-            assert(res[1][4] === 'quote:{12345>6789}', 'Unexpected result: '+res[1][4]);
+            assert(res[0]['quote'][0] === '{133962>7000}', 'Unexpected result: '+res[0]['quote'][0]);
+            assert(res[0]['quote'][1] === '{133964<6500}', 'Unexpected result: '+res[0]['quote'][1]);
+            assert(res[1]['quote'][0] === '{133962>7000}', 'Unexpected result: '+res[1]['quote'][0]);
+            assert(res[1]['portfolio'][0] === '{1337>9000}', 'Unexpected result: '+res[1]['portfolio'][0]);
+            assert(res[1]['portfolio'][1] === '{12345>6789}', 'Unexpected result: '+res[1]['portfolio'][1]);
+            assert(res[1]['topflop'][0] === '{1337>9000}', 'Unexpected result: '+res[1]['topflop'][0]);
+            assert(res[1]['quote'][1] === '{12345>6789}', 'Unexpected result: '+res[1]['quote'][1]);
         });
 
         it('should parse alert successful', function() {
             res = Aql.parse(alerts[4]);
-            assert(res[0][0] === 'quote:{133962>7000}', 'Unexpected result: '+res[0][0]);
-            assert(res[0][1] === 'quote:{133964<6500}', 'Unexpected result: '+res[0][1]);
-            assert(res[1][0] === 'quote:{133962>7000}', 'Unexpected result: '+res[1][0]);
-            assert(res[1][1] === 'quote:{1337>9000}', 'Unexpected result: '+res[1][1]);
+            assert(res[0]['quote'][0] === '{133962>7000}', 'Unexpected result: '+res[0]['quote'][0]);
+            assert(res[0]['quote'][1] === '{133964<6500}', 'Unexpected result: '+res[0]['quote'][1]);
+            assert(res[1]['quote'][0] === '{133962>7000}', 'Unexpected result: '+res[1]['quote'][0]);
+            assert(res[1]['quote'][1] === '{1337>9000}', 'Unexpected result: '+res[1]['quote'][1]);
         });
 
         it('should parse alert successful', function() {
             res = Aql.parse(alerts[5]);
-            assert(res[0][0] === 'status.id:5', 'Unexpected result: '+res[0][0]);
-            assert(res[0][1] === 'status.id:4', 'Unexpected result: '+res[0][1]);
-            assert(res[1][0] === 'type.id:3', 'Unexpected result: '+res[1][0]);
-            assert(res[2][0] === 'quote:{133962>7000}', 'Unexpected result: '+res[2][0]);
-            assert(res[2][1] === 'quote:{133964<6500}', 'Unexpected result: '+res[2][1]);
-            assert(res[2][2] === 'topflop:{133962<5}', 'Unexpected result: '+res[2][2]);
+            assert(res[0]['status.id'][0] === '5', 'Unexpected result: '+res[0]['status.id'][0]);
+            assert(res[0]['status.id'][1] === '4', 'Unexpected result: '+res[0]['status.id'][1]);
+            assert(res[1]['type.id'][0] === '3', 'Unexpected result: '+res[1]['type.id'][0]);
+            assert(res[2]['quote'][0] === '{133962>7000}', 'Unexpected result: '+res[2]['quote'][0]);
+            assert(res[2]['quote'][1] === '{133964<6500}', 'Unexpected result: '+res[2]['quote'][1]);
+            assert(res[2]['topflop'][0] === '{133962<5}', 'Unexpected result: '+res[2]['topflop'][0]);
         });
 
         it('should parse alert successful', function() {
             res = Aql.parse(alerts[6]);
-            assert(res[0][0] === 'status.id:5', 'Unexpected result: '+res[0][0]);
-            assert(res[0][1] === 'status.id:4', 'Unexpected result: '+res[0][1]);
-            assert(res[1][0] === 'status.id:5', 'Unexpected result: '+res[1][0]);
-            assert(res[1][1] === 'status.id:3', 'Unexpected result: '+res[1][1]);
+            assert(res[0]['status.id'][0] === '5', 'Unexpected result: '+res[0]['status.id'][0]);
+            assert(res[0]['status.id'][1] === '4', 'Unexpected result: '+res[0]['status.id'][1]);
+            assert(res[1]['status.id'][0] === '5', 'Unexpected result: '+res[1]['status.id'][0]);
+            assert(res[1]['status.id'][1] === '3', 'Unexpected result: '+res[1]['status.id'][1]);
         });
 
         it('should parse alert successful', function() {
             res = Aql.parse(alerts[7]);
-            assert(res[0][0] === 'status.id:-1', 'Unexpected result: '+res[0][0]);
-            assert(res[1][0] === 'status.id:1', 'Unexpected result: '+res[1][0]);
-            assert(res[2][0] === 'status.id:0', 'Unexpected result: '+res[2][0]);
+            assert(res[0]['status.id'][0] === '-1', 'Unexpected result: '+res[0]['status.id'][0]);
+            assert(res[1]['status.id'][0] === '1', 'Unexpected result: '+res[1]['status.id'][0]);
+            assert(res[2]['status.id'][0] === '0', 'Unexpected result: '+res[2]['status.id'][0]);
         });
 
     });
