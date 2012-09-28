@@ -348,7 +348,8 @@ describe('Aql', function() {
             "quote:{133962>7000}&({133964<6500}|{1337>9000})",
             "status.id:5&4|type.id:3|(quote:{133962>7000}&{133964<6500}&topflop:{133962<5})",
             "status.id:5&(4|3)",
-            "status.id:-1|1|0"
+            "status.id:-1|1|0",
+            "patternStatus.id:{>=2}&timeHorizon:2&3&120|(instrumentSort:stock&(index|commodity&currency))"
         ];
         var res;
 
@@ -429,5 +430,17 @@ describe('Aql', function() {
             assert(res[2]['status.id'][0] === '0', 'Unexpected result: '+res[2]['status.id'][0]);
         });
 
+        it('should parse alert successful', function() {
+            res = Aql.parse(alerts[8]);
+            assert(res[0]['patternStatus.id'][0] === '{>=2}', 'Unexpected result: '+res[0]['patternStatus.id'][0]);
+            assert(res[0]['timeHorizon'][0] === '2', 'Unexpected result: '+res[0]['timeHorizon'][0]);
+            assert(res[0]['timeHorizon'][1] === '3', 'Unexpected result: '+res[0]['timeHorizon'][1]);
+            assert(res[0]['timeHorizon'][2] === '120', 'Unexpected result: '+res[0]['timeHorizon'][2]);
+            assert(res[1]['instrumentSort'][0] === 'stock', 'Unexpected result: '+res[1]['instrumentSort'][0]);
+            assert(res[1]['instrumentSort'][1] === 'index', 'Unexpected result: '+res[1]['instrumentSort'][1]);
+            assert(res[2]['instrumentSort'][0] === 'stock', 'Unexpected result: '+res[2]['instrumentSort'][0]);
+            assert(res[2]['instrumentSort'][1] === 'commodity', 'Unexpected result: '+res[2]['instrumentSort'][1]);
+            assert(res[2]['instrumentSort'][2] === 'currency', 'Unexpected result: '+res[2]['instrumentSort'][2]);
+        });
     });
 });
