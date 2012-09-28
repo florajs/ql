@@ -369,7 +369,8 @@ describe('Aql', function() {
             "status.id:-1|1|0",
             "patternStatus.id:{>=2}&timeHorizon:2&3&120|(instrumentSort:stock&(index|commodity&currency))",
             "status[id:1&type[id:2]]",
-            "status[id:1&type[id:2&name:abc]&power:{>9000}]"
+            "status[id:1&type[id:2&name:abc]&power:{>9000}]",
+            "status[id:1&(type[id:{>2}|name:abc])]"
         ];
         var res;
 
@@ -475,6 +476,14 @@ describe('Aql', function() {
             assert(res[0]['status#type#id'][0] === '2', 'Unexpected result: '+res[0]['status#type#id'][0]);
             assert(res[0]['status#type#name'][0] === 'abc', 'Unexpected result: '+res[0]['status#type#name'][0]);
             assert(res[0]['status#power'][0] === '{>9000}', 'Unexpected result: '+res[0]['status#power'][0]);
+        });
+
+        it('should parse alert successful', function() {
+            res = Aql.parse(alerts[11]);
+            assert(res[0]['status#id'][0] === '1', 'Unexpected result: '+res[0]['status#id'][0]);
+            assert(res[0]['status#type#id'][0] === '{>2}', 'Unexpected result: '+res[0]['status#type#id'][0]);
+            assert(res[1]['status#id'][0] === '1', 'Unexpected result: '+res[1]['status#id'][0]);
+            assert(res[1]['status#type#name'][0] === 'abc', 'Unexpected result: '+res[1]['status#type#name'][0]);
         });
 
     });
