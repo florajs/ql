@@ -371,7 +371,8 @@ describe('Aql', function() {
             "status[id:1&type[id:2]]",
             "status[id:1&type[id:2&name:abc]&power:{>9000}]",
             "status[id:1&(type[id:{>2}|name:abc])]",
-            "quote:{133962:4:last>7000}"
+            "quote:{133962:4:last>7000}",
+            "quote:{133962:4:last>7000}|{133962:4:last<6500}"
         ];
         var res;
 
@@ -490,6 +491,12 @@ describe('Aql', function() {
         it('should parse alert successful', function() {
             res = Aql.parse(alerts[12]);
             assert(res[0]['quote'][0] === '{133962:4:last>7000}', 'Unexpected result: '+res[0]['quote'][0]);
+        });
+
+        it('should parse alert successful', function() {
+            res = Aql.parse(alerts[13]);
+            assert(res[0]['quote'][0] === '{133962:4:last>7000}', 'Unexpected result: '+res[0]['quote'][0]);
+            assert(res[1]['quote'][0] === '{133962:4:last<6500}', 'Unexpected result: '+res[1]['quote'][0]);
         });
 
     });
