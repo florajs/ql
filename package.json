@@ -4,7 +4,7 @@
   "description": "Alerting Query Language with parser, tests, syntax generators, etc.",
   "main": "lib/aql.js",
   "scripts": {
-    "test": "mocha"
+    "test": "/opt/nodejs/v0.8.8/bin/node ./node_modules/mocha/bin/mocha --reporter list"
   },
   "repository": {
     "type": "git",
