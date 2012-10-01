@@ -146,7 +146,7 @@ describe('Aql', function() {
         });
     });
 
-    describe('setType()', function() {
+    describe('setMissingTypes()', function() {
 
         var alerts = [
             [['e1&e2', 'e1&e3&e4&e5&e6'],{
@@ -190,12 +190,12 @@ describe('Aql', function() {
         var res;
 
         it('should set type smart', function() {
-            res = Aql.setType(alerts[0], '&');
+            res = Aql.setMissingTypes(alerts[0], '&');
             assert(res[1]['e4'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e4']+'"');
         });
 
         it('should set type smart', function() {
-            res = Aql.setType(alerts[1], '&&');
+            res = Aql.setMissingTypes(alerts[1], '&&');
             assert(res[1]['e2'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e2']+'"');
             assert(res[1]['e3'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e3']+'"');
             assert(res[1]['e4'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e4']+'"');
@@ -204,7 +204,7 @@ describe('Aql', function() {
         });
 
         it('should set type smart', function() {
-            res = Aql.setType(alerts[2], '&');
+            res = Aql.setMissingTypes(alerts[2], '&');
             assert(res[1]['e2'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e2']+'"');
             assert(res[1]['e3'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e3']+'"');
             assert(res[1]['e4'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e4']+'"');
@@ -212,12 +212,12 @@ describe('Aql', function() {
         });
 
         it('should set type smart', function() {
-            res = Aql.setType(alerts[3], '&&');
+            res = Aql.setMissingTypes(alerts[3], '&&');
             assert(res[1]['e4'].indexOf('portfolio') !== -1, 'Expected "portfolio" type: "'+res[1]['e4']+'"');
         });
 
         it('should set type smart', function() {
-            res = Aql.setType(alerts[4], '&');
+            res = Aql.setMissingTypes(alerts[4], '&');
             assert(res[1]['e2'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e2']+'"');
             assert(res[1]['e3'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e3']+'"');
         });
@@ -370,7 +370,8 @@ describe('Aql', function() {
             "patternStatus.id:{>=2}&timeHorizon:2&3&120|(instrumentSort:stock&(index|commodity&currency))",
             "status[id:1&type[id:2]]",
             "status[id:1&type[id:2&name:abc]&power:{>9000}]",
-            "status[id:1&(type[id:{>2}|name:abc])]"
+            "status[id:1&(type[id:{>2}|name:abc])]",
+            "quote:{133962:4:last>7000}"
         ];
         var res;
 
@@ -484,6 +485,11 @@ describe('Aql', function() {
             assert(res[0]['status#type#id'][0] === '{>2}', 'Unexpected result: '+res[0]['status#type#id'][0]);
             assert(res[1]['status#id'][0] === '1', 'Unexpected result: '+res[1]['status#id'][0]);
             assert(res[1]['status#type#name'][0] === 'abc', 'Unexpected result: '+res[1]['status#type#name'][0]);
+        });
+
+        it('should parse alert successful', function() {
+            res = Aql.parse(alerts[12]);
+            assert(res[0]['quote'][0] === '{133962:4:last>7000}', 'Unexpected result: '+res[0]['quote'][0]);
         });
 
     });
