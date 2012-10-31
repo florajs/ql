@@ -228,7 +228,7 @@ describe('Aql', function() {
         // alerts with syntax errors
         var failerts = [
             '{133962>7000}&({133964<6500}|{1337>9000})',                            // At least one type is required
-            'quote:{1339|62>7000}&({133964<6500}|{1337>9000})',                     // Invalid expression
+            'quote:{1339|62>7000}&({133964<6500}|{1337>9000})',                     // Invalid character
             'quote:{133962>7000}&({133964<6500}|{1337>9000}|)&({12345>6789})',      // Missing expression
             'quote:{133962>7000}&(133964<6500}|{1337>9000})&{12345>6789}',          // Missing opening tag
             'quote:{133962>7000}&({133964<6500}|{1337>9000})}',                     // Missing opening tag
@@ -240,7 +240,26 @@ describe('Aql', function() {
             'status.id:5&4type.id:3',                                               // Missing logical operator
             'status.id:(-1|1|-2)&3',                                                // Type must be followed by value or expression
             'status[]&type:2',                                                      // Invalid subtyping
-            'status:[]&type:2'                                                      // Invalid subtyping
+            'status:[]&type:2',                                                     // Invalid subtyping
+            'quote:{133962:4>7000}',                                                // Invalid character in expression
+            'quote:{133962%4>7000}',                                                // Invalid character in expression
+            'quote:{133962$4>7000}',                                                // Invalid character in expression
+            'quote:{133962&4>7000}',                                                // Invalid character in expression
+            'quote:{133962\'4>7000}',                                               // Invalid character in expression
+            'quote:{133962,4>7000}',                                                // Invalid character in expression
+            'quote:{133962\\4>7000}',                                               // Invalid character in expression
+            'quote:{133962!4>7000}',                                                // Invalid character in expression
+            'quote:{133962"4>7000}',                                                // Invalid character in expression
+            'quote:{133962?4>7000}',                                                // Invalid character in expression
+            'quote:{133962(4>7000}',                                                // Invalid character in expression
+            'quote:{133962)4>7000}',                                                // Invalid character in expression
+            'quote:{133962#4>7000}',                                                // Invalid character in expression
+            'quote:{133962|4>7000}',                                                // Invalid character in expression
+            'quote:{133962&4>7000}',                                                // Invalid character in expression
+            'quote.:{>7000}',                                                       // Invalid typing
+            'quote:{>7000}',                                                        // Invalid typing
+            'quote:{>7000}&.133962:{>9000}'                                         // Invalid typing
+
         ];
 
         it('should recognize missing type', function() {
@@ -255,7 +274,7 @@ describe('Aql', function() {
             try {
                 Aql.checkForSyntaxErrors(failerts[1]);
             } catch(err) {
-                assert(err.message.indexOf('Invalid expression') !== -1, err.message);
+                assert(err.message.indexOf('Invalid character') !== -1, err.message);
             }
         });
 
@@ -354,6 +373,150 @@ describe('Aql', function() {
                 assert(err.message.indexOf('Invalid subtyping') !== -1, err.message);
             }
         });
+
+        it('should recognize invalid character', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[14]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid character', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[15]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid character', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[16]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid character', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[17]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid character', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[18]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid character', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[19]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid character', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[20]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid character', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[21]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid character', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[22]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid character', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[23]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid character', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[24]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid character', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[25]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid character', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[26]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid character', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[27]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid character', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[28]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid typing', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[29]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid typing') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid typing', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[30]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid typing') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid typing', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[31]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid typing') !== -1, err.message);
+            }
+        });
     });
 
     describe('parse()', function() {
@@ -371,8 +534,7 @@ describe('Aql', function() {
             "status[id:1&type[id:2]]",
             "status[id:1&type[id:2&name:abc]&power:{>9000}]",
             "status[id:1&(type[id:{>2}|name:abc])]",
-            "quote:{133962:4:last>7000}",
-            "quote:{133962:4:last>7000}|{133962:4:last<6500}"
+            "quote.133962.4.last:{>7000}|{<6500}"
         ];
         var res;
 
@@ -490,13 +652,8 @@ describe('Aql', function() {
 
         it('should parse alert successful', function() {
             res = Aql.parse(alerts[12]);
-            assert(res[0]['quote'][0] === '{133962:4:last>7000}', 'Unexpected result: '+res[0]['quote'][0]);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[13]);
-            assert(res[0]['quote'][0] === '{133962:4:last>7000}', 'Unexpected result: '+res[0]['quote'][0]);
-            assert(res[1]['quote'][0] === '{133962:4:last<6500}', 'Unexpected result: '+res[1]['quote'][0]);
+            assert(res[0]['quote#133962#4#last'][0] === '{>7000}', 'Unexpected result: '+res[0]['quote#133962#4#last'][0]);
+            assert(res[1]['quote#133962#4#last'][0] === '{<6500}', 'Unexpected result: '+res[1]['quote#133962#4#last'][0]);
         });
 
     });
