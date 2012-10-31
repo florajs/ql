@@ -534,7 +534,11 @@ describe('Aql', function() {
             "status[id:1&type[id:2]]",
             "status[id:1&type[id:2&name:abc]&power:{>9000}]",
             "status[id:1&(type[id:{>2}|name:abc])]",
-            "quote.133962.4.last:{>7000}|{<6500}"
+            "quote.133962.4.last:{>7000}|{<6500}",
+            'quote[133962.4.last:{<7200}]',
+            'quote.133962[4.last:{<7200}]',
+            'quote.133962.4[last:{<7200}]',
+            'quote.133962[4.last:{<7200}&22.last:{>7000}]'
         ];
         var res;
 
@@ -654,6 +658,27 @@ describe('Aql', function() {
             res = Aql.parse(alerts[12]);
             assert(res[0]['quote#133962#4#last'][0] === '{>7000}', 'Unexpected result: '+res[0]['quote#133962#4#last'][0]);
             assert(res[1]['quote#133962#4#last'][0] === '{<6500}', 'Unexpected result: '+res[1]['quote#133962#4#last'][0]);
+        });
+
+        it('should parse alert successful', function() {
+            res = Aql.parse(alerts[13]);
+            assert(res[0]['quote#133962#4#last'][0] === '{<7200}', 'Unexpected result: '+res[0]['quote#133962#4#last'][0]);
+        });
+
+        it('should parse alert successful', function() {
+            res = Aql.parse(alerts[14]);
+            assert(res[0]['quote#133962#4#last'][0] === '{<7200}', 'Unexpected result: '+res[0]['quote#133962#4#last'][0]);
+        });
+
+        it('should parse alert successful', function() {
+            res = Aql.parse(alerts[15]);
+            assert(res[0]['quote#133962#4#last'][0] === '{<7200}', 'Unexpected result: '+res[0]['quote#133962#4#last'][0]);
+        });
+
+        it('should parse alert successful', function() {
+            res = Aql.parse(alerts[16]);
+            assert(res[0]['quote#133962#4#last'][0] === '{<7200}', 'Unexpected result: '+res[0]['quote#133962#4#last'][0]);
+            assert(res[0]['quote#133962#22#last'][0] === '{>7000}', 'Unexpected result: '+res[0]['quote#133962#22#last'][0]);
         });
 
     });
