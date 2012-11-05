@@ -246,7 +246,6 @@ describe('Aql', function() {
             'quote:{133962$4>7000}',                                                // Invalid character in expression
             'quote:{133962&4>7000}',                                                // Invalid character in expression
             'quote:{133962\'4>7000}',                                               // Invalid character in expression
-            'quote:{133962,4>7000}',                                                // Invalid character in expression
             'quote:{133962\\4>7000}',                                               // Invalid character in expression
             'quote:{133962!4>7000}',                                                // Invalid character in expression
             'quote:{133962"4>7000}',                                                // Invalid character in expression
@@ -261,8 +260,8 @@ describe('Aql', function() {
             'quote:{>7000}&.133962:{>9000}',                                        // Invalid typing
             'article.boxes:{1;}',                                                   // Invalid set expression
             'article.boxes:{;6}',                                                   // Invalid set expression
-            'article.boxes:{;}'                                                     // Invalid set expression
-
+            'article.boxes:{;}',                                                    // Invalid set expression
+            'instruments.id:{133954,133962>2}'                                      // Can't mix sets and operators
         ];
 
         it('should recognize missing type', function() {
@@ -489,11 +488,11 @@ describe('Aql', function() {
             }
         });
 
-        it('should recognize invalid character', function() {
+        it('should recognize invalid typing', function() {
             try {
                 Aql.checkForSyntaxErrors(failerts[28]);
             } catch(err) {
-                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
+                assert(err.message.indexOf('Invalid typing') !== -1, err.message);
             }
         });
 
@@ -513,11 +512,11 @@ describe('Aql', function() {
             }
         });
 
-        it('should recognize invalid typing', function() {
+        it('should recognize invalid set expression', function() {
             try {
                 Aql.checkForSyntaxErrors(failerts[31]);
             } catch(err) {
-                assert(err.message.indexOf('Invalid typing') !== -1, err.message);
+                assert(err.message.indexOf('Invalid set expression') !== -1, err.message);
             }
         });
 
@@ -537,11 +536,11 @@ describe('Aql', function() {
             }
         });
 
-        it('should recognize invalid set expression', function() {
+        it('should recognize invalid expression', function() {
             try {
                 Aql.checkForSyntaxErrors(failerts[34]);
             } catch(err) {
-                assert(err.message.indexOf('Invalid set expression') !== -1, err.message);
+                assert(err.message.indexOf('Sets and operators') !== -1, err.message);
             }
         });
     });
@@ -567,7 +566,8 @@ describe('Aql', function() {
             'quote.133962.4[last:{<7200}]',
             'quote.133962[4.last:{<7200}&22.last:{>7000}]',
             'article.boxes:{1;10}',
-            'article[boxes:{1;6}&id:133962]'
+            'article[boxes:{1;6}&id:133962]',
+            'instruments.id:{133954,133962}'
         ];
         var res;
 
@@ -719,6 +719,11 @@ describe('Aql', function() {
             res = Aql.parse(alerts[18]);
             assert(res[0]['article#boxes'][0] === '{1,2,3,4,5,6}', 'Unexpected result: '+res[0]['article#boxes'][0]);
             assert(res[0]['article#id'][0] === '133962', 'Unexpected result: '+res[0]['article#id'][0]);
+        });
+
+        it('should parse alert successful', function() {
+            res = Aql.parse(alerts[19]);
+            assert(res[0]['instruments#id'][0] === '{133954,133962}', 'Unexpected result: '+res[0]['instruments#id'][0]);
         });
 
     });
