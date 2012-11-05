@@ -260,7 +260,8 @@ describe('Aql', function() {
             'quote:{>7000}',                                                        // Invalid typing
             'quote:{>7000}&.133962:{>9000}',                                        // Invalid typing
             'article.boxes:{1;}',                                                   // Invalid set expression
-            'article.boxes:{;6}'                                                    // Invalid set expression
+            'article.boxes:{;6}',                                                   // Invalid set expression
+            'article.boxes:{;}'                                                     // Invalid set expression
 
         ];
 
@@ -531,6 +532,14 @@ describe('Aql', function() {
         it('should recognize invalid set expression', function() {
             try {
                 Aql.checkForSyntaxErrors(failerts[33]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid set expression') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid set expression', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[34]);
             } catch(err) {
                 assert(err.message.indexOf('Invalid set expression') !== -1, err.message);
             }
