@@ -258,7 +258,9 @@ describe('Aql', function() {
             'quote:{133962&4>7000}',                                                // Invalid character in expression
             'quote.:{>7000}',                                                       // Invalid typing
             'quote:{>7000}',                                                        // Invalid typing
-            'quote:{>7000}&.133962:{>9000}'                                         // Invalid typing
+            'quote:{>7000}&.133962:{>9000}',                                        // Invalid typing
+            'article.boxes:{1;}',                                                   // Invalid set expression
+            'article.boxes:{;6}'                                                    // Invalid set expression
 
         ];
 
@@ -517,6 +519,22 @@ describe('Aql', function() {
                 assert(err.message.indexOf('Invalid typing') !== -1, err.message);
             }
         });
+
+        it('should recognize invalid set expression', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[32]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid set expression') !== -1, err.message);
+            }
+        });
+
+        it('should recognize invalid set expression', function() {
+            try {
+                Aql.checkForSyntaxErrors(failerts[33]);
+            } catch(err) {
+                assert(err.message.indexOf('Invalid set expression') !== -1, err.message);
+            }
+        });
     });
 
     describe('parse()', function() {
@@ -538,7 +556,9 @@ describe('Aql', function() {
             'quote[133962.4.last:{<7200}]',
             'quote.133962[4.last:{<7200}]',
             'quote.133962.4[last:{<7200}]',
-            'quote.133962[4.last:{<7200}&22.last:{>7000}]'
+            'quote.133962[4.last:{<7200}&22.last:{>7000}]',
+            'article.boxes:{1;6}',
+            'article[boxes:{1;6}&id:133962]'
         ];
         var res;
 
@@ -679,6 +699,17 @@ describe('Aql', function() {
             res = Aql.parse(alerts[16]);
             assert(res[0]['quote#133962#4#last'][0] === '{<7200}', 'Unexpected result: '+res[0]['quote#133962#4#last'][0]);
             assert(res[0]['quote#133962#22#last'][0] === '{>7000}', 'Unexpected result: '+res[0]['quote#133962#22#last'][0]);
+        });
+
+        it('should parse alert successful', function() {
+            res = Aql.parse(alerts[17]);
+            assert(res[0]['article#boxes'][0] === '{1,2,3,4,5,6}', 'Unexpected result: '+res[0]['article#boxes'][0]);
+        });
+
+        it('should parse alert successful', function() {
+            res = Aql.parse(alerts[18]);
+            assert(res[0]['article#boxes'][0] === '{1,2,3,4,5,6}', 'Unexpected result: '+res[0]['article#boxes'][0]);
+            assert(res[0]['article#id'][0] === '133962', 'Unexpected result: '+res[0]['article#id'][0]);
         });
 
     });
