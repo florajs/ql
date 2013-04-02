@@ -569,7 +569,8 @@ describe('Aql', function() {
             'article[boxes:{1;6}&id:133962]',
             'instruments.id:{133954,133962}',
             'article.boxes.id:{1;4,9;14}',
-            'quote.134000.27.bid:{>1.3240}'
+            'quote.134000.27.bid:{>1.3240}',
+            'article.author.lastname:{Kämmerer}'
         ];
         var res, err;
 
@@ -780,6 +781,13 @@ describe('Aql', function() {
             err = 'Unexpected result: '+JSON.stringify(res);
 
             assert(res[0]['quote#134000#27#bid'][0] === '{>1.3240}', err);
+        });
+
+        it('should parse alert successful', function() {
+            res = Aql.parse(alerts[22]);
+            err = 'Unexpected result: '+JSON.stringify(res);
+
+            assert(res[0]['article#author#lastname'][0] === '{Kämmerer}', err);
         });
 
     });
