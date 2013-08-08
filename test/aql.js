@@ -10,7 +10,8 @@ describe('Aql', function() {
             "quote:{133962>7000}&&({133964<6500}||({1337>9000}&&{12345>6789})&&({1337>9000}&&{12345>6789}))",
             "quote:{133962>7000}&({133964<6500}|({1337>9000}&{12345>6789})&(portfolio:{1337>9000}&{12345>6789}))",
             "quote:{133962>7000}&&(quote:{133964<6500}||(portfolio:{1337>9000}&&{12345>6789})&&(topflop:{1337>9000}&&quote:{12345>6789}))",
-            "quote:{133962>7000}&({133964<6500}|{1337>9000})"
+            "quote:{133962>7000}&({133964<6500}|{1337>9000})",
+            "quote.133962.4.last:{~7000}"
         ];
         var res;
 
@@ -64,6 +65,12 @@ describe('Aql', function() {
             assert(res[1]['e1'] === 'quote:{133962>7000}', 'Unexpected result: '+res[1]['e1']);
             assert(res[1]['e2'] === '{133964<6500}', 'Unexpected result: '+res[1]['e2']);
             assert(res[1]['e3'] === '{1337>9000}', 'Unexpected result: '+res[1]['e3']);
+        });
+
+        it('should replace expressions correctly', function() {
+            res = Aql.extractExpressions(alerts[5]);
+            assert(res[0] === 'quote.133962.4.e1', 'Unexpected result: '+res[0]);
+            assert(res[1]['e1'] === 'last:{~7000}', 'Unexpected result: '+res[1]['e1']);
         });
     });
 
@@ -185,6 +192,11 @@ describe('Aql', function() {
                 e1: 'quote:{133962>7000}',
                 e2: '{133964<6500}',
                 e3: '{1337>9000}'
+            }],
+            [['e1&e2', 'e1&e3'],{
+                e1: 'quote:{133962~7000}',
+                e2: '{133964~6500}',
+                e3: '{1337~9000}'
             }]
         ];
         var res;
@@ -221,6 +233,12 @@ describe('Aql', function() {
             assert(res[1]['e2'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e2']+'"');
             assert(res[1]['e3'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e3']+'"');
         });
+
+        it('should set type smart', function() {
+            res = Aql.setMissingTypes(alerts[5], '&');
+            assert(res[1]['e2'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e2']+'"');
+            assert(res[1]['e3'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e3']+'"');
+        });
     });
 
     describe('checkForSyntaxErrors()', function() {
@@ -230,38 +248,38 @@ describe('Aql', function() {
             '{133962>7000}&({133964<6500}|{1337>9000})',                            // At least one type is required
             'quote:{1339|62>7000}&({133964<6500}|{1337>9000})',                     // Invalid character
             'quote:{133962>7000}&({133964<6500}|{1337>9000}|)&({12345>6789})',      // Missing expression
-            'quote:{133962>7000}&(133964<6500}|{1337>9000})&{12345>6789}',          // Missing opening tag
+            'quote:{133962>7000}&(133964<6500}|{1337~9000})&{12345>6789}',          // Missing opening tag
             'quote:{133962>7000}&({133964<6500}|{1337>9000})}',                     // Missing opening tag
-            'quote:{133962>7000}&({133964<6500}|{1337>9000})&{12345>6789',          // Missing closing tag
+            'quote:{133962>7000}&({133964~6500}|{1337>9000})&{12345>6789',          // Missing closing tag
             '(quote:{133962>7000}&({133964<6500}|{1337>9000})))',                   // Missing opening bracket
             '((quote:{133962>7000}&({133964<6500}|({1337>9000})))',                 // Missing closing bracket
             'quote:{133962>7000}&{133964<6500}|{{1337>9000}',                       // Invalid brackets
-            'quote:{133962>7000}&{133964<6500}|{1337>9000}}',                       // Invalid brackets
+            'quote:{133962~7000}&{133964<6500}|{1337>9000}}',                       // Invalid brackets
             'status.id:5&4type.id:3',                                               // Missing logical operator
             'status.id:(-1|1|-2)&3',                                                // Type must be followed by value or expression
             'status[]&type:2',                                                      // Invalid subtyping
             'status:[]&type:2',                                                     // Invalid subtyping
             'quote:{133962:4>7000}',                                                // Invalid character in expression
-            'quote:{133962%4>7000}',                                                // Invalid character in expression
+            'quote:{133962%4~7000}',                                                // Invalid character in expression
             'quote:{133962$4>7000}',                                                // Invalid character in expression
             'quote:{133962&4>7000}',                                                // Invalid character in expression
             'quote:{133962\'4>7000}',                                               // Invalid character in expression
             'quote:{133962\\4>7000}',                                               // Invalid character in expression
             'quote:{133962!4>7000}',                                                // Invalid character in expression
-            'quote:{133962"4>7000}',                                                // Invalid character in expression
+            'quote:{133962"4~7000}',                                                // Invalid character in expression
             'quote:{133962?4>7000}',                                                // Invalid character in expression
-            'quote:{133962(4>7000}',                                                // Invalid character in expression
-            'quote:{133962)4>7000}',                                                // Invalid character in expression
+            'quote:{133962(4~7000}',                                                // Invalid character in expression
+            'quote:{133962)4~7000}',                                                // Invalid character in expression
             'quote:{133962#4>7000}',                                                // Invalid character in expression
-            'quote:{133962|4>7000}',                                                // Invalid character in expression
+            'quote:{133962|4~7000}',                                                // Invalid character in expression
             'quote:{133962&4>7000}',                                                // Invalid character in expression
             'quote.:{>7000}',                                                       // Invalid typing
             'quote:{>7000}',                                                        // Invalid typing
-            'quote:{>7000}&.133962:{>9000}',                                        // Invalid typing
+            'quote:{>7000}&.133962:{~9000}',                                        // Invalid typing
             'article.boxes:{1;}',                                                   // Invalid set expression
             'article.boxes:{;6}',                                                   // Invalid set expression
             'article.boxes:{;}',                                                    // Invalid set expression
-            'instruments.id:{133954,133962>2}'                                      // Can't mix sets and operators
+            'instruments.id:{133954,133962~2}'                                      // Can't mix sets and operators
         ];
 
         it('should recognize missing type', function() {
@@ -570,7 +588,8 @@ describe('Aql', function() {
             'instruments.id:{133954,133962}',
             'article.boxes.id:{1;4,9;14}',
             'quote.134000.27.bid:{>1.3240}',
-            'article.author.lastname:{Kämmerer}'
+            'article.author.lastname:{Kämmerer}',
+            'quote.134000.27.bid:{~1.3240}'
         ];
         var res, err;
 
@@ -788,6 +807,13 @@ describe('Aql', function() {
             err = 'Unexpected result: '+JSON.stringify(res);
 
             assert(res[0]['article#author#lastname'][0] === '{Kämmerer}', err);
+        });
+
+        it('should parse alert successful', function() {
+            res = Aql.parse(alerts[23]);
+            err = 'Unexpected result: '+JSON.stringify(res);
+
+            assert(res[0]['quote#134000#27#bid'][0] === '{~1.3240}', err);
         });
 
     });
