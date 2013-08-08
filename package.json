@@ -1,6 +1,6 @@
 {
   "name": "aql",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Alerting Query Language with parser, tests, syntax generators, etc.",
   "main": "index.js",
   "scripts": {
