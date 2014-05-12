@@ -5,7 +5,12 @@ endif
 ifdef WINDOWS
 	NODE = node
 else
-	NODE = /opt/nodejs/stable/bin/node
+	UNAME_S := $(shell uname -s)
+	ifeq ($(UNAME_S),Darwin)
+		NODE = node
+	else
+		NODE = /opt/nodejs/v0.8/bin/node
+	endif
 endif
 
 NODE_ENV=production

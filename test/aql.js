@@ -75,82 +75,36 @@ describe('Aql', function() {
     });
 
     describe('simplify()', function() {
+        var terms, keys, i, l, key;
         
-        var terms = [
-            'a*(b+c)',                          // a*b + a*c
-            'a*b+c*(d+e*f)',                    // a*b + c*d + c*e*f
-            'a*b*(c*d*e*(f+g))',                // a*b*c*d*e*f + a*b*c*d*e*g
-            'a*b*(c*d*e+c*d*g)',                // a*b*c*d*e + a*b*c*d*g
-            'a*(b+c+d*e)',                      // a*b + a*c + a*d*e
-            'a*b*(c+d)*(e)',                    // a*b*c*e + a*b*d*e
-            '(a)*b+(c*d*(e*f+g)+h*(i+j))*k',    // b*a + k*c*d*e*f + k*c*d*g + k*h*i + k*h*j
-            '(a)*(b+c)*(d*e)*(f+g)',            // a*b*d*e*f + a*b*d*e*g + a*c*d*e*f + a*c*d*e*g
-            '(a)&(b|c)&(d&e)&(f|g)',            // a&b&d&e&f | a&b&d&e&g | a&c&d&e&f | a&c&d&e&g
-            'a*(b+c)*d',                        // a*d*b + a*d*c
-            'a&(b|c)&d',                        // a&d&b | a&d&c
-            '(a)&&(b||c)&&(d&&e)&&(f||g)'       // a&&b&&d&&e&&f || a&&b&&d&&e&&g || a&&c&&d&&e&&f || a&&c&&d&&e&&g
-        ];
-        var res;
-
-        it('should simplify correctly', function() {
-            res = Aql.simplify(terms[0]);
-            assert(res === 'a*b+a*c', 'Unexpected result: '+res);
-        });
-
-        it('should simplify correctly', function() {
-            res = Aql.simplify(terms[1]);
-            assert(res === 'a*b+c*d+c*e*f', 'Unexpected result: '+res);
-        });
-
-        it('should simplify correctly', function() {
-            res = Aql.simplify(terms[2]);
-            assert(res === 'a*b*c*d*e*f+a*b*c*d*e*g', 'Unexpected result: '+res);
-        });
-
-        it('should simplify correctly', function() {
-            res = Aql.simplify(terms[3]);
-            assert(res === 'a*b*c*d*e+a*b*c*d*g', 'Unexpected result: '+res);
-        });
-
-        it('should simplify correctly', function() {
-            res = Aql.simplify(terms[4]);
-            assert(res === 'a*b+a*c+a*d*e', 'Unexpected result: '+res);
-        });
-
-        it('should simplify correctly', function() {
-            res = Aql.simplify(terms[5]);
-            assert(res === 'a*b*c*e+a*b*d*e', 'Unexpected result: '+res);
-        });
-
-        it('should simplify correctly', function() {
-            res = Aql.simplify(terms[6]);
-            assert(res === 'b*a+k*c*d*e*f+k*c*d*g+k*h*i+k*h*j', 'Unexpected result: '+res);
-        });
-
-        it('should simplify correctly', function() {
-            res = Aql.simplify(terms[7]);
-            assert(res === 'a*b*d*e*f+a*b*d*e*g+a*c*d*e*f+a*c*d*e*g', 'Unexpected result: '+res);
-        });
-
-        it('should simplify correctly', function() {
-            res = Aql.simplify(terms[8], '|', '&');
-            assert(res === 'a&b&d&e&f|a&b&d&e&g|a&c&d&e&f|a&c&d&e&g', 'Unexpected result: '+res);
-        });
-
-        it('should simplify correctly', function() {
-            res = Aql.simplify(terms[9]);
-            assert(res === 'a*d*b+a*d*c', 'Unexpected result: '+res);
-        });
-
-        it('should simplify correctly', function() {
-            res = Aql.simplify(terms[10], '|', '&');
-            assert(res === 'a&d&b|a&d&c', 'Unexpected result: '+res);
-        });
-
-        it('should simplify correctly', function() {
-            res = Aql.simplify(terms[11], '||', '&&');
-            assert(res === 'a&&b&&d&&e&&f||a&&b&&d&&e&&g||a&&c&&d&&e&&f||a&&c&&d&&e&&g', 'Unexpected result: '+res);
-        });
+        terms = {
+            'a*(b+c)':                          ['a*b+a*c'],
+            'a*b+c*(d+e*f)':                    ['a*b+c*d+c*e*f'],
+            'a*b*(c*d*e*(f+g))':                ['a*b*c*d*e*f+a*b*c*d*e*g'],
+            'a*b*(c*d*e+c*d*g)':                ['a*b*c*d*e+a*b*c*d*g'],
+            'a*(b+c+d*e)':                      ['a*b+a*c+a*d*e'],
+            'a*b*(c+d)*(e)':                    ['a*b*c*e+a*b*d*e'],
+            '(a)*b+(c*d*(e*f+g)+h*(i+j))*k':    ['b*a+k*c*d*e*f+k*c*d*g+k*h*i+k*h*j'],
+            '(a)*(b+c)*(d*e)*(f+g)':            ['a*b*d*e*f+a*b*d*e*g+a*c*d*e*f+a*c*d*e*g'],
+            '(a)&(b|c)&(d&e)&(f|g)':            ['a&b&d&e&f|a&b&d&e&g|a&c&d&e&f|a&c&d&e&g', '|', '&'],
+            'a*(b+c)*d':                        ['a*d*b+a*d*c'],
+            'a&(b|c)&d':                        ['a&d&b|a&d&c', '|', '&'],
+            '(a)&&(b||c)&&(d&&e)&&(f||g)':      ['a&&b&&d&&e&&f||a&&b&&d&&e&&g||a&&c&&d&&e&&f||a&&c&&d&&e&&g', '||', '&&'],
+            '(a+b+c)*(d+e+f)':                  ['a*d+a*e+a*f+b*d+b*e+b*f+c*d+c*e+c*f']
+        };
+        keys = Object.keys(terms);
+        
+        function factory(term, ex, plus, mul) {
+            return function() {
+                var res = Aql.simplify(term, plus, mul);
+                assert(res === ex, 'Input: '+term+'  Result: '+res+'  Expected: '+ex);
+            }
+        }
+        
+        for (i=0, l=keys.length; i<l; i++) {
+            key = keys[i];
+            it('should simplify term '+(i+1), factory(key, terms[key][0], terms[key][1], terms[key][2]));
+        }
     });
 
     describe('setMissingTypes()', function() {
@@ -562,6 +516,42 @@ describe('Aql', function() {
             }
         });
     });
+    
+    describe('clearSubtypes()', function() {
+        
+        var alerts = [
+            'quote.133962[4.last:{<7200}]',
+            'status[id:1&type[id:2&name:abc]&power:{>9000}]',
+            'chartpattern.patternData[(instrumentId:122118|instrumentId:122117|instrumentId:133978)&(patternType:2|patternType:2001|patternType:2012)]'
+        ];
+        var res, err;
+
+        it('should parse alert successful', function() {
+            res = Aql.clearSubtypes(alerts[0]);
+            err = 'Unexpected result: '+JSON.stringify(res);
+
+            assert(res === 'quote#133962#4#last:{<7200}', err);
+        });
+
+        it('should parse alert successful', function() {
+            res = Aql.clearSubtypes(alerts[1]);
+            err = 'Unexpected result: '+JSON.stringify(res);
+
+            assert(res === 'status#id:1&status#type#id:2&status#type#name:abc&status#power:{>9000}', err);
+        });
+
+        it('should parse alert successful', function() {
+            res = Aql.clearSubtypes(alerts[2]);
+            err = 'Unexpected result: '+JSON.stringify(res);
+
+            assert(res === '(chartpattern#patternData#instrumentId:122118' +
+                '|chartpattern#patternData#instrumentId:122117' +
+                '|chartpattern#patternData#instrumentId:133978)' +
+                '&(chartpattern#patternData#patternType:2' +
+                '|chartpattern#patternData#patternType:2001' +
+                '|chartpattern#patternData#patternType:2012)', err);
+        });
+    });
 
     describe('parse()', function() {
 
@@ -589,7 +579,8 @@ describe('Aql', function() {
             'article.boxes.id:{1;4,9;14}',
             'quote.134000.27.bid:{>1.3240}',
             'article.author.lastname:{Kämmerer}',
-            'quote.134000.27.bid:{~1.3240}'
+            'quote.134000.27.bid:{~1.3240}',
+            'chartpattern.patternData[(instrumentId:122118|instrumentId:122117|instrumentId:133978)&(patternType:2|patternType:2001|patternType:2012)]'
         ];
         var res, err;
 
@@ -814,6 +805,30 @@ describe('Aql', function() {
             err = 'Unexpected result: '+JSON.stringify(res);
 
             assert(res[0]['quote#134000#27#bid'][0] === '{~1.3240}', err);
+        });
+
+        it('should parse alert successful', function() {
+            res = Aql.parse(alerts[24]);
+            err = 'Unexpected result: '+JSON.stringify(res);
+
+            assert(res[0]['chartpattern#patternData#instrumentId'][0] === '122118',     err);
+            assert(res[0]['chartpattern#patternData#patternType'][0] === '2',           err);
+            assert(res[1]['chartpattern#patternData#instrumentId'][0] === '122118',     err);
+            assert(res[1]['chartpattern#patternData#patternType'][0] === '2001',        err);
+            assert(res[2]['chartpattern#patternData#instrumentId'][0] === '122118',     err);
+            assert(res[2]['chartpattern#patternData#patternType'][0] === '2012',        err);
+            assert(res[3]['chartpattern#patternData#instrumentId'][0] === '122117',     err);
+            assert(res[3]['chartpattern#patternData#patternType'][0] === '2',           err);
+            assert(res[4]['chartpattern#patternData#instrumentId'][0] === '122117',     err);
+            assert(res[4]['chartpattern#patternData#patternType'][0] === '2001',        err);
+            assert(res[5]['chartpattern#patternData#instrumentId'][0] === '122117',     err);
+            assert(res[5]['chartpattern#patternData#patternType'][0] === '2012',        err);
+            assert(res[6]['chartpattern#patternData#instrumentId'][0] === '133978',     err);
+            assert(res[6]['chartpattern#patternData#patternType'][0] === '2',           err);
+            assert(res[7]['chartpattern#patternData#instrumentId'][0] === '133978',     err);
+            assert(res[7]['chartpattern#patternData#patternType'][0] === '2001',        err);
+            assert(res[8]['chartpattern#patternData#instrumentId'][0] === '133978',     err);
+            assert(res[8]['chartpattern#patternData#patternType'][0] === '2012',        err);
         });
 
     });
