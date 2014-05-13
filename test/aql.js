@@ -4,74 +4,72 @@ var Aql = require('../lib/aql.js');
 describe('Aql', function() {
 
     describe('extractExpressions()', function() {
+        var alerts, i, l;
 
-        var alerts = [
-            "quote:{133962>7000}&(quote:{133964<6500}|(quote:{1337>9000}&{12345>6789})&(topflop:{1337>9000}&quote:{12345>6789}))",
-            "quote:{133962>7000}&&({133964<6500}||({1337>9000}&&{12345>6789})&&({1337>9000}&&{12345>6789}))",
-            "quote:{133962>7000}&({133964<6500}|({1337>9000}&{12345>6789})&(portfolio:{1337>9000}&{12345>6789}))",
-            "quote:{133962>7000}&&(quote:{133964<6500}||(portfolio:{1337>9000}&&{12345>6789})&&(topflop:{1337>9000}&&quote:{12345>6789}))",
-            "quote:{133962>7000}&({133964<6500}|{1337>9000})",
-            "quote.133962.4.last:{~7000}"
+        alerts = [
+            ['quote:{133962>7000}&(quote:{133964<6500}|(quote:{1337>9000}&{12345>6789})&(topflop:{1337>9000}&quote:{12345>6789}))', 
+                'e1&(e2|(e3&e4)&(e5&e6))', {
+                'e1' : 'quote:{133962>7000}',
+                'e2' : 'quote:{133964<6500}',
+                'e3' : 'quote:{1337>9000}',
+                'e4' : '{12345>6789}',
+                'e5' : 'topflop:{1337>9000}',
+                'e6' : 'quote:{12345>6789}'
+            }],
+            ['quote:{133962>7000}&&({133964<6500}||({1337>9000}&&{12345>6789})&&({1337>9000}&&{12345>6789}))', 
+                'e1&&(e2||(e3&&e4)&&(e5&&e6))', {
+                'e1': 'quote:{133962>7000}',
+                'e2': '{133964<6500}',
+                'e3': '{1337>9000}',
+                'e4': '{12345>6789}',
+                'e5': '{1337>9000}',
+                'e6': '{12345>6789}'
+            }],
+            ['quote:{133962>7000}&({133964<6500}|({1337>9000}&{12345>6789})&(portfolio:{1337>9000}&{12345>6789}))', 
+                'e1&(e2|(e3&e4)&(e5&e6))', {
+                'e1': 'quote:{133962>7000}',
+                'e2': '{133964<6500}',
+                'e3': '{1337>9000}',
+                'e4': '{12345>6789}',
+                'e5': 'portfolio:{1337>9000}',
+                'e6': '{12345>6789}'
+            }],
+            ['quote:{133962>7000}&&(quote:{133964<6500}||(portfolio:{1337>9000}&&{12345>6789})&&(topflop:{1337>9000}&&quote:{12345>6789}))', 
+                'e1&&(e2||(e3&&e4)&&(e5&&e6))', {
+                'e1': 'quote:{133962>7000}',
+                'e2': 'quote:{133964<6500}',
+                'e3': 'portfolio:{1337>9000}',
+                'e4': '{12345>6789}',
+                'e5': 'topflop:{1337>9000}',
+                'e6': 'quote:{12345>6789}'
+            }],
+            ['quote:{133962>7000}&({133964<6500}|{1337>9000})', 
+                'e1&(e2|e3)', {
+                'e1': 'quote:{133962>7000}',
+                'e2': '{133964<6500}',
+                'e3': '{1337>9000}'
+            }],
+            ['quote.133962.4.last:{~7000}', 
+                'quote.133962.4.e1', {
+                'e1': 'last:{~7000}'
+            }]
         ];
-        var res;
-
-        it('should replace expressions correctly', function() {
-            res = Aql.extractExpressions(alerts[0]);
-            assert(res[0] === 'e1&(e2|(e3&e4)&(e5&e6))', 'Unexpected result: '+res[0]);
-            assert(res[1]['e1'] === 'quote:{133962>7000}', 'Unexpected result: '+res[1]['e1']);
-            assert(res[1]['e2'] === 'quote:{133964<6500}', 'Unexpected result: '+res[1]['e2']);
-            assert(res[1]['e3'] === 'quote:{1337>9000}', 'Unexpected result: '+res[1]['e3']);
-            assert(res[1]['e4'] === '{12345>6789}', 'Unexpected result: '+res[1]['e4']);
-            assert(res[1]['e5'] === 'topflop:{1337>9000}', 'Unexpected result: '+res[1]['e5']);
-            assert(res[1]['e6'] === 'quote:{12345>6789}', 'Unexpected result: '+res[1]['e6']);
-        });
-
-        it('should replace expressions correctly', function() {
-            res = Aql.extractExpressions(alerts[1]);
-            assert(res[0] === 'e1&&(e2||(e3&&e4)&&(e5&&e6))', 'Unexpected result: '+res[0]);
-            assert(res[1]['e1'] === 'quote:{133962>7000}', 'Unexpected result: '+res[1]['e1']);
-            assert(res[1]['e2'] === '{133964<6500}', 'Unexpected result: '+res[1]['e2']);
-            assert(res[1]['e3'] === '{1337>9000}', 'Unexpected result: '+res[1]['e3']);
-            assert(res[1]['e4'] === '{12345>6789}', 'Unexpected result: '+res[1]['e4']);
-            assert(res[1]['e5'] === '{1337>9000}', 'Unexpected result: '+res[1]['e5']);
-            assert(res[1]['e6'] === '{12345>6789}', 'Unexpected result: '+res[1]['e6']);
-        });
-
-        it('should replace expressions correctly', function() {
-            res = Aql.extractExpressions(alerts[2]);
-            assert(res[0] === 'e1&(e2|(e3&e4)&(e5&e6))', 'Unexpected result: '+res[0]);
-            assert(res[1]['e1'] === 'quote:{133962>7000}', 'Unexpected result: '+res[1]['e1']);
-            assert(res[1]['e2'] === '{133964<6500}', 'Unexpected result: '+res[1]['e2']);
-            assert(res[1]['e3'] === '{1337>9000}', 'Unexpected result: '+res[1]['e3']);
-            assert(res[1]['e4'] === '{12345>6789}', 'Unexpected result: '+res[1]['e4']);
-            assert(res[1]['e5'] === 'portfolio:{1337>9000}', 'Unexpected result: '+res[1]['e5']);
-            assert(res[1]['e6'] === '{12345>6789}', 'Unexpected result: '+res[1]['e6']);
-        });
-
-        it('should replace expressions correctly', function() {
-            res = Aql.extractExpressions(alerts[3]);
-            assert(res[0] === 'e1&&(e2||(e3&&e4)&&(e5&&e6))', 'Unexpected result: '+res[0]);
-            assert(res[1]['e1'] === 'quote:{133962>7000}', 'Unexpected result: '+res[1]['e1']);
-            assert(res[1]['e2'] === 'quote:{133964<6500}', 'Unexpected result: '+res[1]['e2']);
-            assert(res[1]['e3'] === 'portfolio:{1337>9000}', 'Unexpected result: '+res[1]['e3']);
-            assert(res[1]['e4'] === '{12345>6789}', 'Unexpected result: '+res[1]['e4']);
-            assert(res[1]['e5'] === 'topflop:{1337>9000}', 'Unexpected result: '+res[1]['e5']);
-            assert(res[1]['e6'] === 'quote:{12345>6789}', 'Unexpected result: '+res[1]['e6']);
-        });
-
-        it('should replace expressions correctly', function() {
-            res = Aql.extractExpressions(alerts[4]);
-            assert(res[0] === 'e1&(e2|e3)', 'Unexpected result: '+res[0]);
-            assert(res[1]['e1'] === 'quote:{133962>7000}', 'Unexpected result: '+res[1]['e1']);
-            assert(res[1]['e2'] === '{133964<6500}', 'Unexpected result: '+res[1]['e2']);
-            assert(res[1]['e3'] === '{1337>9000}', 'Unexpected result: '+res[1]['e3']);
-        });
-
-        it('should replace expressions correctly', function() {
-            res = Aql.extractExpressions(alerts[5]);
-            assert(res[0] === 'quote.133962.4.e1', 'Unexpected result: '+res[0]);
-            assert(res[1]['e1'] === 'last:{~7000}', 'Unexpected result: '+res[1]['e1']);
-        });
+        
+        function factory(alert) {
+            return function() {
+                var res, key;
+                res = Aql.extractExpressions(alert[0]);
+                assert(res[0] === alert[1], 'Expected: '+alert[1]+'  Result: '+res[0]);
+                for (key in alert[2]) {
+                    if (!alert[2].hasOwnProperty(key)) { continue; }
+                    assert(res[1][key] === alert[2][key], 'Expected: '+alert[2][key]+'  Result: '+res[1][key]);
+                }
+            }
+        }
+        
+        for (i=0, l=alerts.length; i<l; i++) {
+            it ('should replace expressions from alert '+(i+1), factory(alerts[i]));
+        }
     });
 
     describe('simplify()', function() {
@@ -108,413 +106,146 @@ describe('Aql', function() {
     });
 
     describe('setMissingTypes()', function() {
-
-        var alerts = [
-            [['e1&e2', 'e1&e3&e4&e5&e6'],{
+        var alerts, i, l;
+        
+        alerts = [
+            [[['e1&e2', 'e1&e3&e4&e5&e6'],{
                 e1: 'quote:{133962>7000}',
                 e2: 'quote:{133962>7000}',
                 e3: 'quote:{133962>7000}',
                 e4: '{12345>6789}',
                 e5: 'topflop:{1337>9000}',
                 e6: 'quote:{12345>6789}'
-            }],
-            [['e1&&e2', 'e1&&e3&&e4&&e5&&e6'],{
+            }], {
+                'e4': 'quote'
+            }, '&'],
+            [[['e1&&e2', 'e1&&e3&&e4&&e5&&e6'],{
                 e1: 'quote:{133962>7000}',
                 e2: '{133964<6500}',
                 e3: '{1337>9000}',
                 e4: '{12345>6789}',
                 e5: '{1337>9000}',
                 e6: '{12345>6789}'
-            }],
-            [['e1&e2', 'e1&e3&e4&e5&e6'],{
+            }], {
+                'e2': 'quote',
+                'e3': 'quote',
+                'e4': 'quote',
+                'e5': 'quote',
+                'e6': 'quote'
+            }, '&&'],
+            [[['e1&e2', 'e1&e3&e4&e5&e6'],{
                 e1: 'quote:{133962>7000}',
                 e2: '{133964<6500}',
                 e3: '{1337>9000}',
                 e4: '{12345>6789}',
                 e5: 'portfolio:{1337>9000}',
                 e6: '{12345>6789}'
-            }],
-            [['e1&&e2', 'e1&&e3&&e4&&e5&&e6'],{
+            }], {
+                'e2': 'quote',
+                'e3': 'quote',
+                'e4': 'quote',
+                'e6': 'portfolio'
+            }, '&'],
+            [[['e1&&e2', 'e1&&e3&&e4&&e5&&e6'],{
                 e1: 'quote:{133962>7000}',
                 e2: 'quote:{133964<6500}',
                 e3: 'portfolio:{1337>9000}',
                 e4: '{12345>6789}',
                 e5: 'topflop:{1337>9000}',
                 e6: 'quote:{12345>6789}'
-            }],
-            [['e1&e2', 'e1&e3'],{
+            }], {
+                'e4': 'portfolio'
+            }, '&&'],
+            [[['e1&e2', 'e1&e3'],{
                 e1: 'quote:{133962>7000}',
                 e2: '{133964<6500}',
                 e3: '{1337>9000}'
-            }],
-            [['e1&e2', 'e1&e3'],{
+            }], {
+                'e2': 'quote',
+                'e3': 'quote'
+            }, '&'],
+            [[['e1&e2', 'e1&e3'],{
                 e1: 'quote:{133962~7000}',
                 e2: '{133964~6500}',
                 e3: '{1337~9000}'
-            }]
+            }], {
+                'e2': 'quote',
+                'e3': 'quote'
+            }, '&']
         ];
-        var res;
-
-        it('should set type smart', function() {
-            res = Aql.setMissingTypes(alerts[0], '&');
-            assert(res[1]['e4'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e4']+'"');
-        });
-
-        it('should set type smart', function() {
-            res = Aql.setMissingTypes(alerts[1], '&&');
-            assert(res[1]['e2'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e2']+'"');
-            assert(res[1]['e3'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e3']+'"');
-            assert(res[1]['e4'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e4']+'"');
-            assert(res[1]['e5'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e5']+'"');
-            assert(res[1]['e6'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e6']+'"');
-        });
-
-        it('should set type smart', function() {
-            res = Aql.setMissingTypes(alerts[2], '&');
-            assert(res[1]['e2'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e2']+'"');
-            assert(res[1]['e3'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e3']+'"');
-            assert(res[1]['e4'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e4']+'"');
-            assert(res[1]['e6'].indexOf('portfolio') !== -1, 'Expected "portfolio" type: "'+res[1]['e6']+'"');
-        });
-
-        it('should set type smart', function() {
-            res = Aql.setMissingTypes(alerts[3], '&&');
-            assert(res[1]['e4'].indexOf('portfolio') !== -1, 'Expected "portfolio" type: "'+res[1]['e4']+'"');
-        });
-
-        it('should set type smart', function() {
-            res = Aql.setMissingTypes(alerts[4], '&');
-            assert(res[1]['e2'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e2']+'"');
-            assert(res[1]['e3'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e3']+'"');
-        });
-
-        it('should set type smart', function() {
-            res = Aql.setMissingTypes(alerts[5], '&');
-            assert(res[1]['e2'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e2']+'"');
-            assert(res[1]['e3'].indexOf('quote') !== -1, 'Expected "quote" type: "'+res[1]['e3']+'"');
-        });
+        
+        function factory(alert) {
+            return function() {
+                var key, res;
+                
+                res = Aql.setMissingTypes(alert[0], alert[2]);
+                for (key in alert[1]) {
+                    if (!alert[1].hasOwnProperty(key)) { continue; }
+                    assert(res[1][key].indexOf(alert[1][key]) !== -1, 'Expected: "'+alert[1][key]+'"  Result: "'+res[1][key]+'"');
+                }
+            }
+        }
+        
+        for (i=0, l=alerts.length; i<l; i++) {
+            it('should set type from alert '+(i+1), factory(alerts[i]));
+        }
     });
 
     describe('checkForSyntaxErrors()', function() {
+        var failerts, keys, i, l;
 
-        // alerts with syntax errors
-        var failerts = [
-            '{133962>7000}&({133964<6500}|{1337>9000})',                            // At least one type is required
-            'quote:{1339|62>7000}&({133964<6500}|{1337>9000})',                     // Invalid character
-            'quote:{133962>7000}&({133964<6500}|{1337>9000}|)&({12345>6789})',      // Missing expression
-            'quote:{133962>7000}&(133964<6500}|{1337~9000})&{12345>6789}',          // Missing opening tag
-            'quote:{133962>7000}&({133964<6500}|{1337>9000})}',                     // Missing opening tag
-            'quote:{133962>7000}&({133964~6500}|{1337>9000})&{12345>6789',          // Missing closing tag
-            '(quote:{133962>7000}&({133964<6500}|{1337>9000})))',                   // Missing opening bracket
-            '((quote:{133962>7000}&({133964<6500}|({1337>9000})))',                 // Missing closing bracket
-            'quote:{133962>7000}&{133964<6500}|{{1337>9000}',                       // Invalid brackets
-            'quote:{133962~7000}&{133964<6500}|{1337>9000}}',                       // Invalid brackets
-            'status.id:5&4type.id:3',                                               // Missing logical operator
-            'status.id:(-1|1|-2)&3',                                                // Type must be followed by value or expression
-            'status[]&type:2',                                                      // Invalid subtyping
-            'status:[]&type:2',                                                     // Invalid subtyping
-            'quote:{133962:4>7000}',                                                // Invalid character in expression
-            'quote:{133962%4~7000}',                                                // Invalid character in expression
-            'quote:{133962$4>7000}',                                                // Invalid character in expression
-            'quote:{133962&4>7000}',                                                // Invalid character in expression
-            'quote:{133962\'4>7000}',                                               // Invalid character in expression
-            'quote:{133962\\4>7000}',                                               // Invalid character in expression
-            'quote:{133962!4>7000}',                                                // Invalid character in expression
-            'quote:{133962"4~7000}',                                                // Invalid character in expression
-            'quote:{133962?4>7000}',                                                // Invalid character in expression
-            'quote:{133962(4~7000}',                                                // Invalid character in expression
-            'quote:{133962)4~7000}',                                                // Invalid character in expression
-            'quote:{133962#4>7000}',                                                // Invalid character in expression
-            'quote:{133962|4~7000}',                                                // Invalid character in expression
-            'quote:{133962&4>7000}',                                                // Invalid character in expression
-            'quote.:{>7000}',                                                       // Invalid typing
-            'quote:{>7000}',                                                        // Invalid typing
-            'quote:{>7000}&.133962:{~9000}',                                        // Invalid typing
-            'article.boxes:{1;}',                                                   // Invalid set expression
-            'article.boxes:{;6}',                                                   // Invalid set expression
-            'article.boxes:{;}',                                                    // Invalid set expression
-            'instruments.id:{133954,133962~2}'                                      // Can't mix sets and operators
-        ];
-
-        it('should recognize missing type', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[0]);
-            } catch(err) {
-                assert(err.message.indexOf('At least one type is required') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid expression', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[1]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid character') !== -1, err.message);
-            }
-        });
-
-        it('should recognize missing expression', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[2]);
-            } catch(err) {
-                assert(err.message.indexOf('Missing expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize missing opening tag', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[3]);
-            } catch(err) {
-                assert(err.message.indexOf('Missing opening tag') !== -1, err.message);
-            }
-        });
-
-        it('should recognize missing opening tag', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[4]);
-            } catch(err) {
-                assert(err.message.indexOf('Missing opening tag') !== -1, err.message);
-            }
-        });
-
-        it('should recognize missing closing tag', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[5]);
-            } catch(err) {
-                assert(err.message.indexOf('Missing closing tag') !== -1, err.message);
-            }
-        });
-
-        it('should recognize missing opening bracket', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[6]);
-            } catch(err) {
-                assert(err.message.indexOf('Missing opening bracket') !== -1, err.message);
-            }
-        });
-
-        it('should recognize missing closing bracket', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[7]);
-            } catch(err) {
-                assert(err.message.indexOf('Missing closing bracket') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid brackets', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[8]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid brackets') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid brackets', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[9]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid brackets') !== -1, err.message);
-            }
-        });
-
-        it('should recognize missing logical operator', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[10]);
-            } catch(err) {
-                assert(err.message.indexOf('Missing logical operator') !== -1, err.message);
-            }
-        });
-
-        it('should recognize wrong type syntax', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[11]);
-            } catch(err) {
-                assert(err.message.indexOf('Type must be followed by value or expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize wrong type syntax', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[12]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid subtyping') !== -1, err.message);
-            }
-        });
-
-        it('should recognize wrong type syntax', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[13]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid subtyping') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid character', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[14]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid character', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[15]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid character', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[16]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid character', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[17]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid character', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[18]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid character', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[19]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid character', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[20]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid character', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[21]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid character', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[22]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid character', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[23]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid character', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[24]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid character', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[25]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid character', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[26]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid character', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[27]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid character in expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid typing', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[28]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid typing') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid typing', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[29]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid typing') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid typing', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[30]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid typing') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid set expression', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[31]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid set expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid set expression', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[32]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid set expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid set expression', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[33]);
-            } catch(err) {
-                assert(err.message.indexOf('Invalid set expression') !== -1, err.message);
-            }
-        });
-
-        it('should recognize invalid expression', function() {
-            try {
-                Aql.checkForSyntaxErrors(failerts[34]);
-            } catch(err) {
-                assert(err.message.indexOf('Sets and operators') !== -1, err.message);
-            }
-        });
+        // alerts with syntax error
+        failerts = {
+            '{133962>7000}&({133964<6500}|{1337>9000})':                            'At least one type is required',
+            'quote:{1339|62>7000}&({133964<6500}|{1337>9000})':                     'Invalid character',
+            'quote:{133962>7000}&({133964<6500}|{1337>9000}|)&({12345>6789})':      'Missing expression',
+            'quote:{133962>7000}&(133964<6500}|{1337~9000})&{12345>6789}':          'Missing opening tag',
+            'quote:{133962>7000}&({133964<6500}|{1337>9000})}':                     'Missing opening tag',
+            'quote:{133962>7000}&({133964~6500}|{1337>9000})&{12345>6789':          'Missing closing tag',
+            '(quote:{133962>7000}&({133964<6500}|{1337>9000})))':                   'Missing opening bracket',
+            '((quote:{133962>7000}&({133964<6500}|({1337>9000})))':                 'Missing closing bracket',
+            'quote:{133962>7000}&{133964<6500}|{{1337>9000}':                       'Invalid brackets',
+            'quote:{133962~7000}&{133964<6500}|{1337>9000}}':                       'Invalid brackets',
+            'status.id:5&4type.id:3':                                               'Missing logical operator',
+            'status.id:(-1|1|-2)&3':                                                'Type must be followed by value or expression',
+            'status[]&type:2':                                                      'Invalid subtyping',
+            'status:[]&type:2':                                                     'Invalid subtyping',
+            'quote:{133962:4>7000}':                                                'Invalid character in expression',
+            'quote:{133962%4~7000}':                                                'Invalid character in expression',
+            'quote:{133962$4>7000}':                                                'Invalid character in expression',
+            'quote:{133962&4>7000}':                                                'Invalid character in expression',
+            'quote:{133962\'4>7000}':                                               'Invalid character in expression',
+            'quote:{133962\\4>7000}':                                               'Invalid character in expression',
+            'quote:{133962!4>7000}':                                                'Invalid character in expression',
+            'quote:{133962"4~7000}':                                                'Invalid character in expression',
+            'quote:{133962?4>7000}':                                                'Invalid character in expression',
+            'quote:{133962(4~7000}':                                                'Invalid character in expression',
+            'quote:{133962)4~7000}':                                                'Invalid character in expression',
+            'quote:{133962#4>7000}':                                                'Invalid character in expression',
+            'quote:{133962|4~7000}':                                                'Invalid character in expression',
+            'quote.:{>7000}':                                                       'Invalid typing',
+            'quote:{>7000}':                                                        'Invalid typing',
+            'quote:{>7000}&.133962:{~9000}':                                        'Invalid typing',
+            'article.boxes:{1;}':                                                   'Invalid set expression',
+            'article.boxes:{;6}':                                                   'Invalid set expression',
+            'article.boxes:{;}':                                                    'Invalid set expression',
+            'instruments.id:{133954:133962~2}':                                     'Invalid character in expression'
+        };
+        keys = Object.keys(failerts);
+        
+        function factory(failert, result) {
+            return function() {
+                try {
+                    Aql.checkForSyntaxErrors(failert);
+                } catch(err) {
+                    assert(err.message.indexOf(result) !== -1, err.message);
+                }
+            };
+        }
+        
+        for (i=0, l=keys.length; i<l; i++) {
+            it('should recognize wrong syntax '+(i+1), factory(keys[i], failerts[keys[i]]));
+        }
     });
     
     describe('clearSubtypes()', function() {
