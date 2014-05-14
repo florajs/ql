@@ -249,318 +249,184 @@ describe('Aql', function() {
     });
     
     describe('clearSubtypes()', function() {
+        var alerts, i, l;
         
-        var alerts = [
-            'quote.133962[4.last:{<7200}]',
-            'status[id:1&type[id:2&name:abc]&power:{>9000}]',
-            'chartpattern.patternData[(instrumentId:122118|instrumentId:122117|instrumentId:133978)&(patternType:2|patternType:2001|patternType:2012)]'
+        alerts = [
+            ['quote.133962[4.last:{<7200}]',
+             'quote#133962#4#last:{<7200}'],
+            ['status[id:1&type[id:2&name:abc]&power:{>9000}]',
+             'status#id:1&status#type#id:2&status#type#name:abc&status#power:{>9000}'],
+            ['chartpattern.patternData[(instrumentId:122118|instrumentId:122117|instrumentId:133978)&(patternType:2|patternType:2001|patternType:2012)]',
+             '(chartpattern#patternData#instrumentId:122118' +
+             '|chartpattern#patternData#instrumentId:122117' +
+             '|chartpattern#patternData#instrumentId:133978)' +
+             '&(chartpattern#patternData#patternType:2' +
+             '|chartpattern#patternData#patternType:2001' +
+             '|chartpattern#patternData#patternType:2012)']
         ];
-        var res, err;
-
-        it('should parse alert successful', function() {
-            res = Aql.clearSubtypes(alerts[0]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res === 'quote#133962#4#last:{<7200}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.clearSubtypes(alerts[1]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res === 'status#id:1&status#type#id:2&status#type#name:abc&status#power:{>9000}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.clearSubtypes(alerts[2]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res === '(chartpattern#patternData#instrumentId:122118' +
-                '|chartpattern#patternData#instrumentId:122117' +
-                '|chartpattern#patternData#instrumentId:133978)' +
-                '&(chartpattern#patternData#patternType:2' +
-                '|chartpattern#patternData#patternType:2001' +
-                '|chartpattern#patternData#patternType:2012)', err);
-        });
+        
+        function factory(alert) {
+            return function() {
+                var res = Aql.clearSubtypes(alert[0]);
+                assert(res === alert[1], 'Result: '+res+'  Expected: '+alert[1]);
+            }
+        }
+        
+        for (i=0, l=alerts.length; i<l; i++) {
+            it('clear subtypes of alert '+(i+1), factory(alerts[i]));
+        }
     });
 
     describe('parse()', function() {
+        var alerts, i, l;
 
-        var alerts = [
-            "quote:{133962>7000}&(quote:{133964<6500}|(quote:{1337>9000}&{12345>6789})&(topflop:{1337>9000}&quote:{12345>6789}))",
-            "quote:{133962>7000}&&({133964<6500}||({1337>9000}&&{12345>6789})&&({1337>9000}&&{12345>6789}))",
-            "quote:{133962>7000}&({133964<6500}|({1337>9000}&{12345>6789})&(portfolio:{1337>9000}&{12345>6789}))",
-            "quote:{133962>7000}&&(quote:{133964<6500}||(portfolio:{1337>9000}&&{12345>6789})&&(topflop:{1337>9000}&&quote:{12345>6789}))",
-            "quote:{133962>7000}&({133964<6500}|{1337>9000})",
-            "status.id:5&4|type.id:3|(quote:{133962>7000}&{133964<6500}&topflop:{133962<5})",
-            "status.id:5&(4|3)",
-            "status.id:-1|1|0",
-            "patternStatus.id:{>=2}&timeHorizon:2&3&120|(instrumentSort:stock&(index|commodity&currency))",
-            "status[id:1&type[id:2]]",
-            "status[id:1&type[id:2&name:abc]&power:{>9000}]",
-            "status[id:1&(type[id:{>2}|name:abc])]",
-            "quote.133962.4.last:{>7000}|{<6500}",
-            'quote[133962.4.last:{<7200}]',
-            'quote.133962[4.last:{<7200}]',
-            'quote.133962.4[last:{<7200}]',
-            'quote.133962[4.last:{<7200}&22.last:{>7000}]',
-            'article.boxes:{1;10}',
-            'article[boxes:{1;6}&id:133962]',
-            'instruments.id:{133954,133962}',
-            'article.boxes.id:{1;4,9;14}',
-            'quote.134000.27.bid:{>1.3240}',
-            'article.author.lastname:{Kämmerer}',
-            'quote.134000.27.bid:{~1.3240}',
-            'chartpattern.patternData[(instrumentId:122118|instrumentId:122117|instrumentId:133978)&(patternType:2|patternType:2001|patternType:2012)]'
+        alerts = [
+            ["quote:{133962>7000}&(quote:{133964<6500}|(quote:{1337>9000}&{12345>6789})&(topflop:{1337>9000}&quote:{12345>6789}))", [
+                { 'quote': ['{133962>7000}', '{133964<6500}'] },
+                { 'quote': ['{133962>7000}', '{1337>9000}', '{12345>6789}', '{12345>6789}'],
+                  'topflop': ['{1337>9000}'] }
+            ]],
+            ["quote:{133962>7000}&&({133964<6500}||({1337>9000}&&{12345>6789})&&({1337>9000}&&{12345>6789}))", [
+                { 'quote': ['{133962>7000}', '{133964<6500}'] },
+                { 'quote': ['{133962>7000}', '{1337>9000}', '{12345>6789}', '{1337>9000}', '{12345>6789}'] }
+            ]],
+            ["quote:{133962>7000}&({133964<6500}|({1337>9000}&{12345>6789})&(portfolio:{1337>9000}&{12345>6789}))", [
+                { 'quote': ['{133962>7000}', '{133964<6500}'] },
+                { 'quote': ['{133962>7000}', '{1337>9000}', '{12345>6789}'],
+                  'portfolio': ['{1337>9000}', '{12345>6789}'] }
+            ]],
+            ["quote:{133962>7000}&&(quote:{133964<6500}||(portfolio:{1337>9000}&&{12345>6789})&&(topflop:{1337>9000}&&quote:{12345>6789}))", [
+                { 'quote': ['{133962>7000}', '{133964<6500}'] },
+                { 'quote': ['{133962>7000}', '{12345>6789}'],
+                  'portfolio': ['{1337>9000}', '{12345>6789}'],
+                  'topflop': ['{1337>9000}'] }
+            ]],
+            ["quote:{133962>7000}&({133964<6500}|{1337>9000})", [
+                { 'quote': ['{133962>7000}', '{133964<6500}'] },
+                { 'quote': ['{133962>7000}', '{1337>9000}'] }
+            ]],
+            ["status.id:5&4|type.id:3|(quote:{133962>7000}&{133964<6500}&topflop:{133962<5})", [
+                { 'status#id': ['5', '4'] },
+                { 'type#id': ['3'] },
+                { 'quote': ['{133962>7000}', '{133964<6500}'],
+                  'topflop': ['{133962<5}'] }
+            ]],
+            ["status.id:5&(4|3)", [
+                { 'status#id': ['5', '4'] },
+                { 'status#id': ['5', '3'] }
+            ]],
+            ["status.id:-1|1|0", [
+                { 'status#id': ['-1'] },
+                { 'status#id': ['1'] },
+                { 'status#id': ['0'] }
+            ]],
+            ["patternStatus.id:{>=2}&timeHorizon:2&3&120|(instrumentSort:stock&(index|commodity&currency))", [
+                { 'patternStatus#id': ['{>=2}'],
+                  'timeHorizon': ['2', '3', '120']},
+                { 'instrumentSort': ['stock', 'index'] },
+                { 'instrumentSort': ['stock', 'commodity', 'currency'] }
+            ]],
+            ["status[id:1&type[id:2]]", [
+                { 'status#id': ['1'],
+                  'status#type#id': ['2'] }
+            ]],
+            ["status[id:1&type[id:2&name:abc]&power:{>9000}]", [
+                { 'status#id': ['1'],
+                  'status#type#id': ['2'],
+                  'status#type#name': ['abc'],
+                  'status#power': ['{>9000}'] }
+            ]],
+            ["status[id:1&(type[id:{>2}|name:abc])]", [
+                { 'status#id': ['1'],
+                  'status#type#id': ['{>2}'] },
+                { 'status#id': ['1'],
+                  'status#type#name': ['abc'] }
+            ]],
+            ["quote.133962.4.last:{>7000}|{<6500}", [
+                { 'quote#133962#4#last': ['{>7000}'] },
+                { 'quote#133962#4#last': ['{<6500}'] }
+            ]],
+            ['quote[133962.4.last:{<7200}]', [
+                { 'quote#133962#4#last': ['{<7200}'] }
+            ]],
+            ['quote.133962[4.last:{<7200}]', [
+                { 'quote#133962#4#last': ['{<7200}'] }
+            ]],
+            ['quote.133962.4[last:{<7200}]', [
+                { 'quote#133962#4#last': ['{<7200}'] }
+            ]],
+            ['quote.133962[4.last:{<7200}&22.last:{>7000}]', [
+                { 'quote#133962#4#last': ['{<7200}'],
+                  'quote#133962#22#last': ['{>7000}'] }
+            ]],
+            ['article.boxes:{1;10}', [
+                { 'article#boxes': ['{1,2,3,4,5,6,7,8,9,10}'] }
+            ]],
+            ['article[boxes:{1;6}&id:133962]', [
+                { 'article#boxes': ['{1,2,3,4,5,6}'],
+                  'article#id': ['133962'] }
+            ]],
+            ['instruments.id:{133954,133962}', [
+                { 'instruments#id': ['{133954,133962}'] }
+            ]],
+            ['article.boxes.id:{1;4,9;14}', [
+                { 'article#boxes#id': ['{1,2,3,4,9,10,11,12,13,14}'] }
+            ]],
+            ['quote.134000.27.bid:{>1.3240}', [
+                { 'quote#134000#27#bid': ['{>1.3240}'] }
+            ]],
+            ['article.author.lastname:{Kämmerer}', [
+                { 'article#author#lastname': ['{Kämmerer}'] }
+            ]],
+            ['quote.134000.27.bid:{~1.3240}', [
+                { 'quote#134000#27#bid': ['{~1.3240}'] }
+            ]],
+            ['chartpattern.patternData[(instrumentId:122118|instrumentId:122117|instrumentId:133978)&(patternType:2|patternType:2001|patternType:2012)]', [
+                { 'chartpattern#patternData#instrumentId': ['122118'],
+                  'chartpattern#patternData#patternType': ['2'] },
+                { 'chartpattern#patternData#instrumentId': ['122118'],
+                  'chartpattern#patternData#patternType': ['2001'] },
+                { 'chartpattern#patternData#instrumentId': ['122118'],
+                  'chartpattern#patternData#patternType': ['2012'] },
+                { 'chartpattern#patternData#instrumentId': ['122117'],
+                  'chartpattern#patternData#patternType': ['2'] },
+                { 'chartpattern#patternData#instrumentId': ['122117'],
+                  'chartpattern#patternData#patternType': ['2001'] },
+                { 'chartpattern#patternData#instrumentId': ['122117'],
+                  'chartpattern#patternData#patternType': ['2012'] },
+                { 'chartpattern#patternData#instrumentId': ['133978'],
+                  'chartpattern#patternData#patternType': ['2'] },
+                { 'chartpattern#patternData#instrumentId': ['133978'],
+                  'chartpattern#patternData#patternType': ['2001'] },
+                { 'chartpattern#patternData#instrumentId': ['133978'],
+                  'chartpattern#patternData#patternType': ['2012'] }
+            ]]
         ];
-        var res, err;
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[0]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['quote'][0] === '{133962>7000}', err);
-            assert(res[0]['quote'][1] === '{133964<6500}', err);
-            assert(res[1]['quote'][0] === '{133962>7000}', err);
-            assert(res[1]['quote'][1] === '{1337>9000}', err);
-            assert(res[1]['quote'][2] === '{12345>6789}', err);
-            assert(res[1]['quote'][3] === '{12345>6789}', err);
-            assert(res[1]['topflop'][0] === '{1337>9000}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[1]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['quote'][0] === '{133962>7000}', err);
-            assert(res[0]['quote'][1] === '{133964<6500}', err);
-            assert(res[1]['quote'][0] === '{133962>7000}', err);
-            assert(res[1]['quote'][1] === '{1337>9000}', err);
-            assert(res[1]['quote'][2] === '{12345>6789}', err);
-            assert(res[1]['quote'][3] === '{1337>9000}', err);
-            assert(res[1]['quote'][4] === '{12345>6789}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[2]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['quote'][0] === '{133962>7000}', err);
-            assert(res[0]['quote'][1] === '{133964<6500}', err);
-            assert(res[1]['quote'][0] === '{133962>7000}', err);
-            assert(res[1]['quote'][1] === '{1337>9000}', err);
-            assert(res[1]['quote'][2] === '{12345>6789}', err);
-            assert(res[1]['portfolio'][0] === '{1337>9000}', err);
-            assert(res[1]['portfolio'][1] === '{12345>6789}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[3]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['quote'][0] === '{133962>7000}', err);
-            assert(res[0]['quote'][1] === '{133964<6500}', err);
-            assert(res[1]['quote'][0] === '{133962>7000}', err);
-            assert(res[1]['portfolio'][0] === '{1337>9000}', err);
-            assert(res[1]['portfolio'][1] === '{12345>6789}', err);
-            assert(res[1]['topflop'][0] === '{1337>9000}', err);
-            assert(res[1]['quote'][1] === '{12345>6789}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[4]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['quote'][0] === '{133962>7000}', err);
-            assert(res[0]['quote'][1] === '{133964<6500}', err);
-            assert(res[1]['quote'][0] === '{133962>7000}', err);
-            assert(res[1]['quote'][1] === '{1337>9000}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[5]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['status#id'][0] === '5', err);
-            assert(res[0]['status#id'][1] === '4', err);
-            assert(res[1]['type#id'][0] === '3', err);
-            assert(res[2]['quote'][0] === '{133962>7000}', err);
-            assert(res[2]['quote'][1] === '{133964<6500}', err);
-            assert(res[2]['topflop'][0] === '{133962<5}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[6]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['status#id'][0] === '5', err);
-            assert(res[0]['status#id'][1] === '4', err);
-            assert(res[1]['status#id'][0] === '5', err);
-            assert(res[1]['status#id'][1] === '3', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[7]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['status#id'][0] === '-1', err);
-            assert(res[1]['status#id'][0] === '1', err);
-            assert(res[2]['status#id'][0] === '0', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[8]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['patternStatus#id'][0] === '{>=2}', err);
-            assert(res[0]['timeHorizon'][0] === '2', err);
-            assert(res[0]['timeHorizon'][1] === '3', err);
-            assert(res[0]['timeHorizon'][2] === '120', err);
-            assert(res[1]['instrumentSort'][0] === 'stock', err);
-            assert(res[1]['instrumentSort'][1] === 'index', err);
-            assert(res[2]['instrumentSort'][0] === 'stock', err);
-            assert(res[2]['instrumentSort'][1] === 'commodity', err);
-            assert(res[2]['instrumentSort'][2] === 'currency', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[9]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['status#id'][0] === '1', err);
-            assert(res[0]['status#type#id'][0] === '2', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[10]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['status#id'][0] === '1', err);
-            assert(res[0]['status#type#id'][0] === '2', err);
-            assert(res[0]['status#type#name'][0] === 'abc', err);
-            assert(res[0]['status#power'][0] === '{>9000}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[11]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['status#id'][0] === '1', err);
-            assert(res[0]['status#type#id'][0] === '{>2}', err);
-            assert(res[1]['status#id'][0] === '1', err);
-            assert(res[1]['status#type#name'][0] === 'abc', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[12]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['quote#133962#4#last'][0] === '{>7000}', err);
-            assert(res[1]['quote#133962#4#last'][0] === '{<6500}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[13]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['quote#133962#4#last'][0] === '{<7200}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[14]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['quote#133962#4#last'][0] === '{<7200}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[15]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['quote#133962#4#last'][0] === '{<7200}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[16]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['quote#133962#4#last'][0] === '{<7200}', err);
-            assert(res[0]['quote#133962#22#last'][0] === '{>7000}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[17]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['article#boxes'][0] === '{1,2,3,4,5,6,7,8,9,10}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[18]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['article#boxes'][0] === '{1,2,3,4,5,6}', err);
-            assert(res[0]['article#id'][0] === '133962', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[19]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['instruments#id'][0] === '{133954,133962}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[20]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['article#boxes#id'][0] === '{1,2,3,4,9,10,11,12,13,14}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[21]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['quote#134000#27#bid'][0] === '{>1.3240}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[22]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['article#author#lastname'][0] === '{Kämmerer}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[23]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['quote#134000#27#bid'][0] === '{~1.3240}', err);
-        });
-
-        it('should parse alert successful', function() {
-            res = Aql.parse(alerts[24]);
-            err = 'Unexpected result: '+JSON.stringify(res);
-
-            assert(res[0]['chartpattern#patternData#instrumentId'][0] === '122118',     err);
-            assert(res[0]['chartpattern#patternData#patternType'][0] === '2',           err);
-            assert(res[1]['chartpattern#patternData#instrumentId'][0] === '122118',     err);
-            assert(res[1]['chartpattern#patternData#patternType'][0] === '2001',        err);
-            assert(res[2]['chartpattern#patternData#instrumentId'][0] === '122118',     err);
-            assert(res[2]['chartpattern#patternData#patternType'][0] === '2012',        err);
-            assert(res[3]['chartpattern#patternData#instrumentId'][0] === '122117',     err);
-            assert(res[3]['chartpattern#patternData#patternType'][0] === '2',           err);
-            assert(res[4]['chartpattern#patternData#instrumentId'][0] === '122117',     err);
-            assert(res[4]['chartpattern#patternData#patternType'][0] === '2001',        err);
-            assert(res[5]['chartpattern#patternData#instrumentId'][0] === '122117',     err);
-            assert(res[5]['chartpattern#patternData#patternType'][0] === '2012',        err);
-            assert(res[6]['chartpattern#patternData#instrumentId'][0] === '133978',     err);
-            assert(res[6]['chartpattern#patternData#patternType'][0] === '2',           err);
-            assert(res[7]['chartpattern#patternData#instrumentId'][0] === '133978',     err);
-            assert(res[7]['chartpattern#patternData#patternType'][0] === '2001',        err);
-            assert(res[8]['chartpattern#patternData#instrumentId'][0] === '133978',     err);
-            assert(res[8]['chartpattern#patternData#patternType'][0] === '2012',        err);
-        });
-
+        
+        function factory(alert) {
+            return function() {
+                var check, res, cond1, cond2, value, i, j, k, il, kl;
+                
+                res = Aql.parse(alert[0]);
+                
+                for (i=0, il=res.length; i<il; i++) {
+                    cond1 = res[i];
+                    for (j in cond1) {
+                        if (!cond1.hasOwnProperty(j)) { continue; }
+                        cond2 = cond1[j];
+                        for (k=0, kl=cond2.length; k<kl; k++) {
+                            value = cond2[k];
+                            try { check = alert[1][i][j][k] }
+                            catch(err) { throw new Error('Unable to find index '+i+' '+j+' '+k); }
+                            assert(value === alert[1][i][j][k], 'At: '+i+' '+j+' '+k+'  Result: '+value+'  Expected: '+alert[1][i][j][k]);
+                        }
+                    }
+                }
+            }
+        }
+        
+        for (i=0, l=alerts.length; i<l; i++) {
+            it('should understand alert '+(i+1), factory(alerts[i]));
+        }
     });
 });
