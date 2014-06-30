@@ -229,6 +229,7 @@ describe('Aql', function() {
             'article.boxes:{1;}':                                                   'Invalid set expression',
             'article.boxes:{;6}':                                                   'Invalid set expression',
             'article.boxes:{;}':                                                    'Invalid set expression',
+            '(timeHorizon:1)&&(patternStatus:2,7)&&(breakoutDirectionClose:1)':     'Invalid set expression',
             'instruments.id:{133954:133962~2}':                                     'Invalid character in expression'
         };
         keys = Object.keys(failerts);
@@ -404,6 +405,18 @@ describe('Aql', function() {
                   'chartpattern#patternData#patternType': ['2001'] },
                 { 'chartpattern#patternData#instrumentId': ['133978'],
                   'chartpattern#patternData#patternType': ['2012'] }
+            ]],
+            ['chartpattern.patternData[(instrumentId:133962)&&(patternType:2||patternType:2000)&&(timeHorizon:1)&&(patternStatus:{2,7})&&(breakoutDirectionClose:1)]', [
+                { 'chartpattern#patternData#instrumentId': [ '133962' ],
+                  'chartpattern#patternData#patternType': [ '2' ],
+                  'chartpattern#patternData#timeHorizon': [ '1' ],
+                  'chartpattern#patternData#patternStatus': [ '{2,7}' ],
+                  'chartpattern#patternData#breakoutDirectionClose': [ '1' ] },
+                { 'chartpattern#patternData#instrumentId': [ '133962' ],
+                  'chartpattern#patternData#patternType': [ '2000' ],
+                  'chartpattern#patternData#timeHorizon': [ '1' ],
+                  'chartpattern#patternData#patternStatus': [ '{2,7}' ],
+                  'chartpattern#patternData#breakoutDirectionClose': [ '1' ] }
             ]]
         ];
         
