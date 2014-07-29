@@ -19,7 +19,10 @@ describe('clearSubtypes()', function() {
         ['chartpattern.patternData[instrumentId:122118&patternType:2&distPercentQuotePotentialFromLevel1:{>3.5}]',
             'chartpattern.patternData:instrumentId:122118' +
             '&chartpattern.patternData:patternType:2' +
-            '&chartpattern.patternData:distPercentQuotePotentialFromLevel1:{>3.5}']
+            '&chartpattern.patternData:distPercentQuotePotentialFromLevel1:{>3.5}'],
+        ['chartpattern:patternData[instrumentId:133962,118548&&patternType:2,2000]',
+            'chartpattern:patternData:instrumentId:133962,118548' +
+            '&&chartpattern:patternData:patternType:2,2000']
     ];
 
     function factory(term, ex) {
