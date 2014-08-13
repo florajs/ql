@@ -287,7 +287,38 @@ describe('parse()', function() {
         ['chartpattern:patternData[instrumentId:133962,118548&&patternType:2,2000,2001,2002,2003,2004,2005]', [
             { 'chartpattern:patternData:instrumentId': ['133962,118548'],
               'chartpattern:patternData:patternType': ['2,2000,2001,2002,2003,2004,2005']}
-        ]]
+        ]],
+        
+        /*
+         * NOT operator.
+         */
+        
+        ['chartpattern:patternData:instrumentId:!133962', [
+            { 'chartpattern:patternData:instrumentId': ['!133962'] }
+        ]],
+        ['chartpattern:patternData[instrumentId:!133962&&patternType:2,2000,2001,2002,2003,2004,2005]', [
+            { 'chartpattern:patternData:instrumentId': ['!133962'],
+                'chartpattern:patternData:patternType': ['2,2000,2001,2002,2003,2004,2005']}
+        ]],
+        ['chartpattern:patternData[patternType:2,2000,2001,2002,2003,2004,2005&&instrumentId:!133962]', [
+            { 'chartpattern:patternData:instrumentId': ['!133962'],
+                'chartpattern:patternData:patternType': ['2,2000,2001,2002,2003,2004,2005']}
+        ]],
+        ['quote:133962:4:last:!0&!10000', [
+            { 'quote:133962:4:last': [ '!0', '!10000' ] }
+        ]],
+        ['chartpattern:patternData[(instrumentId:!133962)&&(patternType:2||patternType:2000)&&(timeHorizon:1)&&(patternStatus:2,7)&&(breakoutDirectionClose:!1)]', [
+            { 'chartpattern:patternData:instrumentId': [ '!133962' ],
+                'chartpattern:patternData:patternType': [ '2' ],
+                'chartpattern:patternData:timeHorizon': [ '1' ],
+                'chartpattern:patternData:patternStatus': [ '2,7' ],
+                'chartpattern:patternData:breakoutDirectionClose': [ '!1' ] },
+            { 'chartpattern:patternData:instrumentId': [ '!133962' ],
+                'chartpattern:patternData:patternType': [ '2000' ],
+                'chartpattern:patternData:timeHorizon': [ '1' ],
+                'chartpattern:patternData:patternStatus': [ '2,7' ],
+                'chartpattern:patternData:breakoutDirectionClose': [ '!1' ] }
+        ]],
     ];
     
     function factory(alert) {
