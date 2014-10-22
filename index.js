@@ -44,3 +44,7 @@ console.log(query);
 
 query = clearSubtypes(cfg, query);
 console.log(query);
+
+
+
+console.log(tokenizer(config({ or: ','}), "instruments(filter=assetClass.id=1)"));
