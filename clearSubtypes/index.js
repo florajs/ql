@@ -6,23 +6,24 @@
  */
 
 function clearSubtypes(config, query) {
-    var s, term, i, l, s2,
-        //splitter = new RegExp('([('+config.and+')('+config.or+')]+)');
-        splitter = /'(\*|\+)'/;
+    var s, i, attr, keys;
     
-    while(s = /'([^*+\\(\\)]+)\\[([^\\[\\]]+)\\]'/g.exec(query[0])) {
-        term = s[2].split(splitter);
-        console.log('!!', s, new RegExp('([^('+config.and+')('+config.or+')\\(\\)]+)\\[([^\\[\\]]+)\\]', 'g'), term, splitter, '--------------------- ');
-        for (i=0, l=term.length; i<l; i++) {
-            if (term[i] === config.and || term[i] === config.or) { continue; }
-            
-            if (s2 = /^(\(+)(.*)/.exec(term[i])) {
-                term[i] = s2[1]+s[1]+config.glue+s2[2];
-            } else {
-                term[i] = s[1]+config.glue+term[i];
+    while(s = /([^*+\(\)]+)\[([^\[\]]+)\]/g.exec(query[0])) {
+        attr = null;
+        
+        if (s[1] in query[1]) {
+            attr = query[1][s[1]].attribute;
+            delete query[1][s[1]];
+        }
+        
+        if (attr) {
+            keys = "(e3+e4*e5)*(e6+e7)".match(/(e[0-9]+)/g);
+            for (i=keys.length; i--;) {
+                query[1][keys[i]].attribute = attr+config.glue+query[1][keys[i]].attribute;
             }
         }
-        query[0] = query[0].replace(s[0], term.join(''));
+        
+        query[0] = query[0].replace(s[0], s[2]);
     }
 
     return query;

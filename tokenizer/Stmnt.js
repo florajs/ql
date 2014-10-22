@@ -12,8 +12,8 @@ function Stmnt(config, str) {
     }
 
     var split = str.split(this.operator);
-    this.attribute = split[0];
-    this.value = split[1] || null;
+    this.attribute = split.shift();
+    this.value = split.join() || null;
 
     if (this.value && this.value[0] === '"') {
         try {

@@ -42,9 +42,5 @@ console.log(query);
 query = replaceOperators(cfg, query);
 console.log(query);
 
-//query = clearSubtypes(cfg, query);
-//console.log(query);
-
-
-var str = 'name,title,instrument.id,quote(order=id:asc)(limit=20)(filter=")(")';8
-tokenizer(config({ or: ',' }), str);
+query = clearSubtypes(cfg, query);
+console.log(query);
