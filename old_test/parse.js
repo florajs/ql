@@ -319,6 +319,11 @@ describe('parse()', function() {
                 'chartpattern:patternData:patternStatus': [ '2,7' ],
                 'chartpattern:patternData:breakoutDirectionClose': [ '!1' ] }
         ]],
+        ['chartpattern[type:UpperTriggerlineCrossedClose,LowerTriggerlineCrossedClose&patternData[instrumentId:133962&patternType:2]]', [
+            { 'chartpattern:type': [ 'UpperTriggerlineCrossedClose,LowerTriggerlineCrossedClose' ],
+                'chartpattern:patternData:instrumentId': [ '133962' ],
+                'chartpattern:patternData:patternType': [ '2' ] }
+        ]]
     ];
     
     function factory(alert) {
