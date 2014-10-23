@@ -21,7 +21,7 @@ function tokenizer(config, query) {
         if (!stack) { return; }
         
         var id = getIdentifier();
-        string = string.replace(stack, id);
+        string = string.substr(0, i-stack.length)+id+string.substr(i, string.length);
         i -= l - string.length;
         l = string.length;
 
@@ -64,7 +64,7 @@ function tokenizer(config, query) {
             
             if (string[i] === config.string && string[i-1] !== '\\') {
                 state = 'stmnt';
-                resolve();
+                //resolve();
             }
         }
     }

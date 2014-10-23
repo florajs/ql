@@ -20,7 +20,7 @@
 var tokenizer = require('./tokenizer'),
     config = require('./config'),
     replaceOperators = require('./operators/replace'),
-    clearSubtypes = require('./clearSubtypes'),
+    clearSquare = require('./clearSquare'),
     simplify = require('./simplify');
 
 
@@ -42,9 +42,5 @@ console.log(query);
 query = replaceOperators(cfg, query);
 console.log(query);
 
-query = clearSubtypes(cfg, query);
+query = clearSquare(cfg, query);
 console.log(query);
-
-
-
-console.log(tokenizer(config({ or: ','}), "instruments(filter=assetClass.id=1)"));

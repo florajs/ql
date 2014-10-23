@@ -1,13 +1,11 @@
-var extend = require('./extend');
+var extend = require('./extend'),
+    defaults = require('./default');
 
-function config(cfg) {
-    cfg = extend({
-        operators: ['=', '!=', '<', '<=', '>', '>='],
-        glue: ':',
-        and: '&',
-        or: '|',
-        string: '"'
-    }, cfg);
+function config(config) {
+    var cfg;
+
+    cfg = extend({}, defaults);
+    cfg = extend(cfg, config);
     
     cfg.operators = cfg.operators.sort(function(a, b) {
         return a.length < b.length;
