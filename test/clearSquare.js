@@ -53,9 +53,19 @@ describe('clearSquare()', function() {
             ['e0[(e1[e2*e3]+e4[e5*e6])*(e7[e8*e9]+e10[e11*e12])]',  '(((e2*e3)+(e5*e6))*((e8*e9)+(e11*e12)))'],
             ['e0[(e1+e2)*(e3+e4)*(e5+e6)]',                         '((e1+e2)*(e3+e4)*(e5+e6))'],
             
-            // square brackets between attributes  
+            // square brackets between attributes
             
-            //['e0[e1]e3', 'e3']
+            //['e0[e1]e2', 'e1']
+            //['e0[e1][e2]', 'e2']
+            //['e0[e1][e2]e3', 'e2']
+            //['e0[e1][e2][e3]e4', 'e3']
+            //['e0[e1*e2]e3', '(e1*e2)']
+            //['e0[e1*e2][e3*e4]', '(e1*e2)(e3*e4)']
+            
+            //['e0[e1+e2][e3*e4]', 'e0[e1[e3*e4]+e2[e3*e4]]', 'e0[(e3*e4)+(e3*e4)]', '((e3*e4)+(e3*e4))']
+            //['e0[e1+e2][e3*e4]', 'e0[e1][e3*e4]+e0[e2][e3*e4]']
+            
+            //['e0[e1*e2+e3*e4][e3*e4]', 'e0[e1][e3*e4]+e0[e2][e3*e4]']
         ],
         fails = [
             ['0[0=1]',              '0.0=1'],

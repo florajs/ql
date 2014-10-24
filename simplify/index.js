@@ -1,83 +1,58 @@
+var replace = require('./replace'),
+    identify = require('./identify'),
+    expand = require('./expand'),
+    lookAhead = require('./lookAhead'),
+    lookBehind = require('./lookBehind');
+
 /**
  * 
- * @param {string} sentence
- * @returns {string}
+ * @param {object} config
+ * @param {Array} query
+ * @returns {Array}
  */
 
-function simplify(sentence) {
-
-    /*
-     * Remove empty brackets:
-     * a*() -> a
-     * a+() -> a
-     * ()*a -> a
-     * ()+a -> a
-     */
-
-    sentence = sentence.replace(/[\*\+]?\(\)[\*\+]?/g, '');
-
-    /*
-     * Expand:
-     * (a+b)*c -> a*c+b*c
-     * a*(b+c) -> a*b+a*c
-     * (a+b)*(c+d) -> a*c+a*d+b*c+b*d
-     * a*(b+c*d) -> a*b+a*c*d
-     * a*(b*(c+d)) -> a*b*c+a*b*d
-     */
-
-    function expand(s) {
-        var i, l, f, t, j, lj, k, lk, p, m, rgx;
-
-        rgx = /\(([a-z0-9\+\*]+)\)\*([a-z0-9]+)|([a-z0-9]+)\*\(([a-z0-9\+\*]+)\)|\(([a-z0-9\+\*]+)\)\*\(([a-z0-9\+\*]+)\)/;
-        while(f = rgx.exec(s)) {
-            t = f.shift();
-            for (i=0, l=f.length; i<l; i+=2) {
-                if (typeof f[i] === 'undefined') { continue; }
-                p = [];
-                m = [
-                    f[i].match(/[a-z0-9\*]+/g),
-                    f[i+1].match(/[a-z0-9\*]+/g)
-                ];
-                for (j=0, lj=m[0].length; j<lj; j++) {
-                    for (k=0, lk=m[1].length; k<lk; k++) {
-                        p.push(m[0][j]+'*'+m[1][k]);
-                    }
-                }
-                break;
-            }
-
-            s = s.replace(t, '('+p.join('+')+')');
-            s = clearBrackets(s);
-        }
-        return s;
-    }
-
-    sentence = expand(sentence);
-
-    /*
-     * Clear brackets:
-     * a+(b+c*d) -> a+b+c*d
-     * (b+c*d)+a -> b+c*d+a
-     * a+(b+c*d)+a -> a+b+c*d+a
-     * (b+c*d) -> a+b+c*d+a
-     */
+function simplify(config, query) {
+    var sentence = query[0];
     
-    function clearBrackets(s) {
-        s = s.replace(/\({2}([a-z0-9\+\*]+)\){2}/g, '($1)');
-        s = s.replace(/\({2}([a-z0-9\+\*]+)\){2}/g, '($1)');
+    sentence = sentence.replace(/\*/g, '');
+
+    sentence = identify(sentence, function(sentence, bracket, pos) {
+        var i, l, expanded, 
+            origin = bracket,
+            behind = lookBehind(sentence, pos+1), 
+            ahead = lookAhead(sentence, pos+1);
         
-        s = s.replace(/\+\(([a-z0-9\+\*]+)\)\+/, '+$1+');
-        s = s.replace(/\(\(([a-z0-9\+\*]+)\)\+/, '($1+');
-        s = s.replace(/\+\(([a-z0-9\+\*]+)\)\)/, '+$1)');
-        s = s.replace(/\+\(([a-z0-9\+\*]+)\)$/, '+$1');
-        s = s.replace(/^\(([a-z0-9\+\*]+)\)\+/, '$1+');
-        s = s.replace(/^\(([a-z0-9\+\*]+)\)$/, '$1');
-        return s;
-    }
-    
-    sentence = clearBrackets(sentence);
+        expanded = [];
+        for (i=0, l=behind[1].length; i<l; i++) {
+            expanded.push(expand(behind[1][i], bracket));
+        }
+        bracket = expanded.join('+');
 
-    return sentence;
+        expanded = [];
+        for (i=0, l=ahead[1].length; i<l; i++) {
+            expanded.push(expand(ahead[1][i], bracket, true));
+        }
+        bracket = expanded.join('+');
+        
+        if (behind[0] || ahead[0]) {
+            bracket = '('+bracket+')';
+        }
+
+        return replace(
+            sentence, 
+            pos-origin.length-1-behind[0].length,
+            pos+1+ahead[0].length,
+            bracket
+        );
+    });
+    
+    sentence = sentence.replace(/(e[0-9]+)(e[0-9]+)/g, '$1*$2');
+    sentence = sentence.replace(/(e[0-9]+)(e[0-9]+)/g, '$1*$2');
+    sentence = sentence.replace(/(e[0-9]+)\(/g, '$1*(');
+    sentence = sentence.replace(/\)(e[0-9]+)/g, ')*$1');
+    sentence = sentence.replace(/\)\(/g, ')*(');
+
+    return [sentence, query[1]];
 }
 
 module.exports = simplify;
