@@ -14,8 +14,8 @@ function clearSquare(config, query) {
     
     while(s = /([^*+\(\)\[\]]+)\[([^\[\]]+)\]/g.exec(query[0])) {
         attr = null;
-        //term = simplify(undefined, [s[2]])[0];
-        term = s[2];
+        term = simplify(undefined, [s[2]])[0];
+        //term = s[2];
         withOps = s[2].indexOf('*') !== -1 || s[2].indexOf('+') !== -1;
         
         //console.log(s[2], term, '--------------');

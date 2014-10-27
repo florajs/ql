@@ -1,14 +1,14 @@
 {
-  "name": "aql",
+  "name": "flora-ql",
   "version": "1.0.2",
-  "description": "Alerting Query Language with parser, tests, syntax generators, etc.",
+  "description": "Query Language with parser, tests, syntax generators, etc. for flora, alerting server, webpush",
   "main": "index.js",
   "scripts": {
     "test": "/opt/nodejs/v0.8.8/bin/node ./node_modules/mocha/bin/mocha --reporter list"
   },
   "repository": {
     "type": "git",
-    "url": "http://git.dc1.boerse-go.de/node-core/aql.git"
+    "url": "http://git.dc1.boerse-go.de/node-core/flora-ql.git"
   },
   "keywords": [
     "Alerting",
