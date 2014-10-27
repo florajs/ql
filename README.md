@@ -1,1 +1,1 @@
-Alerting Query Language with parser, tests, syntax generators, etc.
+Query Language with parser, tests, syntax generators, etc. for flora, alerting server, webpush
