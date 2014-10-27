@@ -19,7 +19,6 @@
   ],
   "author": "Thomas Lukacs",
   "license": "Commercial License",
-  "private": true,
   "dependencies": {
     "mocha": ""
   }

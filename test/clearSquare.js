@@ -1,27 +1,26 @@
 var assert = require('assert'),
-    config = require('../config'),
-    clearSquare = require('../clearSquare');
+    fn = require('../clearSquare')({ 
+        and: '*',
+        or: '+'
+    });
 
 describe('clearSquare()', function() {
     var i, l, 
         terms = [
             // basic
             
-            ['e0[e1]',                      'e1'],
-            ['e0[e1[e2]]',                  'e2'],
-
-            // replace with round brackets
-            
-            ['e1[e2*e3]', '(e2*e3)'],
-            ['e1[e2+e3]', '(e2+e3)'],
+            ['e0[e1]',                      '(e1)'],
+            ['e0[e1[e2]]',                  '((e2))'],
+            ['e1[e2*e3]',                   '(e2*e3)'],
+            ['e1[e2+e3]',                   '(e2+e3)'],
             
             // AND and OR Connections
             
-            ['e0*e1[e2]',                   'e0*e2'],
-            ['e0[e1]*e2',                   'e1*e2'],
+            ['e0*e1[e2]',                   'e0*(e2)'],
+            ['e0[e1]*e2',                   '(e1)*e2'],
             ['e0[e1*e2*e3]',                '(e1*e2*e3)'],
-            ['e0[e1*e2[e3]]',               '(e1*e3)'],
-            ['e0[e1[e2]*e3]',               '(e2*e3)'],
+            ['e0[e1*e2[e3]]',               '(e1*(e3))'],
+            ['e0[e1[e2]*e3]',               '((e2)*e3)'],
             ['e0[e1*e2[e3*e4]]',            '(e1*(e3*e4))'],
             ['e0[e1[e2*e3]*e4]',            '((e2*e3)*e4)'],
             ['e0[e1*e2[e3*e4]*e5]',         '(e1*(e3*e4)*e5)'],
@@ -29,11 +28,11 @@ describe('clearSquare()', function() {
             ['e0*e1[e2*e3[e4*e5]*e6]',      'e0*(e2*(e4*e5)*e6)'],
             ['e0*e1[e2*e3[e4*e5]*e6]*e7',   'e0*(e2*(e4*e5)*e6)*e7'],
 
-            ['e0+e1[e2]',                   'e0+e2'],
-            ['e0[e1]+e2',                   'e1+e2'],
+            ['e0+e1[e2]',                   'e0+(e2)'],
+            ['e0[e1]+e2',                   '(e1)+e2'],
             ['e0[e1+e2+e3]',                '(e1+e2+e3)'],
-            ['e0[e1+e2[e3]]',               '(e1+e3)'],
-            ['e0[e1[e2]+e3]',               '(e2+e3)'],
+            ['e0[e1+e2[e3]]',               '(e1+(e3))'],
+            ['e0[e1[e2]+e3]',               '((e2)+e3)'],
             ['e0[e1+e2[e3+e4]]',            '(e1+(e3+e4))'],
             ['e0[e1[e2+e3]+e4]',            '((e2+e3)+e4)'],
             ['e0[e1+e2[e3+e4]+e5]',         '(e1+(e3+e4)+e5)'],
@@ -66,7 +65,7 @@ describe('clearSquare()', function() {
             //['e0*[e1+e2][e3*e4]', 'e0[e1[e3*e4]+e2[e3*e4]]', 'e0[(e3*e4)+(e3*e4)]', '((e3*e4)+(e3*e4))']
             //['e0[e1+e2][e3*e4]', 'e0[e1][e3*e4]+e0[e2][e3*e4]']
             
-            //['e0[e1*e2+e3*e4][e3*e4]', 'e0[e1][e3*e4]+e0[e2][e3*e4]']
+            //['e0[e1*e2+e3*e4][e5*e6]', simplify (e1*e2+e3*e4)(e5*e6), 'e0[e1*e2*e5*e6+e3*e4*e5*e6]']
         ],
         fails = [
             ['0[0=1]',              '0.0=1'],
@@ -75,7 +74,7 @@ describe('clearSquare()', function() {
 
     function factory(term, res) {
         return function() {
-            assert.equal(clearSquare(config(), [term, {}])[0], res);  
+            assert.equal(fn([term, {}])[0], res);  
         }
     }
 

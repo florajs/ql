@@ -1,6 +1,6 @@
 var assert = require('assert'),
     config = require('../config'),
-    tokenizer = require('../tokenizer');
+    fn = require('../tokenizer');
 
 describe('tokenizer()', function() {
     var i, l,
@@ -90,7 +90,7 @@ describe('tokenizer()', function() {
 
     function factory(config, term, res) {
         return function() {
-            assert.equal(tokenizer(config, [term, {}])[0], res);  
+            assert.equal(fn(config)([term, {}])[0], res);  
         }
     }
 

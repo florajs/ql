@@ -36,11 +36,11 @@ var cfg = config({
 var query = ['x=2 OR a=1 AND aA.hhasdhhXx[(b_=1 OR c0.d_0=" OR " AND c0.e=1) AND (f=1;5 OR g=")\\"(")] AND h=1'];
 console.log(query);
 
-query = tokenizer(cfg, query);
+query = tokenizer(cfg)(query);
 console.log(query);
 
-query = replaceOperators(cfg, query);
+query = replaceOperators(cfg)(query);
 console.log(query);
 
-query = clearSquare(cfg, query);
+query = clearSquare(cfg)(query);
 console.log(query);

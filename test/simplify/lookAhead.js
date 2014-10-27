@@ -1,5 +1,8 @@
 var assert = require('assert'),
-    lookAhead = require('../../simplify/lookAhead');
+    lookAhead = require('../../simplify/lookAhead')({
+        and: '*',
+        or: '+' 
+    });
 
 describe('simplify/lookAhead()', function() {
     var i, l,

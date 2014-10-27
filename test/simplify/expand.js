@@ -1,5 +1,5 @@
 var assert = require('assert'),
-    fn = require('../../simplify/expand');
+    fn = require('../../simplify/expand')({ or: '+' });
 
 describe('simplify/expand()', function() {
     var i, l,
