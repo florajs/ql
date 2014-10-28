@@ -11,7 +11,7 @@ module.exports = function factory(config) {
     
     
     function resolve(query) {
-        var s, terms, id, key, tmp = {},
+        var s, terms, id,
             sentence = query[0],
             stmnts = query[1];
         
@@ -19,16 +19,12 @@ module.exports = function factory(config) {
             terms = s[0].split(config.relate);
             id = 'e'+((terms[0]+'_'+terms[1]).replace(/e/g, ''));
             
-            tmp = {};
-            for (key in stmnts) {
-                if (!stmnts.hasOwnProperty(key)) { continue; }
-                if (key === terms[0] || key === terms[1]) { continue; }
-                tmp[key] = stmnts[key];
-            }
+            //console.log('new id', id);
+            //console.log(terms[0] in stmnts && terms[1] in stmnts, terms[0], terms[1]);
             if (terms[0] in stmnts && terms[1] in stmnts) {
-                tmp[id] = stmnts[terms[0]].merge(stmnts[terms[1]]);
+                stmnts[id] = stmnts[terms[0]].merge(stmnts[terms[1]]);
             }
-            stmnts = tmp;
+            //console.log(Object.keys(stmnts));
             
             sentence = sentence.replace(s[0], id);
         }

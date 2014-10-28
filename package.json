@@ -1,6 +1,6 @@
 {
   "name": "flora-ql",
-  "version": "2.0.0-alpha",
+  "version": "2.0.0-beta",
   "description": "Query Language with parser, tests, syntax generators, etc. for flora, alerting server, webpush",
   "main": "index.js",
   "scripts": {
@@ -11,6 +11,8 @@
     "url": "http://git.dc1.boerse-go.de/node-core/flora-ql.git"
   },
   "keywords": [
+    "Flora",
+    "Api",
     "Alerting",
     "AQL",
     "query",

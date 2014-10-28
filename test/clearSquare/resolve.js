@@ -43,8 +43,8 @@ describe('clearSquare/resolve()', function() {
             console.log(">", res);
             
             assert.equal(res[0], output[0]);
-            for (e in res[1]) {
-                if (!res[1].hasOwnProperty(e)) { continue; }
+            for (e in output[1]) {
+                if (!output[1].hasOwnProperty(e)) { continue; }
                 assert.equal(res[1][e], output[1][e]);
             }
         }
