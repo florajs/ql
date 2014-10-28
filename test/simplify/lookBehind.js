@@ -1,19 +1,25 @@
 var assert = require('assert'),
     lookBehind = require('../../simplify/lookBehind')({
+        operators: ['=', '!=', '<', '<=', '>', '>='],
+        glue: '.',
         and: '*',
-        or: '+'
+        or: '+',
+        relate: '~',
+        lookDelimiter: '+',
+        roundBracket: ['(', ')'],
+        squareBracket: ['[', ']']
     });
 
 describe('simplify/lookBehind()', function() {
     var i, l,
         tests = [
-            [['e(e1+e2)', 8],                ['e']],
-            [['eee(e1+e2)', 10],             ['eee']],
-            [['aaa+eee(e1+e2)', 15],         ['eee']],
-            [['(aaa+eee)(e1+e2)', 17],       ['aaa', 'eee']],
-            [['(aaa*aaa+eee)(e1+e2)', 20],   ['aaa*aaa', 'eee']],
-            [['a+(aaa*aaa+eee)(e1+e2)', 22], ['aaa*aaa', 'eee']],
-            [['((aaa*aaa)+eee)(e1+e2)', 22], ['']],
+            [['e*(e1+e2)', 9],                ['e']],
+            [['eee*(e1+e2)', 11],             ['eee']],
+            [['aaa+eee*(e1+e2)', 16],         ['eee']],
+            [['(aaa+eee)*(e1+e2)', 18],       ['aaa', 'eee']],
+            [['(aaa*aaa+eee)*(e1+e2)', 21],   ['aaa*aaa', 'eee']],
+            [['a+(aaa*aaa+eee)*(e1+e2)', 23], ['aaa*aaa', 'eee']],
+            [['((aaa*aaa)+eee)*(e1+e2)', 23], ['']],
             [['eee+(e1+e2)', 11],            ['']]
         ];
 

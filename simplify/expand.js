@@ -16,15 +16,15 @@ module.exports = function factory(config) {
         
         for (i=0, l=str.length; i<l; i++) {
             if (str[i] === config.or) {
-                str = replace(str, i-term.length, i, isBackwards? term+exp : exp+term);
-                i += exp.length;
-                l += exp.length;
+                str = replace(str, i-term.length, i, isBackwards? term+config.and+exp : exp+config.and+term);
+                i += exp.length+config.and.length;
+                l += exp.length+config.and.length;
                 term = '';
             } else {
                 term += str[i];
             }
         }
-        str = replace(str, i-term.length, i, isBackwards? term+exp : exp+term);
+        str = replace(str, i-term.length, i, isBackwards? term+config.and+exp : exp+config.and+term);
         
         return str;
     }

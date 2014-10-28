@@ -1,4 +1,4 @@
-module.exports = function factory() {
+module.exports = function factory(config) {
 
     /**
      * 
@@ -11,8 +11,9 @@ module.exports = function factory() {
         
         function findDeepest(str) {
             var level = -1, tmp, brackets = [], store;
+            
             for(var i=0, l=str.length; i<l; i++) {
-                if (str[i] === '(') {
+                if (str[i] === config.roundBracket[0]) {
                     level++;
                     if (!brackets[level]) { brackets[level] = []; }
                     store = brackets[level];
@@ -20,7 +21,7 @@ module.exports = function factory() {
                     continue;
                 }
                 
-                if (str[i] === ')') {
+                if (str[i] === config.roundBracket[1]) {
                     if (tmp) { store.push([tmp, i, level]); }
                     level--;
                     store = brackets[level];
@@ -30,6 +31,7 @@ module.exports = function factory() {
                 
                 tmp += str[i];
             }
+            
             return brackets;
         }
         

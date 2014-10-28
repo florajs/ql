@@ -1,15 +1,24 @@
 var assert = require('assert'),
-    fn = require('../../simplify/expand')({ or: '+' });
+    fn = require('../../simplify/expand')({
+        operators: ['=', '!=', '<', '<=', '>', '>='],
+        glue: '.',
+        and: '*',
+        or: '+',
+        relate: '~',
+        lookDelimiter: '+',
+        roundBracket: ['(', ')'],
+        squareBracket: ['[', ']']
+    });
 
 describe('simplify/expand()', function() {
     var i, l,
         tests = [
-            [['e', 'a+b'],                  'ea+eb'],
-            [['e', 'a+b', true],            'ae+be'],
-            [['eee', 'a+b'],                'eeea+eeeb'],
-            [['eee', 'aaa+bbb'],            'eeeaaa+eeebbb'],
-            [['ee', 'aa+bb+cc+dd'],         'eeaa+eebb+eecc+eedd'],
-            [['ee', 'aa+bb+cc+dd', true],   'aaee+bbee+ccee+ddee'],
+            [['e', 'a+b'],                  'e*a+e*b'],
+            [['e', 'a+b', true],            'a*e+b*e'],
+            [['eee', 'a+b'],                'eee*a+eee*b'],
+            [['eee', 'aaa+bbb'],            'eee*aaa+eee*bbb'],
+            [['ee', 'aa+bb+cc+dd'],         'ee*aa+ee*bb+ee*cc+ee*dd'],
+            [['ee', 'aa+bb+cc+dd', true],   'aa*ee+bb*ee+cc*ee+dd*ee'],
         ];
 
     function factory(input, output) {

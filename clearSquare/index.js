@@ -1,7 +1,27 @@
-var simplifyF = require('../simplify');
+var replace = require('../simplify/replace')(),
+    simplifyF = require('../simplify'),
+    resolveF = require('./resolve'),
+    relationF = require('./relation'),
+    identifyF = require('../simplify/identify'),
+    lookAheadF = require('../simplify/lookAhead'),
+    lookBehindF = require('../simplify/lookBehind');
 
 module.exports = function factory(config) {
-    var simplify = simplifyF(config);
+    var relation = relationF(config),
+        resolve = resolveF(config),
+        simplify = simplifyF(config),
+        identify = identifyF({
+            roundBracket: config.squareBracket
+        }),
+        lookAhead = lookAheadF({
+            roundBracket: config.squareBracket,
+            lookDelimiter: [config.or, config.and].concat(config.roundBracket)
+        }),
+        lookBehind = lookBehindF({
+            roundBracket: config.squareBracket,
+            lookDelimiter: [config.or, config.and].concat(config.roundBracket)
+        })
+        ;
     
     /**
      * 
@@ -10,28 +30,50 @@ module.exports = function factory(config) {
      */
     
     function clearSquare(query) {
-        var s, i, attr, keys, term;
+        var sentence = query[0];
         
-        while(s = /([^*+\(\)\[\]]+)\[([^\[\]]+)\]/g.exec(query[0])) {
-            attr = null;
-            term = simplify([s[2]])[0];
+        console.log('<', sentence);
+        
+        sentence = identify(sentence, function(sentence, bracket, pos) {
+            var origin = bracket,
+                ahead = lookAhead(sentence, pos+1),
+                behind = lookBehind(sentence, pos+1);
             
-            if (s[1] in query[1]) {
-                attr = query[1][s[1]].attribute;
-                delete query[1][s[1]];
+            bracket = simplify([bracket])[0];
+            
+            console.log(sentence, bracket, 'ahead:', ahead, 'behind:', behind);
+            
+            if (ahead) {
+                bracket = relation(bracket, ahead[1].join(config.or));
+            }
+            if (behind) {
+                bracket = relation(behind[1].join(config.or), bracket);
+            }
+ 
+            if (behind[0] || ahead[0]) {
+                bracket = config.squareBracket[0]+bracket+config.squareBracket[1];
+            } else {
+                bracket = config.roundBracket[0]+bracket+config.roundBracket[1];
             }
             
-            if (attr) {
-                keys = s[2].match(/(e[0-9]+)/g);
-                for (i=keys.length; i--;) {
-                    query[1][keys[i]].attribute = attr+config.glue+query[1][keys[i]].attribute;
-                }
-            }
+            console.log('!', bracket);
             
-            query[0] = query[0].replace(s[0], '('+s[2]+')');
-        }
-    
-        return query;
+            console.log('>', replace(
+                sentence,
+                pos-origin.length-1-behind[0].length,
+                pos+1+ahead[0].length,
+                bracket
+            ));
+            
+            return replace(
+                sentence,
+                pos-origin.length-1-behind[0].length,
+                pos+1+ahead[0].length,
+                bracket
+            );
+        });
+        
+        return resolve([sentence, query[1]]);
     }
     
     return clearSquare;

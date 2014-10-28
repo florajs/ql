@@ -1,8 +1,14 @@
 var assert = require('assert'),
     config = require('../../config'),
     fn = require('../../simplify')(config({
+        operators: ['=', '!=', '<', '<=', '>', '>='],
+        glue: '.',
         and: '*',
-        or: '+'
+        or: '+',
+        relate: '~',
+        lookDelimiter: '+',
+        roundBracket: ['(', ')'],
+        squareBracket: ['[', ']']
     }));
 
 describe('simplify()', function() {
@@ -10,6 +16,7 @@ describe('simplify()', function() {
         tests = [
             // clear brackets
             
+            [['e1'],                                            'e1'],
             [['(e1)'],                                          'e1'],
             [['(e1+e2)'],                                       'e1+e2'],
             [['e0+(e1+e2)'],                                    'e0+e1+e2'],
@@ -58,6 +65,13 @@ describe('simplify()', function() {
                                                                 'e5*e6*e8*e9+e5*e6*e13+e5*e6*e11*e12'],
             [['(((e2*e3))+(e5*e6))*((e8*e9+e13)+(e11*e12))'],   'e2*e3*e8*e9+e2*e3*e13+e2*e3*e11*e12+' +
                                                                 'e5*e6*e8*e9+e5*e6*e13+e5*e6*e11*e12'],
+            
+            // relate operator
+            
+            [['e0~e1*e2~e3'],                                   'e0~e1*e2~e3'],
+            [['e0*(e1~e2)'],                                    'e0*e1~e2'],
+            [['(e0~e1)*e2'],                                    'e0~e1*e2'],
+            [['(e0~e1)*(e2~e3)'],                               'e0~e1*e2~e3'],
         ],
         fails = [
             ['a*()',                             'a'],

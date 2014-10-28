@@ -20,8 +20,6 @@ module.exports = function factory(config) {
 
     function simplify(query) {
         var sentence = query[0];
-        
-        sentence = sentence.replace(new RegExp(escape(config.and), 'g'), '');
     
         sentence = identify(sentence, function(sentence, bracket, pos) {
             var i, l, expanded, 
@@ -42,22 +40,16 @@ module.exports = function factory(config) {
             bracket = expanded.join(config.or);
             
             if (behind[0] || ahead[0]) {
-                bracket = '('+bracket+')';
+                bracket = config.roundBracket[0]+bracket+config.roundBracket[1];
             }
     
             return replace(
                 sentence, 
-                pos-origin.length-1-behind[0].length,
-                pos+1+ahead[0].length,
+                pos-origin.length-1-behind[0].length-(behind[0]?1:0),
+                pos+1+ahead[0].length+(ahead[0]?1:0),
                 bracket
             );
         });
-        
-        sentence = sentence.replace(/(e[0-9]+)(e[0-9]+)/g, '$1*$2');
-        sentence = sentence.replace(/(e[0-9]+)(e[0-9]+)/g, '$1*$2');
-        sentence = sentence.replace(/(e[0-9]+)\(/g, '$1*(');
-        sentence = sentence.replace(/\)(e[0-9]+)/g, ')*$1');
-        sentence = sentence.replace(/\)\(/g, ')*(');
     
         return [sentence, query[1]];
     }

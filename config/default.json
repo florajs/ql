@@ -3,5 +3,9 @@
     "glue": ":",
     "and": "&",
     "or": "|",
-    "string": "\""
+    "relate": "~",
+    "string": "\"",
+    "roundBracket": ["(", ")"],
+    "squareBracket": ["[", "]"],
+    "lookDelimiter": "|"
 }
