@@ -1,14 +1,16 @@
-module.exports = function factory(cfg) {
+module.exports = function factory(_config) {
     
     
-    function beautify(query) {
+    function beautify(query, config) {
+        config = config || _config;
+        
         var sentence, result, i, l, conjunction, term, j, lj;
         
         result = [];
         
-        sentence = query[0].split(cfg.or);
+        sentence = query[0].split(_config.or);
         for (i=0, l=sentence.length; i<l; i++) {
-            conjunction = sentence[i].split(cfg.and);
+            conjunction = sentence[i].split(_config.and);
             result.push([]);
             
             for (j=0, lj=conjunction.length; j<lj; j++) {
@@ -16,7 +18,7 @@ module.exports = function factory(cfg) {
                     term = query[1][conjunction[j]];
                     
                     result[result.length-1].push({
-                        attribute: term.attribute.split(cfg.glue),
+                        attribute: term.attribute.split(config.glue),
                         operator: term.operator,
                         value: term.value
                     });

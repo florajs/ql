@@ -25,7 +25,7 @@ module.exports = {
         query = replaceOperators(this.config)(query, _config);
         query = clearSquare(_config)(query);
         query = simplify(_config)(query);
-        query = beautify(_config)(query, config);
+        query = beautify(_config)(query, this.config);
         
         return query;
     }

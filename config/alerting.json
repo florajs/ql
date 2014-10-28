@@ -1,11 +1,11 @@
 {
     "operators": [":<=", ":>=", ":!", ":<", ":>", ":"],
     "glue": ":",
-    "and": "&&",
-    "or": "||",
+    "and": "&",
+    "or": "|",
     "relate": "~",
     "string": "\"",
     "roundBracket": ["(", ")"],
     "squareBracket": ["[", "]"],
-    "lookDelimiter": "||"
+    "lookDelimiter": "|"
 }

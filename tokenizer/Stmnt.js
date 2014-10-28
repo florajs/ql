@@ -11,36 +11,39 @@ module.exports = function factory(config) {
         this.value      = null;
         this.attribute  = null;
         this.config     = config;
+        if (!str) { return; }
         
         var i, l, split;
-    
-        if (str) {
-            for (i=0, l=this.config.operators.length; i<l; i++) {
-                if (str.indexOf(this.config.operators[i]) !== -1) {
-                    this.operator = this.config.operators[i];
-                    break;
+        
+        for (i=0, l=this.config.operators.length; i<l; i++) {
+            if (str.lastIndexOf(this.config.operators[i]) !== -1) {
+                this.operator = this.config.operators[i];
+                break;
+            }
+        }
+
+        split = str.split(this.operator);
+        if (split.length === 1) {
+            this.attribute = split[0];
+        } else {
+            this.value = split.pop();
+            this.attribute = split.join(this.operator);
+        }
+
+        if (this.value) {
+            if (this.value[0] === config.string ||
+                this.value === 'true' ||
+                this.value === 'false') {
+                try {
+                    this.value = JSON.parse(this.value);
+                } catch(err) {
+                    this.value = null;
                 }
             }
-    
-            split = str.split(this.operator);
-            this.attribute = split.shift();
-            this.value = split.join(this.operator) || null;
-    
-            if (this.value) {
-                if (this.value[0] === config.string ||
-                    this.value === 'true' ||
-                    this.value === 'false') {
-                    try {
-                        this.value = JSON.parse(this.value);
-                    } catch(err) {
-                        this.value = null;
-                    }
-                }
-            
-                var tmp = parseFloat(this.value);
-                if (!isNaN(tmp)) {
-                    this.value = tmp;
-                }
+        
+            var tmp = parseFloat(this.value);
+            if (!isNaN(tmp)) {
+                this.value = tmp;
             }
         }
     }

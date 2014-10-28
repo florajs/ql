@@ -6,6 +6,7 @@ describe('tokenizer/Stmnt()', function() {
     var i, l, stmnt,
         tests = [
             ['a=1',                 { attribute: 'a', operator: '=', value: 1, serialized: 'a=1'}                               ],
+            ['a=b=1',               { attribute: 'a=b', operator: '=', value: 1, serialized: 'a=b=1'}                           ],
             ['aaa>=100',            { attribute: 'aaa', operator: '>=', value: 100, serialized: 'aaa>=100'}                     ],
             ['aaa=true',            { attribute: 'aaa', operator: '=', value: true, serialized: 'aaa=true'}                     ],
             ['aaa=false',           { attribute: 'aaa', operator: '=', value: false, serialized: 'aaa=false'}                   ],

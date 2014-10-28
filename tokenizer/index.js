@@ -41,7 +41,7 @@ module.exports = function factory(config) {
         
         for (i=0, l=string.length; i<l; i++) {
             if (state === 'stmnt') {
-                if (['[', ']', '(', ')'].indexOf(string[i]) !== -1) {
+                if ([].concat(config.roundBracket).concat(config.squareBracket).indexOf(string[i]) !== -1) {
                     resolve();
                     continue;
                 }

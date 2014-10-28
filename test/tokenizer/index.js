@@ -7,6 +7,7 @@ describe('tokenizer()', function() {
         tests = [
             // basic
             
+            ['a=1',                                 'e0'],
             ['a=1*b=1',                             'e0*e1'],
             ['a=1*b=1*c=1',                         'e0*e1*e2'],
             ['a=1+b=1',                             'e0+e1'],
