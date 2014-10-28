@@ -1,14 +1,6 @@
 var assert = require('assert'),
-    fn = require('../../simplify/expand')({
-        operators: ['=', '!=', '<', '<=', '>', '>='],
-        glue: '.',
-        and: '*',
-        or: '+',
-        relate: '~',
-        lookDelimiter: '+',
-        roundBracket: ['(', ')'],
-        squareBracket: ['[', ']']
-    });
+    config = require('../../config'),
+    fn = require('../../simplify/expand');
 
 describe('simplify/expand()', function() {
     var i, l,
@@ -19,16 +11,18 @@ describe('simplify/expand()', function() {
             [['eee', 'aaa+bbb'],            'eee*aaa+eee*bbb'],
             [['ee', 'aa+bb+cc+dd'],         'ee*aa+ee*bb+ee*cc+ee*dd'],
             [['ee', 'aa+bb+cc+dd', true],   'aa*ee+bb*ee+cc*ee+dd*ee'],
-        ];
+        ],
+        fails = [];
 
-    function factory(input, output) {
+    function factory(config, input, output) {
         return function() {
-            assert.equal(fn.apply(this, input), output);
+            assert.equal(fn(config).apply(this, input), output);
         }
     }
 
     for (i=0, l=tests.length; i<l; i++) {
         it('should expand '+tests[i][0].join(', '), factory(
+            config(),
             tests[i][0],
             tests[i][1]
         ));

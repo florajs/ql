@@ -1,5 +1,4 @@
-var escape      = require('../lib/escape')(),
-    replaceF    = require('./replace'),
+var replaceF    = require('./replace'),
     identifyF   = require('./identify'),
     expandF     = require('./expand'),
     lookAheadF  = require('./lookAhead'),

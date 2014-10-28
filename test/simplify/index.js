@@ -1,15 +1,6 @@
 var assert = require('assert'),
     config = require('../../config'),
-    fn = require('../../simplify')(config({
-        operators: ['=', '!=', '<', '<=', '>', '>='],
-        glue: '.',
-        and: '*',
-        or: '+',
-        relate: '~',
-        lookDelimiter: '+',
-        roundBracket: ['(', ')'],
-        squareBracket: ['[', ']']
-    }));
+    fn = require('../../simplify');
 
 describe('simplify()', function() {
     var i, l,
@@ -85,14 +76,15 @@ describe('simplify()', function() {
         ];
     
 
-    function factory(input, output) {
+    function factory(config, input, output) {
         return function() {
-            assert.equal(fn.apply(this, [input])[0], output);
+            assert.equal(fn(config)(input)[0], output);
         }
     }
 
     for (i=0, l=tests.length; i<l; i++) {
         it('should simplify '+tests[i][0], factory(
+            config(),
             tests[i][0], 
             tests[i][1]
         ));

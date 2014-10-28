@@ -26,17 +26,21 @@ module.exports = function factory(config) {
             this.attribute = split.shift();
             this.value = split.join(this.operator) || null;
     
-            if (this.value && this.value[0] === '"') {
-                try {
-                    this.value = JSON.parse(this.value);
-                } catch(err) {
-                    this.value = null;
+            if (this.value) {
+                if (this.value[0] === config.string ||
+                    this.value === 'true' ||
+                    this.value === 'false') {
+                    try {
+                        this.value = JSON.parse(this.value);
+                    } catch(err) {
+                        this.value = null;
+                    }
                 }
-            }
-        
-            var tmp = parseFloat(this.value);
-            if (!isNaN(tmp)) {
-                this.value = tmp;
+            
+                var tmp = parseFloat(this.value);
+                if (!isNaN(tmp)) {
+                    this.value = tmp;
+                }
             }
         }
     }
@@ -47,7 +51,7 @@ module.exports = function factory(config) {
      */
     
     Stmnt.prototype.toString = function toString() {
-        return this.attribute+this.operator+this.value;
+        return this.attribute+this.operator+JSON.stringify(this.value);
     };
 
     /**

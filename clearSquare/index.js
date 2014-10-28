@@ -32,15 +32,10 @@ module.exports = function factory(config) {
     function clearSquare(query) {
         var sentence = query[0];
         
-        //console.log('<', sentence);
-        
         sentence = identify(sentence, function(sentence, bracket, pos) {
-            //console.log(':', sentence, bracket, pos);
             var origin = bracket,
                 ahead = lookAhead(sentence, pos+1),
                 behind = lookBehind(sentence, pos+1);
-            
-            //console.log(':', ahead, behind);
             
             bracket = simplify([bracket])[0];
             
@@ -56,15 +51,6 @@ module.exports = function factory(config) {
             } else {
                 bracket = config.roundBracket[0]+bracket+config.roundBracket[1];
             }
-            
-            //console.log('!', bracket);
-            
-            /*console.log('>', replace(
-                sentence,
-                pos-origin.length-1-behind[0].length,
-                pos+1+ahead[0].length,
-                bracket
-            ));*/
             
             return replace(
                 sentence,

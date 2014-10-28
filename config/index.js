@@ -1,4 +1,4 @@
-var extend = require('./extend'),
+var extend = require('./extend')(),
     defaults = require('./default');
 
 function config(config) {
@@ -20,7 +20,7 @@ function config(config) {
         cfg = extend(cfg, config);
         
         cfg.operators = cfg.operators.sort(function(a, b) {
-            return a.length < b.length;
+            return a.length < b.length; 
         });
     }
     

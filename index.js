@@ -30,8 +30,3 @@ module.exports = {
         return query;
     }
 };
-
-var floraQL = module.exports;
-floraQL.setConfig('api');
-console.log('(x=2 OR a=1 AND aA.hhasdhhXx[(b_=1 OR c0[d_0=" OR " AND e=1]) AND (f=1;5 OR g=")\\"(")]) AND h=1');
-console.log(floraQL.parse('(x=2 OR a=1 AND aA.hhasdhhXx[(b_=1 OR c0[d_0=" OR " AND e=1]) AND (f=1;5 OR g=")\\"(")]) AND h=1'));

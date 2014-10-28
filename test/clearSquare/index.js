@@ -1,50 +1,42 @@
 var assert = require('assert'),
-    fn = require('../../clearSquare')({
-        operators: ['=', '!=', '<', '<=', '>', '>='],
-        glue: '.',
-        and: '*',
-        or: '+',
-        relate: '~',
-        lookDelimiter: '+',
-        roundBracket: ['(', ')'],
-        squareBracket: ['[', ']']
-    });
+    config = require('../../config'),
+    fn = require('../../clearSquare');
 
 describe('clearSquare()', function() {
     var i, l, 
-        terms = [
+        tests = [
             // basic
             
-            ['e0[e1]',                      '(e0_1)'],
-            ['e0[e1[e2]]',                  '(e0_1_2)'],
-            ['e1[e2*e3]',                   '(e1_2*e1_3)'],
-            ['e1[e2+e3]',                   '(e1_2+e1_3)'],
+            ['e0[e1]',                                              '(e0_1)'],
+            ['e0[e1[e2]]',                                          '(e0_1_2)'],
+            ['e1[e2*e3]',                                           '(e1_2*e1_3)'],
+            ['e1[e2+e3]',                                           '(e1_2+e1_3)'],
             
             // AND and OR Connections
             
-            ['e0*e1[e2]',                   'e0*(e1_2)'],
-            ['e0[e1]*e2',                   '(e0_1)*e2'],
-            ['e0[e1*e2*e3]',                '(e0_1*e0_2*e0_3)'],
-            ['e0[e1*e2[e3]]',               '(e0_1*e0_2_3)'],
-            ['e0[e1[e2]*e3]',               '(e0_1_2*e0_3)'],
-            ['e0[e1*e2[e3*e4]]',            '(e0_1*e0_2_3*e0_2_4)'],
-            ['e0[e1[e2*e3]*e4]',            '(e0_1_2*e0_1_3*e0_4)'],
-            ['e0[e1*e2[e3*e4]*e5]',         '(e0_1*e0_2_3*e0_2_4*e0_5)'],
-            ['e0[e1*e2[e3*e4]*e5]*e6',      '(e0_1*e0_2_3*e0_2_4*e0_5)*e6'],
-            ['e0*e1[e2*e3[e4*e5]*e6]',      'e0*(e1_2*e1_3_4*e1_3_5*e1_6)'],
-            ['e0*e1[e2*e3[e4*e5]*e6]*e7',   'e0*(e1_2*e1_3_4*e1_3_5*e1_6)*e7'],
+            ['e0*e1[e2]',                                           'e0*(e1_2)'],
+            ['e0[e1]*e2',                                           '(e0_1)*e2'],
+            ['e0[e1*e2*e3]',                                        '(e0_1*e0_2*e0_3)'],
+            ['e0[e1*e2[e3]]',                                       '(e0_1*e0_2_3)'],
+            ['e0[e1[e2]*e3]',                                       '(e0_1_2*e0_3)'],
+            ['e0[e1*e2[e3*e4]]',                                    '(e0_1*e0_2_3*e0_2_4)'],
+            ['e0[e1[e2*e3]*e4]',                                    '(e0_1_2*e0_1_3*e0_4)'],
+            ['e0[e1*e2[e3*e4]*e5]',                                 '(e0_1*e0_2_3*e0_2_4*e0_5)'],
+            ['e0[e1*e2[e3*e4]*e5]*e6',                              '(e0_1*e0_2_3*e0_2_4*e0_5)*e6'],
+            ['e0*e1[e2*e3[e4*e5]*e6]',                              'e0*(e1_2*e1_3_4*e1_3_5*e1_6)'],
+            ['e0*e1[e2*e3[e4*e5]*e6]*e7',                           'e0*(e1_2*e1_3_4*e1_3_5*e1_6)*e7'],
 
-            ['e0+e1[e2]',                   'e0+(e1_2)'],
-            ['e0[e1]+e2',                   '(e0_1)+e2'],
-            ['e0[e1+e2+e3]',                '(e0_1+e0_2+e0_3)'],
-            ['e0[e1+e2[e3]]',               '(e0_1+e0_2_3)'],
-            ['e0[e1[e2]+e3]',               '(e0_1_2+e0_3)'],
-            ['e0[e1+e2[e3+e4]]',            '(e0_1+e0_2_3+e0_2_4)'],
-            ['e0[e1[e2+e3]+e4]',            '(e0_1_2+e0_1_3+e0_4)'],
-            ['e0[e1+e2[e3+e4]+e5]',         '(e0_1+e0_2_3+e0_2_4+e0_5)'],
-            ['e0[e1+e2[e3+e4]+e5]+e6',      '(e0_1+e0_2_3+e0_2_4+e0_5)+e6'],
-            ['e0+e1[e2+e3[e4+e5]+e6]',      'e0+(e1_2+e1_3_4+e1_3_5+e1_6)'],
-            ['e0+e1[e2+e3[e4+e5]+e6]+e7',   'e0+(e1_2+e1_3_4+e1_3_5+e1_6)+e7'],
+            ['e0+e1[e2]',                                           'e0+(e1_2)'],
+            ['e0[e1]+e2',                                           '(e0_1)+e2'],
+            ['e0[e1+e2+e3]',                                        '(e0_1+e0_2+e0_3)'],
+            ['e0[e1+e2[e3]]',                                       '(e0_1+e0_2_3)'],
+            ['e0[e1[e2]+e3]',                                       '(e0_1_2+e0_3)'],
+            ['e0[e1+e2[e3+e4]]',                                    '(e0_1+e0_2_3+e0_2_4)'],
+            ['e0[e1[e2+e3]+e4]',                                    '(e0_1_2+e0_1_3+e0_4)'],
+            ['e0[e1+e2[e3+e4]+e5]',                                 '(e0_1+e0_2_3+e0_2_4+e0_5)'],
+            ['e0[e1+e2[e3+e4]+e5]+e6',                              '(e0_1+e0_2_3+e0_2_4+e0_5)+e6'],
+            ['e0+e1[e2+e3[e4+e5]+e6]',                              'e0+(e1_2+e1_3_4+e1_3_5+e1_6)'],
+            ['e0+e1[e2+e3[e4+e5]+e6]+e7',                           'e0+(e1_2+e1_3_4+e1_3_5+e1_6)+e7'],
 
             // support for wild, round brackets
 
@@ -109,14 +101,18 @@ describe('clearSquare()', function() {
             ['0_0.0_0[0_0=1]',      '0_0.0_0.0_0=1']
         ];
 
-    function factory(term, res) {
+    function factory(config, input, output) {
         return function() {
-            assert.equal(fn([term, {}])[0], res);  
+            assert.equal(fn(config)([input, {}])[0], output);
         }
     }
 
-    for (i=0, l=terms.length; i<l; i++) {
-        it('should clear square brackets '+terms[i][0], factory(terms[i][0], terms[i][1]));
+    for (i=0, l=tests.length; i<l; i++) {
+        it('should clear square brackets '+tests[i][0], factory(
+            config(),
+            tests[i][0], 
+            tests[i][1]
+        ));
     }
 });
 
