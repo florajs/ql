@@ -1,5 +1,5 @@
 var assert = require('assert'),
-    contains = require('../lib/contains')(),
+    contains = require('../lib/contains'),
     config = require('../config'),
     floraQL = require('../');
 
@@ -89,9 +89,49 @@ describe('parse()', function() {
                         { attribute: ['h'], operator: '=', value: 1 }
                     ]
                 ]
-            ],
+            ]
         ],
-        fails = [];
+        fails = [
+            [false,                 2000],
+            [4,                     2000],
+            ['',                    2000],
+            ['(',                   2203],
+            ['(aaa',                2203],
+            ['[',                   2203],
+            ['[aaa',                2203],
+            [')',                   2204],
+            ['aaa)',                2204],
+            [']',                   2204],
+            ['aaa]',                2204],
+            [' AND aaa',            2208],
+            ['( AND aaa) OR bbb',   2208],
+            ['[ AND aaa] OR bbb',   2208],
+            ['aaa AND ',            2209],
+            ['(aaa AND ) OR bbb',   2209],
+            ['[aaa AND ] OR bbb',   2209],
+            [' OR aaa',             2208],
+            ['( OR aaa) OR bbb',    2208],
+            ['[ OR aaa] OR bbb',    2208],
+            ['aaa OR ',             2209],
+            ['(aaa OR ) OR bbb',    2209],
+            ['[aaa OR ] OR bbb',    2209],
+            ['()',                  2210],
+            ['[]',                  2210],
+            ['[()]',                2210],
+            ['aaa OR ()',           2210],
+            ['aaa OR []',           2210],
+            ['() OR aaa',           2210],
+            ['[] OR aaa',           2210],
+            ['(bbb AND ccc)aaa',    2211],
+            ['aaa(bbb AND ccc)',    2211],
+            ['aaa=string"',         2212],
+            ['aaa="string',         2213],
+            ['aaa=string',          2214],
+            ['aaa=hello world',     2214],
+            ['=123',                2215],
+            ['aaa123',              2216],
+            ['aaa=',                2217]
+        ];
 
     function factory(config, input, output) {
         return function() {
@@ -107,9 +147,31 @@ describe('parse()', function() {
 
     for (i=0, l=tests.length; i<l; i++) {
         it('should parse '+tests[i][0], factory(
-            config('api'),
+            'api',
             tests[i][0],
             tests[i][1]
+        ));
+    }
+
+    function failFactory(config, input, code) {
+        return function() {
+            try {
+                floraQL.setConfig(config);
+                floraQL.parse(input);
+            } catch(e) {
+                assert.equal(e.code, code);
+                return;
+            }
+
+            throw new Error('Test failed, error not thrown');
+        }
+    }
+
+    for (i=0, l=fails.length; i<l; i++) {
+        it('should throw error '+fails[i][0], failFactory(
+            'api',
+            fails[i][0],
+            fails[i][1]
         ));
     }
 });

@@ -29,13 +29,6 @@ describe('tokenizer()', function() {
             ['a=undefined*b="hello world"',         'e0*e1'],
             ['a="hello world"*b="hällö wôrld"',     'e0*e1'],
             ['a="hällö wôrld"*b="\\")(()][[].,"',   'e0*e1'],
-            ['a="\\")(()][[].,"*b={>1000}',         'e0*e1'],
-            ['a:"\\")(()][[].,"*b:{>1000}',         'e0*e1'],
-            ['a>"\\")(()][[].,"*b>{>1000}*c>1',     'e0*e1*e2'],
-            ['a>="\\")(()][[].,"*b>={>1000}*c>=1',  'e0*e1*e2'],
-            ['a<"\\")(()][[].,"*b<{>1000}*c<1',     'e0*e1*e2'],
-            ['a<="\\")(()][[].,"*b<={>1000}*c<=1',  'e0*e1*e2'],
-            ['a!="\\")(()][[].,"*b!={>1000}*c!=1',  'e0*e1*e2'],
             
             // round brackets
             
@@ -87,7 +80,17 @@ describe('tokenizer()', function() {
             ['a=1 AND b=1 OR c=1',                                              'e0 AND e1 OR e2'],
             ['a=1 AND (b[(c=1)][(d="\\")(()][[].," AND e=1)] OR f!=1) AND g=1', 'e0 AND (e1[(e2)][(e3 AND e4)] OR e5) AND e6']
         ],
-        fails = [];
+        fails = [
+            ['(a)b',            2211],
+            ['([a])b',          2211],
+            ['(a AND b)c',      2211],
+            ['a(b)',            2211],
+            ['a([b])',          2211],
+            ['a(b AND c)',      2211],
+            ['a=s"',            2212],
+            ['a="s',            2213],
+            ['a=s',             2214]
+        ];
 
     function factory(config, input, output) {
         return function() {
@@ -107,6 +110,27 @@ describe('tokenizer()', function() {
             config('api'),
             alternative[i][0],
             alternative[i][1]
+        ));
+    }
+
+    function failFactory(config, input, code) {
+        return function() {
+            try {
+                fn(config)([input, {}]);
+            } catch(e) {
+                assert.equal(e.code, code);
+                return;
+            }
+
+            throw new Error('Test failed, error not thrown');
+        }
+    }
+
+    for (i=0, l=fails.length; i<l; i++) {
+        it('should throw error '+fails[i][0], failFactory(
+            config('api'),
+            fails[i][0],
+            fails[i][1]
         ));
     }
 });

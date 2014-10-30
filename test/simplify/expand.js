@@ -10,9 +10,8 @@ describe('simplify/expand()', function() {
             [['eee', 'a+b'],                'eee*a+eee*b'],
             [['eee', 'aaa+bbb'],            'eee*aaa+eee*bbb'],
             [['ee', 'aa+bb+cc+dd'],         'ee*aa+ee*bb+ee*cc+ee*dd'],
-            [['ee', 'aa+bb+cc+dd', true],   'aa*ee+bb*ee+cc*ee+dd*ee'],
-        ],
-        fails = [];
+            [['ee', 'aa+bb+cc+dd', true],   'aa*ee+bb*ee+cc*ee+dd*ee']
+        ];
 
     function factory(config, input, output) {
         return function() {

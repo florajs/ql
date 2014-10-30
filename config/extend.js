@@ -1,12 +1,16 @@
 var util = require('util');
 
+/**
+ * @returns {extend}
+ */
+
 module.exports = function factory() {
     
     /** 
      * 
-     * @param target
-     * @param source
-     * @returns {{}}
+     * @param {object} target
+     * @param {object} source
+     * @returns {object}
      * @source http://stackoverflow.com/questions/12317003/something-like-jquery-extend-but-standalone
      */
     

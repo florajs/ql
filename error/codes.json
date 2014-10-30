@@ -1,0 +1,36 @@
+{
+    "1001": "Error",
+
+    "2000": "Invalid query string",
+
+    "2100": "Invalid query object",
+    "2101": "Invalid config object",
+    "2102": "Invalid config object: 'operators' have to be an array of at least one entry",
+    "2103": "Invalid config object: 'glue' has to be a string",
+    "2104": "Invalid config object: 'and' has to be a string",
+    "2105": "Invalid config object: 'or' has to be a string",
+    "2106": "Invalid config object: 'relate' has to be a string",
+    "2107": "Invalid config object: 'string' indicator has to be a string",
+    "2108": "Invalid config object: 'lookDelimiter' has to be an array or a string",
+    "2109": "Invalid config object: 'roundBracket' indicator has to be an array of strings",
+    "2110": "Invalid config object: 'squareBracket' indicator has to be an array of strings",
+
+    "2200": "Failed to beautify",
+    "2201": "Failed to beautify: Invalid expression",
+    "2202": "Failed to beautify: Expression not found",
+    "2203": "Unmatched opening bracket :bracket",
+    "2204": "Unmatched closing bracket :bracket",
+    "2205": "Failed to resolve relation",
+    "2206": "Failed to resolve relation: Invalid first argument",
+    "2207": "Failed to resolve relation: Invalid second argument",
+    "2208": "Missing left-hand side:position",
+    "2209": "Missing right-hand side:position",
+    "2210": "Invalid empty bracket:position",
+    "2211": "Missing connective at ':context' (pos: :index)",
+    "2212": "Missing opening quotation mark for string closing at ':context' (pos: :index)",
+    "2213": "Missing closing quotation mark for string starting at ':context' (pos: :index)",
+    "2214": "Invalid value type, missing string quotation marks for ':value'?",
+    "2215": "Missing attribute in statement ':stmnt'",
+    "2216": "Missing operator in statement ':stmnt'",
+    "2217": "Missing value in statement ':stmnt'"
+}

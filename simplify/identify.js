@@ -1,10 +1,24 @@
-module.exports = function factory(config) {
+var validateConfig  = require('../validate/config'),
+    ArgumentError   = require('../error/ArgumentError');
+
+/**
+ * 
+ * @param {Config} cfg
+ * @returns {identify}
+ */
+
+module.exports = function factory(cfg) {
+    validateConfig(cfg);
 
     /**
+     * Find the brackets on the deepest level and call the provided 
+     * action method with their content. The function must return a 
+     * string to be replaced with the sentence. Stops iteration after 
+     * 20 brackets to prevent continuous loops. 
      * 
-     * @param str
-     * @param action
-     * @returns {*}
+     * @param {string} str
+     * @param {function} action
+     * @returns {string}
      */
 
     function identify(str, action) {
@@ -13,7 +27,7 @@ module.exports = function factory(config) {
             var level = -1, tmp, brackets = [], store;
             
             for(var i=0, l=str.length; i<l; i++) {
-                if (str[i] === config.roundBracket[0]) {
+                if (str[i] === cfg.roundBracket[0]) {
                     level++;
                     if (!brackets[level]) { brackets[level] = []; }
                     store = brackets[level];
@@ -21,7 +35,15 @@ module.exports = function factory(config) {
                     continue;
                 }
                 
-                if (str[i] === config.roundBracket[1]) {
+                if (str[i] === cfg.roundBracket[1]) {
+
+                    // unmatched closing bracket
+                    if (level === -1) {
+                        throw new ArgumentError(2204, {
+                            bracket: cfg.roundBracket[1]
+                        });
+                    }
+                    
                     if (tmp) { store.push([tmp, i, level]); }
                     level--;
                     store = brackets[level];
@@ -30,6 +52,13 @@ module.exports = function factory(config) {
                 }
                 
                 tmp += str[i];
+            }
+            
+            // unmatched opening bracket
+            if (level !== -1) { 
+                throw new ArgumentError(2203, {
+                    bracket: cfg.roundBracket[0]
+                }); 
             }
             
             return brackets;

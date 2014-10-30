@@ -1,6 +1,6 @@
 {
   "name": "flora-ql",
-  "version": "2.0.0-beta",
+  "version": "2.0.0",
   "description": "Query Language with parser, tests, syntax generators, etc. for flora, alerting server, webpush",
   "main": "index.js",
   "scripts": {
@@ -12,12 +12,13 @@
   },
   "keywords": [
     "Flora",
-    "Api",
-    "Alerting",
-    "AQL",
+    "FloraQL",
     "query",
     "language",
-    "parser"
+    "parser",
+    "Api",
+    "Alerting",
+    "AQL"
   ],
   "author": "Thomas Lukacs",
   "license": "Commercial License",

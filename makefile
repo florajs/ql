@@ -9,7 +9,7 @@ else
 	ifeq ($(UNAME_S),Darwin)
 		NODE = node
 	else
-		NODE = /opt/nodejs/v0.8/bin/node
+		NODE = node
 	endif
 endif
 

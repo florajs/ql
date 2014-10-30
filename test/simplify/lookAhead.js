@@ -1,5 +1,5 @@
 var assert = require('assert'),
-    contains = require('../../lib/contains')(),
+    contains = require('../../lib/contains'),
     config = require('../../config'),
     fn = require('../../simplify/lookAhead');
 

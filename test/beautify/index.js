@@ -1,5 +1,5 @@
 var assert = require('assert'),
-    contains = require('../../lib/contains')(),
+    contains = require('../../lib/contains'),
     config = require('../../config'),
     fn = require('../../beautify');
 
@@ -39,9 +39,17 @@ describe('beautify()', function() {
                                         e3: { attribute:'d', operator:'!=', value:'4' } }]],    [   [   { attribute:['a'], operator:'=', value:'1' },
                                                                                                         { attribute:['b'], operator:'>', value:'2' } ],
                                                                                                     [   { attribute:['c'], operator:'<', value:'3' }, 
-                                                                                                        { attribute:['d'], operator:'!=', value:'4'} ]    ]],
+                                                                                                        { attribute:['d'], operator:'!=', value:'4'} ]    ]]
         ],
         fails = [
+            [[],                                                            2100],
+            [['e0'],                                                        2100],
+            [['e0', {}],                                                    2202],
+            [['e0', {e1: { attribute: '', operator: '', value: ''}}],       2202],
+            [['e0', {e0: { attribute: null, operator: 'a', value: 'a'}}],   2215],
+            [['e0', {e0: { attribute: 'a', operator: null, value: 'a'}}],   2216],
+            [['e0', {e0: { attribute: 'a', operator: 'a', value: null}}],   2217],
+            [['e0', {e0: { attribute: 'a', operator: 'a', value: ''}}],     2217]
         ];
 
     function factory(config, input, output) {
@@ -54,10 +62,31 @@ describe('beautify()', function() {
     }
 
     for (i=0, l=tests.length; i<l; i++) {
-        it('should beautify '+tests[i][0], factory(
+        it('should beautify '+tests[i][0][0][0], factory(
             config(),
             tests[i][0],
             tests[i][1]
+        ));
+    }
+
+    function failFactory(config, input, code) {
+        return function() {
+            try {
+                fn(config)(input);
+            } catch(e) {
+                assert.equal(e.code, code);
+                return;
+            }
+            
+            throw new Error('Test failed, error not thrown');
+        }
+    }
+
+    for (i=0, l=fails.length; i<l; i++) {
+        it('should throw error '+fails[i][0][0], failFactory(
+            config(),
+            fails[i][0],
+            fails[i][1]
         ));
     }
 });

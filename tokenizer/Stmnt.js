@@ -1,16 +1,34 @@
-module.exports = function factory(config) {
+var validateConfig  = require('../validate/config'),
+    ArgumentError   = require('../error/ArgumentError');
+
+/**
+ * 
+ * @param {Config} cfg
+ * @returns {Stmnt}
+ */
+
+module.exports = function factory(cfg) {
+    validateConfig(cfg);
 
     /**
+     * Class to store and parse a statement of a 
+     * query string.
      * 
-     * @param str
+     * @param {string} [str]
+     * @class
      * @constructor
      */
 
     function Stmnt(str) {
+        /** @member {string} */
         this.operator   = null;
+        /** @member {string} */
         this.value      = null;
+        /** @member {string} */
         this.attribute  = null;
-        this.config     = config;
+        /** @member {Config} */
+        this.config     = cfg;
+
         if (!str) { return; }
         
         var i, l, split;
@@ -29,37 +47,49 @@ module.exports = function factory(config) {
             this.value = split.pop();
             this.attribute = split.join(this.operator);
         }
+        
+        if (this.value === '') {
+            this.value = null;
 
-        if (this.value) {
-            if (this.value[0] === config.string ||
+        } else if (this.value) {
+            if (this.value === 'undefined') {
+                this.value = undefined;
+                
+            } else if (this.value[0] === cfg.string ||
                 this.value === 'true' ||
-                this.value === 'false') {
+                this.value === 'false' ||
+                this.value === 'null') {
                 try {
                     this.value = JSON.parse(this.value);
-                } catch(err) {
+                } catch(e) {
                     this.value = null;
                 }
-            }
-        
-            var tmp = parseFloat(this.value);
-            if (!isNaN(tmp)) {
-                this.value = tmp;
+
+            } else {
+                var tmp = parseFloat(this.value);
+                if (isNaN(tmp)) {
+                    throw new ArgumentError(2214, { value: this.value });
+                } else {
+                    this.value = tmp;
+                }
             }
         }
     }
 
     /**
+     * Create a human readable string of the statement.
      * 
-     * @returns {*}
+     * @returns {string}
      */
     
     Stmnt.prototype.toString = function toString() {
-        return this.attribute+this.operator+JSON.stringify(this.value);
+        return (this.attribute||'')+(this.operator||'')+(this.value===null?'':JSON.stringify(this.value));
     };
 
     /**
+     * If serialized with JSON.stringify, will return a human readable string of the statement.
      * 
-     * @returns {*}
+     * @returns {string}
      */
     
     Stmnt.prototype.toJSON = function toJSON() {
@@ -67,7 +97,9 @@ module.exports = function factory(config) {
     };
 
     /**
+     * Simple shallow clone of the statement.
      * 
+     * @returns {module.Stmnt}
      */
     
     Stmnt.prototype.clone = function clone() {
@@ -80,8 +112,11 @@ module.exports = function factory(config) {
     };
 
     /**
+     * Merge a provided second Stmnt with itself into a new one. 
+     * It will not change the current Stmnt.
      * 
-     * @param b
+     * @param {module.Stmnt} b
+     * @returns {module.Stmnt}
      */
     
     Stmnt.prototype.merge = function merge(b) {

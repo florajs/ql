@@ -1,17 +1,30 @@
-var escape = require('../lib/escape')();
+var validateQuery   = require('../validate/query'),
+    validateConfig  = require('../validate/config'),
+    escape          = require('../lib/escape');
 
-module.exports = function factory(config) {
+/**
+ * 
+ * @param {Config} cfg
+ * @returns {replaceOperators}
+ */
+
+module.exports = function factory(cfg) {
+    validateConfig(cfg);
 
     /**
+     * Replace AND and OR operators with a new config. Makes future 
+     * calculations easier if the logical connectives are single characters.
      * 
-     * @param query
-     * @param replacement
-     * @returns {*}
+     * @param {Query} query
+     * @param {Config} replacement
+     * @returns {Query}
      */
 
     function replaceOperators(query, replacement) {
-        query[0] = query[0].replace(new RegExp(escape(config.and), 'g'), replacement.and);
-        query[0] = query[0].replace(new RegExp(escape(config.or), 'g'), replacement.or);
+        validateQuery(query);
+        
+        query[0] = query[0].replace(new RegExp(escape(cfg.and), 'g'), replacement.and);
+        query[0] = query[0].replace(new RegExp(escape(cfg.or), 'g'), replacement.or);
         
         return query;
     }

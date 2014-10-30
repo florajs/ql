@@ -10,9 +10,8 @@ describe('simplify/replace()', function() {
             [['abcd', 0, 0, 'xxx'], 'xxxabcd'   ],
             [['abcd', 3, 3, 'xxx'], 'abcxxxd'   ],
             [['abcd', 4, 4, 'xxx'], 'abcdxxx'   ],
-            [['abcd', 7, 7, 'xxx'], 'abcdxxx'   ],
-        ],
-        fails = [];
+            [['abcd', 7, 7, 'xxx'], 'abcdxxx'   ]
+        ];
 
     function factory(input, output) {
         return function() {

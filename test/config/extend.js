@@ -18,8 +18,7 @@ describe('config/extend()', function() {
             [[{ a: { b: [1] }}, { a: { b: [1, 2] }}],   { a: { b: [1, 2] } }    ],
             [[{ a: { b: [1] }}, { a: { b: [2] }}],      { a: { b: [2] } }       ],
             [[[1, 2, 3], [2,3,4]],                      [2,3,4]                 ]
-        ],
-        fails = [];
+        ];
 
     function factory(input, output) {
         return function() {

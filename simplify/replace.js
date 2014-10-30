@@ -1,11 +1,17 @@
+/**
+ * @returns {replace}
+ */
+
 module.exports = function factory() {
 
     /**
+     * Replace any parts of the source string with a new part. 
+     * Provide the position with from and to.
      * 
-     * @param source
-     * @param from
-     * @param to
-     * @param newPart
+     * @param {string} source
+     * @param {number} from
+     * @param {number} to
+     * @param {string} newPart
      * @returns {string}
      */
     

@@ -53,9 +53,11 @@ describe('clearSquare/relation()', function() {
             [['e0', 'e1~e2*e3~e4'],                 'e0~e1~e2*e0~e3~e4'],
             [['e0~e1', 'e2~e3'],                    'e0~e1~e2~e3'],
             [['e0~e1*e2~e3', 'e4~e5*e6~e7'],        'e0~e1~e4~e5*e0~e1~e6~e7*e2~e3~e4~e5*e2~e3~e6~e7'],
-            [['e0~e1+e2~e3', 'e4~e5+e6~e7'],        'e0~e1~e4~e5+e0~e1~e6~e7+e2~e3~e4~e5+e2~e3~e6~e7'],
+            [['e0~e1+e2~e3', 'e4~e5+e6~e7'],        'e0~e1~e4~e5+e0~e1~e6~e7+e2~e3~e4~e5+e2~e3~e6~e7']
         ],
         fails = [
+            [[],    2206],
+            [[''],  2207]
         ];
 
     function factory(config, input, output) {
@@ -69,6 +71,27 @@ describe('clearSquare/relation()', function() {
             config(),
             tests[i][0], 
             tests[i][1]
+        ));
+    }
+
+    function failFactory(config, input, code) {
+        return function() {
+            try {
+                fn(config).apply(this, input);
+            } catch(e) {
+                assert.equal(e.code, code);
+                return;
+            }
+
+            throw new Error('Test failed, error not thrown');
+        }
+    }
+
+    for (i=0, l=fails.length; i<l; i++) {
+        it('should throw error '+fails[i][0], failFactory(
+            config(),
+            fails[i][0],
+            fails[i][1]
         ));
     }
 });

@@ -97,8 +97,10 @@ describe('clearSquare()', function() {
                                                                      'e0_1_5_7*e0_1_6_7*e0_2_5_7*e0_2_6_7)+e8']
         ],
         fails = [
-            ['0[0=1]',              '0.0=1'],
-            ['0_0.0_0[0_0=1]',      '0_0.0_0.0_0=1']
+            ['e0[e1',                                               2203],
+            ['e0e1]',                                               2204],
+            ['e0[(e1[e2*e3]+e4[e5*e6])*(e7[e8*e9+e10[e11*e12])]',   2203],
+            ['e0[(e1[e2*e3]+e4[e5*e6])*(e7e8*e9]+e10[e11*e12])]',   2204]
         ];
 
     function factory(config, input, output) {
@@ -112,6 +114,27 @@ describe('clearSquare()', function() {
             config(),
             tests[i][0], 
             tests[i][1]
+        ));
+    }
+
+    function failFactory(config, input, code) {
+        return function() {
+            try {
+                fn(config)([input, {}]);
+            } catch(e) {
+                assert.equal(e.code, code);
+                return;
+            }
+
+            throw new Error('Test failed, error not thrown');
+        }
+    }
+
+    for (i=0, l=fails.length; i<l; i++) {
+        it('should throw error '+fails[i][0], failFactory(
+            config(),
+            fails[i][0],
+            fails[i][1]
         ));
     }
 });

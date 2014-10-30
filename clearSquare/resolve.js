@@ -1,22 +1,34 @@
-var escape = require('../lib/escape')();
+var validateQuery   = require('../validate/query'),
+    validateConfig  = require('../validate/config'),
+    escape          = require('../lib/escape');
 
-module.exports = function factory(config) {
-    var regexp = new RegExp('e[0-9_]+'+escape(config.relate)+'e[0-9_]+');
+/**
+ * 
+ * @param {Config} cfg
+ * @returns {resolve}
+ */
+
+module.exports = function factory(cfg) {
+    validateConfig(cfg);
+    
+    var regexp = new RegExp('e[0-9_]+'+escape(cfg.relate)+'e[0-9_]+');
 
     /**
+     * Resolve any relations and merge the statements.
      * 
-     * @param query
-     * @returns {*[]}
+     * @param {Query} query
+     * @returns {Query}
      */
     
-    
     function resolve(query) {
+        validateQuery(query);
+        
         var s, terms, id,
             sentence = query[0],
             stmnts = query[1];
         
         while(s = regexp.exec(sentence)) {
-            terms = s[0].split(config.relate);
+            terms = s[0].split(cfg.relate);
             id = 'e'+((terms[0]+'_'+terms[1]).replace(/e/g, ''));
             
             if (terms[0] in stmnts && terms[1] in stmnts) {

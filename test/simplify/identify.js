@@ -11,9 +11,8 @@ describe('simplify/identify()', function() {
             ['a(b)',                            ['a(b)', 'b', 3, 0]                             ],
             ['aaa(bb+cc*dd)eee',                ['aaa(bb+cc*dd)eee', 'bb+cc*dd', 12, 0]         ],
             ['aaa(bb+(cc*dd))eee+(ff*gg)',      ['aaa(bb+(cc*dd))eee+(ff*gg)', 'cc*dd', 13, 1]  ],
-            ['aaa(bb+(cc*dd))eee+(ff*(gg))',    ['aaa(bb+(cc*dd))eee+(ff*(gg))', 'gg', 26, 1]   ],
-        ],
-        fails = [];
+            ['aaa(bb+(cc*dd))eee+(ff*(gg))',    ['aaa(bb+(cc*dd))eee+(ff*(gg))', 'gg', 26, 1]   ]
+        ];
 
     function factory(config, input, output) {
         return function() {

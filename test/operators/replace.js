@@ -5,15 +5,14 @@ var assert = require('assert'),
 describe('operators/replace()', function() {
     var i, l,
         tests = [
-            [[['a AND b'], config()],                       'a*b'               ],
-            [[['a OR b'], config()],                        'a+b'               ],
-            [[['a AND b OR (c AND d)'], config()],          'a*b+(c*d)'         ],
-            [[['(a AND b) OR c AND d'], config()],          '(a*b)+c*d'         ],
-            [[['(a AND b OR c AND d)'], config()],          '(a*b+c*d)'         ],
-            [[['b[(c AND d) OR e]'], config()],             'b[(c*d)+e]'        ],
-            [[['a AND b[(c AND d) OR e] OR f'], config()],  'a*b[(c*d)+e]+f'    ],
-        ],
-        fails = [];
+            [[['a AND b', {}], config()],                       'a*b'               ],
+            [[['a OR b', {}], config()],                        'a+b'               ],
+            [[['a AND b OR (c AND d)', {}], config()],          'a*b+(c*d)'         ],
+            [[['(a AND b) OR c AND d', {}], config()],          '(a*b)+c*d'         ],
+            [[['(a AND b OR c AND d)', {}], config()],          '(a*b+c*d)'         ],
+            [[['b[(c AND d) OR e]', {}], config()],             'b[(c*d)+e]'        ],
+            [[['a AND b[(c AND d) OR e] OR f', {}], config()],  'a*b[(c*d)+e]+f'    ]
+        ];
 
     function factory(config, input, output) {
         return function() {

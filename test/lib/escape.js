@@ -1,12 +1,11 @@
 var assert = require('assert'),
-    fn = require('../../lib/escape')();
+    fn = require('../../lib/escape');
 
 describe('lib/escape()', function() {
     var i, l,
         tests = [
             ['abc-\/\\^$*abc+?.()|[]{}abc', 'abc\\-\\/\\\\\\^\\$\\*abc\\+\\?\\.\\(\\)\\|\\[\\]\\{\\}abc']
-        ],
-        fails = [];
+        ];
 
     function factory(input, output) {
         return function() {

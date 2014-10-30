@@ -1,5 +1,5 @@
 var assert = require('assert'),
-    fn = require('../../lib/contains')();
+    fn = require('../../lib/contains');
 
 describe('lib/contains()', function() {
     var i, l,
@@ -11,9 +11,8 @@ describe('lib/contains()', function() {
             [{ a: { b: { c: 1 } } },    { a: { b: { c: 1 } } }  ],
             [[1,2,3],                   [1,2,3]                 ],
             [{ a: 0, b: 1 },            { a: 0 }                ],
-            [{ a: 0, b: 1 },            { b: 1 }                ],
-        ],
-        fails = [];
+            [{ a: 0, b: 1 },            { b: 1 }                ]
+        ];
 
     function factory(input) {
         return function() {

@@ -1,32 +1,45 @@
-var replace = require('./replace')();
+var replace         = require('./replace')(),
+    validateConfig  = require('../validate/config');
 
-module.exports = function factory(config) {
+/**
+ * 
+ * @param {Config} cfg
+ * @returns {expand}
+ */
+
+module.exports = function factory(cfg) {
+    validateConfig(cfg);
 
     /**
+     * Mathematically expand the provided expression to the content of a bracket.
      * 
-     * @param exp
-     * @param str
-     * @param isBackwards
-     * @returns {*}
+     * For example:
+     * - a*(b+c) = a*b+a*c
+     * - (a+b)*(c*d) = a*c+a*b+b*c+b*d 
+     * 
+     * @param {string} exp
+     * @param {string} bracket
+     * @param {boolean} isBackwards
+     * @returns {string}
      */
     
-    function expand(exp, str, isBackwards) {
-        if (!exp) { return str; }
+    function expand(exp, bracket, isBackwards) {
+        if (!exp) { return bracket; }
         var term = '', i, l;
         
-        for (i=0, l=str.length; i<l; i++) {
-            if (str[i] === config.or) {
-                str = replace(str, i-term.length, i, isBackwards? term+config.and+exp : exp+config.and+term);
-                i += exp.length+config.and.length;
-                l += exp.length+config.and.length;
+        for (i=0, l=bracket.length; i<l; i++) {
+            if (bracket[i] === cfg.or) {
+                bracket = replace(bracket, i-term.length, i, isBackwards? term+cfg.and+exp : exp+cfg.and+term);
+                i += exp.length+cfg.and.length;
+                l += exp.length+cfg.and.length;
                 term = '';
             } else {
-                term += str[i];
+                term += bracket[i];
             }
         }
-        str = replace(str, i-term.length, i, isBackwards? term+config.and+exp : exp+config.and+term);
+        bracket = replace(bracket, i-term.length, i, isBackwards? term+cfg.and+exp : exp+cfg.and+term);
         
-        return str;
+        return bracket;
     }
     
     return expand;
