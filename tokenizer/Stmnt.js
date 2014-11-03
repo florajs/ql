@@ -68,7 +68,9 @@ module.exports = function factory(cfg) {
             } else {
                 var tmp = parseFloat(this.value);
                 if (isNaN(tmp)) {
-                    throw new ArgumentError(2214, { value: this.value });
+                    if (cfg.validateStrings) {
+                        throw new ArgumentError(2214, { value: this.value });
+                    }
                 } else {
                     this.value = tmp;
                 }

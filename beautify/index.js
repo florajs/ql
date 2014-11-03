@@ -40,12 +40,14 @@ module.exports = function factory(cfg) {
                 if (conjunction[j] in query[1]) {
                     term = query[1][conjunction[j]];
                     
-                    assert(!!term.attribute, 2215, { stmnt: term.toString() });
-                    assert(!!term.operator, 2216, { stmnt: term.toString() });
-                    assert(!!term.value, 2217, { stmnt: term.toString() });
+                    if (cfg.validateStatements) {
+                        assert(!!term.attribute, 2215, { stmnt: term.toString() });
+                        assert(!!term.operator, 2216, { stmnt: term.toString() });
+                        assert(!!term.value, 2217, { stmnt: term.toString() });
+                    }
                     
                     result[result.length-1].push({
-                        attribute: term.attribute.split(config.glue),
+                        attribute: (term.attribute||'').split(config.glue),
                         operator: term.operator,
                         value: term.value
                     });

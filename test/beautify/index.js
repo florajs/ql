@@ -74,6 +74,7 @@ describe('beautify()', function() {
             try {
                 fn(config)(input);
             } catch(e) {
+                //throw e;
                 assert.equal(e.code, code);
                 return;
             }

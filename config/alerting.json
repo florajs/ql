@@ -7,5 +7,9 @@
     "string": "\"",
     "roundBracket": ["(", ")"],
     "squareBracket": ["[", "]"],
-    "lookDelimiter": "|"
+    "lookDelimiter": "|",
+
+    "validateStrings": true,
+    "validateConnectives": true,
+    "validateStatements": true
 }

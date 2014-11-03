@@ -20,17 +20,23 @@ module.exports = function factory(cfg) {
      * identifier and store them as instances of Stmnt in 
      * the second part of the query object.
      * 
-     * @param {Query} query
+     * @param {Query|string} query
      * @returns {Query}
      */
  
     function tokenizer(query) {
-        validateQuery(query);
+        var string;
+        
+        if (typeof query === 'string') {
+            string = query;
+        } else {
+            validateQuery(query);
+            string = query[0];
+        }
         
         var i, l, j, found, lastQuotationMark, char,
             stack = '',
             state = 'stmnt',
-            string = query[0],
             stmnts = {};
         
         var ii = 0;
@@ -71,30 +77,32 @@ module.exports = function factory(cfg) {
                         });
                     }
                     
-                    // Missing connective ahead of a bracket
-                    if (string[i] === cfg.roundBracket[0] &&
-                        typeof string[i-1] !== 'undefined' &&
-                        string[i-1] !== cfg.roundBracket[0] &&
-                        string[i-1] !== cfg.squareBracket[0] &&
-                        string.substr(i-cfg.and.length, cfg.and.length) !== cfg.and &&
-                        string.substr(i-cfg.or.length, cfg.or.length) !== cfg.or) { 
-                        throw new ArgumentError(2211, {
-                            context: string.substr(i-3>=0?i-3:i-2>=0?i-2:i-1, i-3>=0?7:i-2>=0?6:5),
-                            index: i
-                        }); 
-                    }
-
-                    // Missing connective after closing bracket
-                    if (string[i] === cfg.roundBracket[1] &&
-                        typeof string[i+1] !== 'undefined' &&
-                        string[i+1] !== cfg.roundBracket[1] &&
-                        string[i+1] !== cfg.squareBracket[1] &&
-                        string.substr(i+1, cfg.and.length) !== cfg.and &&
-                        string.substr(i+1, cfg.or.length) !== cfg.or) { 
-                        throw new ArgumentError(2211, {
-                            context: string.substr(i-3, 7),
-                            index: i+2
-                        }); 
+                    if (cfg.validateConnectives) {
+                        // Missing connective ahead of a bracket
+                        if (string[i] === cfg.roundBracket[0] &&
+                            typeof string[i-1] !== 'undefined' &&
+                            string[i-1] !== cfg.roundBracket[0] &&
+                            string[i-1] !== cfg.squareBracket[0] &&
+                            string.substr(i-cfg.and.length, cfg.and.length) !== cfg.and &&
+                            string.substr(i-cfg.or.length, cfg.or.length) !== cfg.or) { 
+                            throw new ArgumentError(2211, {
+                                context: string.substr(i-3>=0?i-3:i-2>=0?i-2:i-1, i-3>=0?7:i-2>=0?6:5),
+                                index: i
+                            }); 
+                        }
+    
+                        // Missing connective after closing bracket
+                        if (string[i] === cfg.roundBracket[1] &&
+                            typeof string[i+1] !== 'undefined' &&
+                            string[i+1] !== cfg.roundBracket[1] &&
+                            string[i+1] !== cfg.squareBracket[1] &&
+                            string.substr(i+1, cfg.and.length) !== cfg.and &&
+                            string.substr(i+1, cfg.or.length) !== cfg.or) { 
+                            throw new ArgumentError(2211, {
+                                context: string.substr(i-3, 7),
+                                index: i+2
+                            }); 
+                        }
                     }
                     
                     resolve();
@@ -103,21 +111,23 @@ module.exports = function factory(cfg) {
                 
                 if (string[i] === cfg.string) {
                     
-                    // Missing opening string quotation mark
-                    for (j=cfg.operators.length; j--;) {
-                        if (string.substr(i-cfg.operators[j].length, cfg.operators[j].length) === cfg.operators[j]) {
-                            found = true;
-                            break;
+                    if (cfg.validateStrings) {
+                        // Missing opening string quotation mark
+                        for (j=cfg.operators.length; j--;) {
+                            if (string.substr(i-cfg.operators[j].length, cfg.operators[j].length) === cfg.operators[j]) {
+                                found = true;
+                                break;
+                            }
                         }
-                    }
-                    if (!found) { 
-                        throw new ArgumentError(2212, {
-                            context: string.substr(i-3, 7),
-                            index: i+1
-                        }); 
+                        if (!found) { 
+                            throw new ArgumentError(2212, {
+                                context: string.substr(i-3, 7),
+                                index: i+1
+                            }); 
+                        }
+                        lastQuotationMark = i;
                     }
 
-                    lastQuotationMark = i;
                     state = 'string';
                     stack += string[i];
                     continue;
@@ -190,12 +200,14 @@ module.exports = function factory(cfg) {
             }
         }
         
-        // Missing closing quotation mark
-        if (state === 'string') { 
-            throw new ArgumentError(2213, {
-                context: string.substr(lastQuotationMark-3, 7),
-                index: lastQuotationMark+1
-            }); 
+        if (cfg.validateStrings) {
+            // Missing closing quotation mark
+            if (state === 'string') { 
+                throw new ArgumentError(2213, {
+                    context: string.substr(lastQuotationMark-3, 7),
+                    index: lastQuotationMark+1
+                }); 
+            }
         }
         
         resolve();

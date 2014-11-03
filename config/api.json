@@ -7,5 +7,9 @@
     "string": "\"",
     "roundBracket": ["(", ")"],
     "squareBracket": ["[", "]"],
-    "lookDelimiter": " OR "
+    "lookDelimiter": " OR ",
+
+    "validateStrings": true,
+    "validateConnectives": true,
+    "validateStatements": true
 }

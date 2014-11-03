@@ -45,14 +45,19 @@ module.exports = function factory(cfg) {
      * Resolve any square brackets in the query. Creates relations between 
      * statements and merges them afterwards.
      * 
-     * @param {Query} query
+     * @param {Query|string} query
      * @returns {Query}
      */
     
     function clearSquare(query) {
-        validateQuery(query);
-        
-        var sentence = query[0];
+        var sentence;
+
+        if (typeof query === 'string') {
+            sentence = query;
+        } else {
+            validateQuery(query);
+            sentence = query[0];
+        }
         
         sentence = identify(sentence, function(sentence, bracket, pos) {
             assert(typeof bracket !== 'undefined', 2210, { position: '' });
