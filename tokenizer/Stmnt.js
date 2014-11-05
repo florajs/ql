@@ -44,8 +44,8 @@ module.exports = function factory(cfg) {
         if (split.length === 1) {
             this.attribute = split[0];
         } else {
-            this.value = split.pop();
-            this.attribute = split.join(this.operator);
+            this.attribute = split.shift();
+            this.value = split.join(this.operator);
         }
         
         if (this.value === '') {
