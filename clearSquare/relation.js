@@ -49,7 +49,7 @@ module.exports = function factory(cfg) {
         b = b.replace(regexp, ';');
         
         terms = first('('+a+')'+cfg.relate+'('+b+')')[0];
-        terms = terms.replace(new RegExp('([a-zA-Z0-9'+escape(cfg.and)+';]+)', 'g'), '($1)');
+        terms = terms.replace(new RegExp('([a-zA-Z_0-9'+escape(cfg.and)+';]+)', 'g'), '($1)');
         
         terms = terms.split(cfg.or);
         parsed = [];
