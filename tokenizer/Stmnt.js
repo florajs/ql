@@ -123,9 +123,10 @@ module.exports = function factory(cfg) {
     
     Stmnt.prototype.merge = function merge(b) {
         var clone = this.clone();
-        
-        clone.attribute += clone.config.glue+b.attribute;
-        clone.config = b.config;
+
+        if (b.attribute !== null && b.attribute !== '') {
+            clone.attribute += clone.config.glue+b.attribute;
+        }
         // todo throw error if own value is set
         clone.operator = b.operator;
         // todo throw error if own value is set
