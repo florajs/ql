@@ -9,6 +9,12 @@ describe('parse()', function() {
             ['a=1',
                 [   [   { attribute: ['a'], operator: '=', value: 1}  ]   ]
             ],
+            ['a=true',
+                [   [   { attribute: ['a'], operator: '=', value: true}  ]   ]
+            ],
+            ['a=false',
+                [   [   { attribute: ['a'], operator: '=', value: false}  ]   ]
+            ],
             ['a=1 AND b=2',
                 [   [   { attribute: ['a'], operator: '=', value: 1},
                         { attribute: ['b'], operator: '=', value: 2}  ]   ]

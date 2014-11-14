@@ -41,9 +41,9 @@ module.exports = function factory(cfg) {
                     term = query[1][conjunction[j]];
                     
                     if (cfg.validateStatements) {
-                        assert(!!term.attribute, 2215, { stmnt: term.toString() });
-                        assert(!!term.operator, 2216, { stmnt: term.toString() });
-                        assert(!!term.value, 2217, { stmnt: term.toString() });
+                        assert(term.attribute !== null && term.attribute !== '', 2215, { stmnt: term.toString() });
+                        assert(term.operator !== null && term.operator !== '', 2216, { stmnt: term.toString() });
+                        assert(term.value !== null && term.value !== '', 2217, { stmnt: term.toString() });
                     }
                     
                     result[result.length-1].push({

@@ -16,6 +16,6 @@ endif
 NODE_ENV=production
 
 test:
-	@$(NODE) $(CURDIR)/node_modules/mocha/bin/mocha --reporter list
+	@$(NODE) $(CURDIR)/node_modules/mocha/bin/mocha --reporter list --recursive
 
 .PHONY: test

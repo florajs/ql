@@ -1,6 +1,6 @@
 {
   "name": "flora-ql",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Query Language with parser, tests, syntax generators, etc. for flora, alerting server, webpush",
   "main": "index.js",
   "scripts": {
