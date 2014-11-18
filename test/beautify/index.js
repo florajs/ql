@@ -47,9 +47,7 @@ describe('beautify()', function() {
             [['e0', {}],                                                    2202],
             [['e0', {e1: { attribute: '', operator: '', value: ''}}],       2202],
             [['e0', {e0: { attribute: null, operator: 'a', value: 'a'}}],   2215],
-            [['e0', {e0: { attribute: 'a', operator: null, value: 'a'}}],   2216],
-            [['e0', {e0: { attribute: 'a', operator: 'a', value: null}}],   2217],
-            [['e0', {e0: { attribute: 'a', operator: 'a', value: ''}}],     2217]
+            [['e0', {e0: { attribute: 'a', operator: null, value: 'a'}}],   2216]
         ];
 
     function factory(config, input, output) {

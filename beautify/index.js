@@ -43,7 +43,7 @@ module.exports = function factory(cfg) {
                     if (cfg.validateStatements) {
                         assert(term.attribute !== null && term.attribute !== '', 2215, { stmnt: term.toString() });
                         assert(term.operator !== null && term.operator !== '', 2216, { stmnt: term.toString() });
-                        assert(term.value !== null && term.value.length !== 0, 2217, { stmnt: term.toString() });
+                        assert(term.value === null || term.value === '' || term.value.length !== 0, 2217, { stmnt: term.toString() });
                     }
                     
                     result[result.length-1].push({

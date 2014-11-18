@@ -22,7 +22,7 @@
   ],
   "author": "Thomas Lukacs",
   "license": "Commercial License",
-  "dependencies": {
+  "devDependencies": {
     "mocha": ""
   }
 }

@@ -15,6 +15,12 @@ describe('parse()', function() {
             ['a=false',
                 [   [   { attribute: ['a'], operator: '=', value: false}  ]   ]
             ],
+            ['foo=null',
+                [   [   { attribute: ['foo'], operator: '=', value: null}  ]   ]
+            ],
+            ['foo=""',
+                [   [   { attribute: ['foo'], operator: '=', value: ''}  ]   ]
+            ],
             ['a.b[c]=1',
                 [   [   { attribute: ['a', 'b', 'c'], operator: '=', value: 1}  ]   ]
             ],
