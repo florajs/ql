@@ -240,7 +240,8 @@ module.exports = function factory(cfg) {
                 // Attribute ongoing, add char to stack
                 } else {
                     //console.log('Attribute ongoing, add char to stack');
-                    if (isBehind(string, i, cfg.roundBracket[1])) {
+                    if (cfg.validateConnectives &&
+                        isBehind(string, i, cfg.roundBracket[1])) {
                         // Missing connective
                         throw new ArgumentError(2211, {
                             context: string.substr(i-3>=0?i-3:i-2>=0?i-2:i-1, i-3>=0?7:i-2>=0?6:5),
@@ -279,10 +280,15 @@ module.exports = function factory(cfg) {
                     isAhead(string, i, cfg.roundBracket[0]) ||
                     isAhead(string, i, cfg.squareBracket[0])) {
                     // Missing connective
-                    throw new ArgumentError(2211, {
-                        context: string.substr(i-3>=0?i-3:i-2>=0?i-2:i-1, i-3>=0?7:i-2>=0?6:5),
-                        index: i
-                    });
+                    if (cfg.validateConnectives) {
+                        throw new ArgumentError(2211, {
+                            context: string.substr(i-3>=0?i-3:i-2>=0?i-2:i-1, i-3>=0?7:i-2>=0?6:5),
+                            index: i
+                        });
+                    } else {
+                        openBracket();
+                        resolve();
+                    }
 
                 // Value ends with closing bracket
                 } else if (stackValue.length > 0 &&
