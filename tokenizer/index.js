@@ -137,8 +137,13 @@ module.exports = function factory(cfg) {
                     isAhead(string, i, cfg.roundBracket[0])) {
                     //console.log('Attribute ends with opening round bracket');
 
-                    // Missing operator and value
-                    throw new ArgumentError(2216, { stmnt: stackAttribute });
+                    if (cfg.validateStatements) {
+                        // Missing operator and value
+                        throw new ArgumentError(2216, { stmnt: stackAttribute });
+                    } else {
+                        openBracket();
+                        resolve();
+                    }
 
                 // Attribute ends with opening square bracket
                 } else if (stackAttribute.length > 0 &&
