@@ -1,4 +1,5 @@
 var validateConfig  = require('../validate/config'),
+    util = require('util'),
     ArgumentError   = require('../error/ArgumentError');
 
 /**
@@ -14,68 +15,51 @@ module.exports = function factory(cfg) {
      * Class to store and parse a statement of a 
      * query string.
      * 
-     * @param {string} [str]
+     * @param {string} [attribute]
+     * @param {string} [operator]
+     * @param {Array} [values]
      * @class
      * @constructor
      */
 
-    function Stmnt(str) {
+    function Stmnt(attribute, operator, values) {
         /** @member {string} */
-        this.operator   = null;
+        this.attribute  = attribute || null;
         /** @member {string} */
-        this.value      = null;
-        /** @member {string} */
-        this.attribute  = null;
+        this.operator   = operator || null;
+        /** @member {Array|string} */
+        this.value      = values || null;
         /** @member {Config} */
         this.config     = cfg;
 
-        if (!str) { return; }
-        
-        var i, l, split;
-        
-        for (i=0, l=this.config.operators.length; i<l; i++) {
-            if (str.lastIndexOf(this.config.operators[i]) !== -1) {
-                this.operator = this.config.operators[i];
-                break;
-            }
-        }
+        if (!this.value) { return; }
+        if (!util.isArray(this.value)) { this.value = [this.value]; }
+        for (var i=this.value.length, tmp; i--;) {
+            if (this.value[i] === 'undefined') {
+                this.value[i] = undefined;
 
-        split = str.split(this.operator);
-        if (split.length === 1) {
-            this.attribute = split[0];
-        } else {
-            this.attribute = split.shift();
-            this.value = split.join(this.operator);
-        }
-        
-        if (this.value === '') {
-            this.value = null;
-
-        } else if (this.value) {
-            if (this.value === 'undefined') {
-                this.value = undefined;
-                
-            } else if (this.value[0] === cfg.string ||
-                this.value === 'true' ||
-                this.value === 'false' ||
-                this.value === 'null') {
+            } else if (this.value[i][0] === cfg.string ||
+                this.value[i] === 'true' ||
+                this.value[i] === 'false' ||
+                this.value[i] === 'null') {
                 try {
-                    this.value = JSON.parse(this.value);
-                } catch(e) {
-                    this.value = null;
+                    this.value[i] = JSON.parse(this.value[i]);
+                } catch (e) {
+                    this.value[i] = null;
                 }
 
             } else {
-                var tmp = parseFloat(this.value);
+                tmp = parseFloat(this.value[i]);
                 if (isNaN(tmp)) {
                     if (cfg.validateStrings) {
-                        throw new ArgumentError(2214, { value: this.value });
+                        throw new ArgumentError(2214, {value: this.value[i]});
                     }
                 } else {
-                    this.value = tmp;
+                    this.value[i] = tmp;
                 }
             }
         }
+        if (this.value.length === 1) { this.value = this.value[0]; }
     }
 
     /**
@@ -125,7 +109,12 @@ module.exports = function factory(cfg) {
         var clone = this.clone();
 
         if (b.attribute !== null && b.attribute !== '') {
-            clone.attribute += clone.config.glue+b.attribute;
+            if (b.attribute.indexOf(b.config.glue) === 0) {
+                clone.attribute += clone.config.glue+b.attribute.substr(b.config.glue.length);
+            } else {
+                clone.attribute += clone.config.glue+b.attribute;
+            }
+
         }
         // todo throw error if own value is set
         clone.operator = b.operator;

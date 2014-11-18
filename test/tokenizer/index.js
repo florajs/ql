@@ -14,13 +14,15 @@ describe('tokenizer()', function() {
             ['a=1+b=1+c=1',                         'e0+e1+e2'],
             ['a=1+b=1*c=1',                         'e0+e1*e2'],
             ['a=1*b=1+c=1',                         'e0*e1+e2'],
-            
+
             // complex values and operators
 
             ['a=1*b=0',                             'e0*e1'],
             ['a=0*b=1000',                          'e0*e1'],
             ['a=1000*b=1,2',                        'e0*e1'],
             ['a=1,2*b=1;2',                         'e0*e1'],
+            ['a="a","b"*b=1;2',                     'e0*e1'],
+            ['a="a",null,2*b=1;2',                  'e0*e1'],
             ['a=1;2*b=1.2',                         'e0*e1'],
             ['a=1.2*b=true',                        'e0*e1'],
             ['a=true*b=false',                      'e0*e1'],
@@ -29,9 +31,9 @@ describe('tokenizer()', function() {
             ['a=undefined*b="hello world"',         'e0*e1'],
             ['a="hello world"*b="hällö wôrld"',     'e0*e1'],
             ['a="hällö wôrld"*b="\\")(()][[].,"',   'e0*e1'],
-            
+
             // round brackets
-            
+
             ['(b=1)',                               '(e0)'],
             ['((b=1))',                             '((e0))'],
             ['(((b=1)))',                           '(((e0)))'],
@@ -44,9 +46,9 @@ describe('tokenizer()', function() {
             ['((a=1*b=1)*c=1*d=1)',                 '((e0*e1)*e2*e3)'],
             ['((a=1*b=1)*(c=1*d=1))',               '((e0*e1)*(e2*e3))'],
             ['((a=1*b=1)*(c=1*d=1)*(c=1*d=1))',     '((e0*e1)*(e2*e3)*(e4*e5))'],
-            
+
             // square brackets
-            
+
             ['a[b=1]',                              'e0[e1]'],
             ['a[b[c=1]]',                           'e0[e1[e2]]'],
             ['a[b=1*c=1]',                          'e0[e1*e2]'],
@@ -62,18 +64,18 @@ describe('tokenizer()', function() {
             ['a[b*c][d*e]f=1',                      'e0[e1*e2][e3*e4]e5'],
             ['a[b][c][d]=1',                        'e0[e1][e2][e3]e4'],
             ['a[b][c][d]e=1',                       'e0[e1][e2][e3]e4'],
-            
+
             // round and square brackets
-            
+
             ['a[(b=1)]',                            'e0[(e1)]'],
             ['a[(b=1)][(c=1)]',                     'e0[(e1)][(e2)]'],
             ['a[(b=1)][(c=1)][(d=1)]',              'e0[(e1)][(e2)][(e3)]'],
             ['a[(b=1*c=1)][(d=1)]',                 'e0[(e1*e2)][(e3)]'],
             ['a[(b=1)][(c=1*d=1)]',                 'e0[(e1)][(e2*e3)]'],
             ['a=1*(b[(c=1)][(d=1*e=1)]+f=1)*g=1',   'e0*(e1[(e2)][(e3*e4)]+e5)*e6'],
-            
+
             // all the things!
-            
+
             ['a=1*(b[(c=1)][(d="\\")(()][[].,"*e=1)]+f!=1)*g=1', 'e0*(e1[(e2)][(e3*e4)]+e5)*e6']
         ],
         alternative = [
@@ -84,9 +86,9 @@ describe('tokenizer()', function() {
             ['(a)b',            2211],
             ['([a])b',          2211],
             ['(a AND b)c',      2211],
-            ['a(b)',            2211],
-            ['a([b])',          2211],
-            ['a(b AND c)',      2211],
+            ['a(b)',            2216],
+            ['a([b])',          2216],
+            ['a(b AND c)',      2216],
             ['a=s"',            2212],
             ['a="s',            2213],
             ['a=s',             2214]
@@ -118,6 +120,7 @@ describe('tokenizer()', function() {
             try {
                 fn(config)([input, {}]);
             } catch(e) {
+                //console.error(e.message);
                 assert.equal(e.code, code);
                 return;
             }

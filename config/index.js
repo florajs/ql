@@ -11,6 +11,7 @@ var extend          = require('./extend')(),
  *     relate:          string,
  *     string:          string,
  *     lookDelimiter:   string|Array,
+ *     setDelimiter:    string,
  *     roundBracket:    Array,
  *     squareBracket:   Array
  * }} Config

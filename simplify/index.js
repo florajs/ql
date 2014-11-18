@@ -42,10 +42,11 @@ module.exports = function factory(cfg) {
 
         var bOpen = escape(cfg.roundBracket[0]+cfg.squareBracket[0]),
             bClose = escape(cfg.roundBracket[1]+cfg.squareBracket[1]),
-            operator = escape(cfg.or+cfg.and);
+            operator = escape(cfg.or+cfg.and),
+            s;
 
         assert(!new RegExp('['+bOpen+']['+operator+'][a-z0-9]|^['+operator+'][a-z0-9]').exec(sentence), 2208, { position: '' });
-        assert(!new RegExp('[a-z0-9]['+operator+']['+bClose+']|[a-z0-9]['+operator+']$').exec(sentence), 2209, { position: '' });
+        assert(!(s = new RegExp('[a-z0-9]['+operator+']['+bClose+']|[a-z0-9]['+operator+']$').exec(sentence)), 2209, { position: ''});
     
         sentence = identify(sentence, function(sentence, bracket, pos) {
             assert(typeof bracket !== 'undefined', 2210, { position: '' });

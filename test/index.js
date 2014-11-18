@@ -18,6 +18,19 @@ describe('parse()', function() {
             ['a.b[c]=1',
                 [   [   { attribute: ['a', 'b', 'c'], operator: '=', value: 1}  ]   ]
             ],
+            ['a[b OR c].d=42',
+                [   [   { attribute: ['a', 'b', 'd'], operator: '=', value: 42}  ],
+                    [   { attribute: ['a', 'c', 'd'], operator: '=', value: 42}  ]  ]
+            ],
+            ['type.id=1,2,3',
+                [   [   { attribute: ['type', 'id'], operator: '=', value: [1, 2, 3]}  ]   ]
+            ],
+            ['type.name="a","b","c"',
+                [   [   { attribute: ['type', 'name'], operator: '=', value: ["a", "b", "c"]}  ]   ]
+            ],
+            ['type.name="a",2,null',
+                [   [   { attribute: ['type', 'name'], operator: '=', value: ["a", 2, null]}  ]   ]
+            ],
             ['a=1 AND b=2',
                 [   [   { attribute: ['a'], operator: '=', value: 1},
                         { attribute: ['b'], operator: '=', value: 2}  ]   ]
@@ -73,7 +86,7 @@ describe('parse()', function() {
             ],
             ['(x=2 OR a=1 AND aA.hhasdhhXx[(b_=1 OR c0[d_0=" OR " AND e=1]) AND (f=1;5 OR g=")\\"(")]) AND h=1',
                 [   [   { attribute: ['x'], operator: '=', value: 2 },
-                        { attribute: ['h'], operator: '=', value: 1 } 
+                        { attribute: ['h'], operator: '=', value: 1 }
                     ],
                     [   { attribute: ['a'], operator: '=', value: 1 },
                         { attribute: ['aA', 'hhasdhhXx', 'b_'], operator: '=', value: 1 },
@@ -132,7 +145,7 @@ describe('parse()', function() {
             ['() OR aaa',           2210],
             ['[] OR aaa',           2210],
             ['(bbb AND ccc)aaa',    2211],
-            ['aaa(bbb AND ccc)',    2211],
+            ['aaa(bbb AND ccc)',    2216],
             ['aaa=string"',         2212],
             ['aaa="string',         2213],
             ['aaa=string',          2214],

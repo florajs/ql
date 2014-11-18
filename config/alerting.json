@@ -5,9 +5,10 @@
     "or": "|",
     "relate": "~",
     "string": "\"",
+    "lookDelimiter": "|",
+    "setDelimiter": ",",
     "roundBracket": ["(", ")"],
     "squareBracket": ["[", "]"],
-    "lookDelimiter": "|",
 
     "validateStrings": true,
     "validateConnectives": true,

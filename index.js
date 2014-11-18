@@ -58,7 +58,7 @@ module.exports = {
         query = clearSquare(_config)(query);
         query = simplify(_config)(query);
         query = beautify(_config)(query, this.config);
-        
+
         return query;
     }
 };
