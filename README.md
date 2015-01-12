@@ -195,3 +195,60 @@ FloraQL.parse('user{external+internal}:type=2');
  * ] ]
  */
 ```
+
+
+
+## Developer Doc
+
+
+### Input
+article[id=1 AND (author[firstname AND lastname][str="true" OR master=true])]
+
+    
+### tokenizer()
+e0[e1 AND (e2[e3 AND e4][e5 OR e6])]
+
+ { e0: { attribute: 'article', operator: null, value: [], config: [Object] },
+   e1: { attribute: 'id', operator: '=', value: 1, config: [Object] },
+   e2: { attribute: 'author', operator: null, value: [], config: [Object] },
+   e3: { attribute: 'firstname', operator: null, value: [], config: [Object] },
+   e4: { attribute: 'lastname', operator: null, value: [], config: [Object] },
+   e5: { attribute: 'str', operator: '=', value: 'hel lo', config: [Object] },
+   e6: { attribute: 'master', operator: '=', value: true, config: [Object] } }
+
+### replaceOperators()
+e0[e1*(e2[e3*e4+e7~e5+e6])]
+
+
+### clearSquare()
+(e0_1*e0_2_3_5*e0_2_4_5+e0_1*e0_2_3_6*e0_2_4_6)
+
+  { e0: { attribute: 'article', operator: null, value: [], config: [Object] },
+    e1: { attribute: 'id', operator: '=', value: 1, config: [Object] },
+    e2: { attribute: 'author', operator: null, value: [], config: [Object] },
+    e3: { attribute: 'firstname', operator: null, value: [], config: [Object] },
+    e4: { attribute: 'lastname', operator: null, value: [], config: [Object] },
+    e5: { attribute: 'str',operator: '=', value: 'hel lo', config: [Object] },
+    e6: { attribute: 'master', operator: '=', value: true, config: [Object] },
+    e0_1: { attribute: 'article.id', operator: '=', value: 1, config: [Object] },
+    e0_2: { attribute: 'article.author', operator: null, value: [], config: [Object] },
+    e0_2_3: { attribute: 'article.author.firstname', operator: null, value: [], config: [Object] },
+    e0_2_3_5: { attribute: 'article.author.firstname.str', operator: '=', value: 'hel lo', config: [Object] },
+    e0_2_4: { attribute: 'article.author.lastname', operator: null, value: [], config: [Object] },
+    e0_2_4_5: { attribute: 'article.author.lastname.str', operator: '=', value: 'hel lo', config: [Object] },
+    e0_2_3_6: { attribute: 'article.author.firstname.master', operator: '=', value: true, config: [Object] },
+    e0_2_4_6: { attribute: 'article.author.lastname.master', operator: '=', value: true, config: [Object] } }
+    
+### simplify()
+e0_1*e0_2_3_5*e0_2_4_5+e0_1*e0_2_3_6*e0_2_4_6
+
+
+### beautify()
+[  [  {"attribute":["article","id"],"operator":"=","value":1},
+      {"attribute":["article","author","firstname","str"],"operator":"=","value":"hel lo"},
+      {"attribute":["article","author","lastname","str"],"operator":"=","value":"hel lo"}
+   ],
+   [  {"attribute":["article","id"],"operator":"=","value":1},
+      {"attribute":["article","author","firstname","master"],"operator":"=","value":true},
+      {"attribute":["article","author","lastname","master"],"operator":"=","value":[null,2,true,4]}
+]  ]

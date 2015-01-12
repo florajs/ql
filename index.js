@@ -54,11 +54,23 @@ module.exports = {
         
         query = [query, {}];
         query = tokenizer(this.config)(query);
+        //console.log(query);
         query = replaceOperators(this.config)(query, _config);
-        query = clearSquare(_config)(query);
+        //console.log(query);
+        query = clearSquare(_config)(query, this.config);
+        //console.log(query);
         query = simplify(_config)(query);
+        //console.log(query);
         query = beautify(_config)(query, this.config);
+        //console.log(query);
 
         return query;
     }
 };
+
+
+
+//module.exports.setConfig('api');
+/*console.log(require('util').inspect(module.exports.parse("[memberships OR groups][id=4 AND type=3]"), {depth: null, colors: true}));
+console.log(require('util').inspect(module.exports.parse("memberships.id=4 AND memberships.type=3 OR groups.id=4 AND groups.type=3"), {depth: null, colors: true}));
+console.log(require('util').inspect(module.exports.parse("memberships[id=4 AND type=3] OR groups.id=4 AND groups.type=3"), {depth: null, colors: true}));*/

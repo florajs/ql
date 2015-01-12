@@ -1,8 +1,8 @@
 var validateQuery   = require('../validate/query'),
     validateConfig  = require('../validate/config'),
-    escape          = require('../lib/escape'),
     StmntF          = require('./Stmnt'),
-    ArgumentError   = require('../error/ArgumentError');
+    ArgumentError   = require('../error/ArgumentError'),
+    assert          = require('../error/assert');
 
 /**
  * 
@@ -69,8 +69,6 @@ module.exports = function factory(cfg) {
             setValues = [],
             stmnts = {};
 
-        //console.log('tokenize', query);
-
         var ii = 0;
 
         function getIdentifier() {
@@ -98,7 +96,6 @@ module.exports = function factory(cfg) {
             var id = getIdentifier();
             var stmntLength = stackAttribute.length+stackOperator.length+setValues.join('').length+(setValues.length > 0? (setValues.length-1)*cfg.setDelimiter.length : 0);
 
-            //console.log('Resolve', string, 'to', string.substr(0, i - stmntLength) + id + string.substr(i, string.length));
             string = string.substr(0, i - stmntLength) + id + string.substr(i, string.length);
 
             i -= l - string.length;
@@ -110,6 +107,15 @@ module.exports = function factory(cfg) {
             stackOperator = '';
             setValues = [];
         }
+
+        assert((i = string.indexOf(cfg.roundBracket[1]+cfg.squareBracket[0])) === -1, 2211, {
+            context: string.substr(i-3>=0?i-3:i-2>=0?i-2:i-1>=0?i-1:i, i-3>=0?7:i-2>=0?6:5),
+            index: i
+        });
+        assert((i = string.indexOf(cfg.squareBracket[1]+cfg.roundBracket[0])) === -1, 2211, {
+            context: string.substr(i-3>=0?i-3:i-2>=0?i-2:i-1>=0?i-1:i, i-3>=0?7:i-2>=0?6:5),
+            index: i
+        });
 
         for (i=0, l=string.length; i < l; i++) {
 
@@ -159,6 +165,7 @@ module.exports = function factory(cfg) {
                     //console.log('Attribute ends with closing round bracket');
 
                     closeBracket();
+                    resolve();
                     // Missing operator and value
                     //throw new ArgumentError(2216, { stmnt: stackAttribute });
 
@@ -336,20 +343,7 @@ module.exports = function factory(cfg) {
             }
         }
 
-        if (state === 'attribute') {
-            // throw errors
-
-            //// Missing right-hand side
-            //char = string[i+cfg.or.length];
-            //if (!(typeof char !== 'undefined' &&
-            //    char !== cfg.roundBracket[1][0] &&
-            //    char !== cfg.squareBracket[1][0])) {
-            //    throw new ArgumentError(2209, {
-            //        position: ' at \''+string.substr(i+cfg.or.length-3, 7)+'\' (pos: '+(i+cfg.or.length)+')'
-            //    });
-            //}
-
-        } else if (state === 'string') {
+        if (state === 'string') {
             if (cfg.validateStrings) {
             // Missing closing quotation mark
                 throw new ArgumentError(2213, {

@@ -11,6 +11,8 @@ var validateConfig  = require('../validate/config'),
 module.exports = function factory(cfg) {
     validateConfig(cfg);
 
+    var currentElemMatchId = 0;
+
     /**
      * Class to store and parse a statement of a 
      * query string.
@@ -122,6 +124,25 @@ module.exports = function factory(cfg) {
         clone.value = b.value;
         
         return clone;
+    };
+
+    /**
+     * This statement will reference a single array entry, if
+     * elemMatch is active, instead of multiple entries.
+     *
+     * @see https://docs.boerse-go.de/pages/viewpage.action?pageId=36339864
+     * @param {boolean} disable
+     */
+
+    Stmnt.prototype.elemMatch = function elemMatch(disable) {
+        if (!disable) {
+            // elemMatch already active
+            if (this.attribute.indexOf(this.config.relate) !== -1) { return; }
+
+            this.attribute += this.config.relate+currentElemMatchId++;
+        } else {
+            this.attribute = this.attribute.split(this.config.relate)[0];
+        }
     };
     
     return Stmnt;

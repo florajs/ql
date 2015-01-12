@@ -4,7 +4,7 @@ var assert = require('assert'),
     floraQL = require('../');
 
 describe('parse()', function() {
-    var i, l,
+    var i, l, cfg,
         tests = [
             ['a=1',
                 [   [   { attribute: ['a'], operator: '=', value: 1}  ]   ]
@@ -22,11 +22,11 @@ describe('parse()', function() {
                 [   [   { attribute: ['foo'], operator: '=', value: ''}  ]   ]
             ],
             ['a.b[c]=1',
-                [   [   { attribute: ['a', 'b', 'c'], operator: '=', value: 1}  ]   ]
+                [   [   { attribute: ['a', 'b~0', 'c'], operator: '=', value: 1}  ]   ]
             ],
             ['a[b OR c].d=42',
-                [   [   { attribute: ['a', 'b', 'd'], operator: '=', value: 42}  ],
-                    [   { attribute: ['a', 'c', 'd'], operator: '=', value: 42}  ]  ]
+                [   [   { attribute: ['a~0', 'b', 'd'], operator: '=', value: 42}  ],
+                    [   { attribute: ['a~0', 'c', 'd'], operator: '=', value: 42}  ]  ]
             ],
             ['type.id=1,2,3',
                 [   [   { attribute: ['type', 'id'], operator: '=', value: [1, 2, 3]}  ]   ]
@@ -57,64 +57,73 @@ describe('parse()', function() {
                         { attribute: ['c'], operator: '=', value: 3}  ]   ]
             ],
             ['xyz[a=1 AND (b=2 OR c=3)]',
-                [   [   { attribute: ['xyz', 'a'], operator: '=', value: 1},
-                        { attribute: ['xyz', 'b'], operator: '=', value: 2}  ],
-                    [   { attribute: ['xyz', 'a'], operator: '=', value: 1},
-                        { attribute: ['xyz', 'c'], operator: '=', value: 3}  ]   ]
+                [   [   { attribute: ['xyz~0', 'a'], operator: '=', value: 1},
+                        { attribute: ['xyz~0', 'b'], operator: '=', value: 2}  ],
+                    [   { attribute: ['xyz~0', 'a'], operator: '=', value: 1},
+                        { attribute: ['xyz~0', 'c'], operator: '=', value: 3}  ]   ]
             ],
             ['xyz[a=1 AND zxy[(b=2 OR c=3)]]',
-                [   [   { attribute: ['xyz', 'a'], operator: '=', value: 1},
-                        { attribute: ['xyz', 'zxy', 'b'], operator: '=', value: 2}  ],
-                    [   { attribute: ['xyz', 'a'], operator: '=', value: 1},
-                        { attribute: ['xyz', 'zxy', 'c'], operator: '=', value: 3}  ]   ]
+                [   [   { attribute: ['xyz~1', 'a'], operator: '=', value: 1},
+                        { attribute: ['xyz~1', 'zxy~0', 'b'], operator: '=', value: 2}  ],
+                    [   { attribute: ['xyz~1', 'a'], operator: '=', value: 1},
+                        { attribute: ['xyz~1', 'zxy~0', 'c'], operator: '=', value: 3}  ]   ]
             ],
             ['xyz[a=1 AND (zxy[b=2 OR c=3])]',
-                [   [   { attribute: ['xyz', 'a'], operator: '=', value: 1},
-                        { attribute: ['xyz', 'zxy', 'b'], operator: '=', value: 2}  ],
-                    [   { attribute: ['xyz', 'a'], operator: '=', value: 1},
-                        { attribute: ['xyz', 'zxy', 'c'], operator: '=', value: 3}  ]   ]
+                [   [   { attribute: ['xyz~1', 'a'], operator: '=', value: 1},
+                        { attribute: ['xyz~1', 'zxy~0', 'b'], operator: '=', value: 2}  ],
+                    [   { attribute: ['xyz~1', 'a'], operator: '=', value: 1},
+                        { attribute: ['xyz~1', 'zxy~0', 'c'], operator: '=', value: 3}  ]   ]
             ],
             ['xyz[a=1 AND (zxy[e AND f][b=2 OR c=3])]',
-                [   [   { attribute: ['xyz', 'a'], operator: '=', value: 1},
-                        { attribute: ['xyz', 'zxy', 'e', 'b'], operator: '=', value: 2},
-                        { attribute: ['xyz', 'zxy', 'f', 'b'], operator: '=', value: 2}  ],
-                    [   { attribute: ['xyz', 'a'], operator: '=', value: 1},
-                        { attribute: ['xyz', 'zxy', 'e', 'c'], operator: '=', value: 3},
-                        { attribute: ['xyz', 'zxy', 'f', 'c'], operator: '=', value: 3}  ]   ]
+                [   [   { attribute: ['xyz~3', 'a'], operator: '=', value: 1},
+                        { attribute: ['xyz~3', 'zxy~2', 'e~0', 'b'], operator: '=', value: 2},
+                        { attribute: ['xyz~3', 'zxy~2', 'f~1', 'b'], operator: '=', value: 2}  ],
+                    [   { attribute: ['xyz~3', 'a'], operator: '=', value: 1},
+                        { attribute: ['xyz~3', 'zxy~2', 'e~0', 'c'], operator: '=', value: 3},
+                        { attribute: ['xyz~3', 'zxy~2', 'f~1', 'c'], operator: '=', value: 3}  ]   ]
             ],
             ['xyz[a=1 AND (zxy[e AND f][b="hel lo" OR c=true])]',
-                [   [   { attribute: ['xyz', 'a'], operator: '=', value: 1},
-                        { attribute: ['xyz', 'zxy', 'e', 'b'], operator: '=', value: 'hel lo'},
-                        { attribute: ['xyz', 'zxy', 'f', 'b'], operator: '=', value: 'hel lo'}  ],
-                    [   { attribute: ['xyz', 'a'], operator: '=', value: 1},
-                        { attribute: ['xyz', 'zxy', 'e', 'c'], operator: '=', value: true},
-                        { attribute: ['xyz', 'zxy', 'f', 'c'], operator: '=', value: true}  ]   ]
+                [   [   { attribute: ['xyz~3', 'a'], operator: '=', value: 1},
+                        { attribute: ['xyz~3', 'zxy~2', 'e~0', 'b'], operator: '=', value: 'hel lo'},
+                        { attribute: ['xyz~3', 'zxy~2', 'f~1', 'b'], operator: '=', value: 'hel lo'}  ],
+                    [   { attribute: ['xyz~3', 'a'], operator: '=', value: 1},
+                        { attribute: ['xyz~3', 'zxy~2', 'e~0', 'c'], operator: '=', value: true},
+                        { attribute: ['xyz~3', 'zxy~2', 'f~1', 'c'], operator: '=', value: true}  ]   ]
             ],
             ['(x=2 OR a=1 AND aA.hhasdhhXx[(b_=1 OR c0[d_0=" OR " AND e=1]) AND (f=1;5 OR g=")\\"(")]) AND h=1',
                 [   [   { attribute: ['x'], operator: '=', value: 2 },
                         { attribute: ['h'], operator: '=', value: 1 }
                     ],
                     [   { attribute: ['a'], operator: '=', value: 1 },
-                        { attribute: ['aA', 'hhasdhhXx', 'b_'], operator: '=', value: 1 },
-                        { attribute: ['aA', 'hhasdhhXx', 'f'], operator: '=', value: 1 },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'b_'], operator: '=', value: 1 },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'f'], operator: '=', value: 1 },
                         { attribute: ['h'], operator: '=', value: 1 }
                     ],
                     [   { attribute: ['a'], operator: '=', value: 1 },
-                        { attribute: ['aA', 'hhasdhhXx', 'b_'], operator: '=', value: 1 },
-                        { attribute: ['aA', 'hhasdhhXx', 'g'], operator: '=', value: ')"(' },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'b_'], operator: '=', value: 1 },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'g'], operator: '=', value: ')"(' },
                         { attribute: ['h'], operator: '=', value: 1 }
                     ],
                     [   { attribute: ['a'], operator: '=', value: 1 },
-                        { attribute: ['aA', 'hhasdhhXx', 'c0', 'd_0'], operator: '=', value: ' OR ' },
-                        { attribute: ['aA', 'hhasdhhXx', 'c0', 'e'], operator: '=', value: 1 },
-                        { attribute: ['aA', 'hhasdhhXx', 'f'], operator: '=', value: 1 },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'c0~0', 'd_0'], operator: '=', value: ' OR ' },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'c0~0', 'e'], operator: '=', value: 1 },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'f'], operator: '=', value: 1 },
                         { attribute: ['h'], operator: '=', value: 1 }
                     ],
                     [   { attribute: ['a'], operator: '=', value: 1 },
-                        { attribute: ['aA', 'hhasdhhXx', 'c0', 'd_0'], operator: '=', value: ' OR ' },
-                        { attribute: ['aA', 'hhasdhhXx', 'c0', 'e'], operator: '=', value: 1 },
-                        { attribute: ['aA', 'hhasdhhXx', 'g'], operator: '=', value: ')"(' },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'c0~0', 'd_0'], operator: '=', value: ' OR ' },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'c0~0', 'e'], operator: '=', value: 1 },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'g'], operator: '=', value: ')"(' },
                         { attribute: ['h'], operator: '=', value: 1 }
+                    ]
+                ]
+            ],
+            ['user[(memberships OR groups)][id=4 AND type=3]',
+                [   [   { attribute: ['user~2', 'memberships~0', 'id'], operator: '=', value: 4 },
+                        { attribute: ['user~2', 'memberships~0', 'type'], operator: '=', value: 3 }
+                    ],
+                    [   { attribute: ['user~2', 'groups~1', 'id'], operator: '=', value: 4 },
+                        { attribute: ['user~2', 'groups~1', 'type'], operator: '=', value: 3 }
                     ]
                 ]
             ]
@@ -158,7 +167,9 @@ describe('parse()', function() {
             ['aaa=hello world',     2214],
             ['=123',                2215],
             ['aaa123',              2216],
-            ['aaa=',                2217]
+            ['aaa=',                2217],
+            ['(memberships OR groups)[id=4 AND type=3]', 2211],
+            ['[memberships OR groups](id=4 AND type=3)', 2211]
         ];
 
     function factory(config, input, output) {
@@ -174,8 +185,10 @@ describe('parse()', function() {
     }
 
     for (i=0, l=tests.length; i<l; i++) {
+        cfg = config('api');
+        cfg.elemMatch = true;
         it('should parse '+tests[i][0], factory(
-            'api',
+            cfg,
             tests[i][0],
             tests[i][1]
         ));
@@ -196,8 +209,10 @@ describe('parse()', function() {
     }
 
     for (i=0, l=fails.length; i<l; i++) {
+        cfg = config('api');
+        cfg.elemMatch = true;
         it('should throw error '+fails[i][0], failFactory(
-            'api',
+            cfg,
             fails[i][0],
             fails[i][1]
         ));

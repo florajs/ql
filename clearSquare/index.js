@@ -46,10 +46,11 @@ module.exports = function factory(cfg) {
      * statements and merges them afterwards.
      * 
      * @param {Query|string} query
+     * @param {Config} [config]
      * @returns {Query}
      */
     
-    function clearSquare(query) {
+    function clearSquare(query, config) {
         var sentence;
 
         if (typeof query === 'string') {
@@ -68,10 +69,22 @@ module.exports = function factory(cfg) {
             
             bracket = simplify(bracket)[0];
             
-            if (ahead) {
+            if (ahead && ahead[0] !== '') {
                 bracket = relation(bracket, ahead[1].join(cfg.or));
             }
-            if (behind) {
+            if (behind && behind[0] !== '') {
+                if (config && config.elemMatch) {
+                    (function (behind) {
+                        for (var i = 0, l = behind.length; i < l; i++) {
+                            if (behind[i] in query[1]) {
+                                query[1][behind[i]].elemMatch();
+                            }
+                        }
+                    })([].concat.apply([], behind[1].map(function (e) {
+                        return e.match(/e[0-9]+/g);
+                    })));
+                }
+
                 bracket = relation(behind[1].join(cfg.or), bracket);
             }
  

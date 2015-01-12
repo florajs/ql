@@ -73,6 +73,7 @@ describe('tokenizer()', function() {
             ['a[(b=1*c=1)][(d=1)]',                 'e0[(e1*e2)][(e3)]'],
             ['a[(b=1)][(c=1*d=1)]',                 'e0[(e1)][(e2*e3)]'],
             ['a=1*(b[(c=1)][(d=1*e=1)]+f=1)*g=1',   'e0*(e1[(e2)][(e3*e4)]+e5)*e6'],
+            ['a[(b=1+c=1)][d=1*e=1]',               'e0[(e1+e2)][e3*e4]'],
 
             // all the things!
 
@@ -80,7 +81,8 @@ describe('tokenizer()', function() {
         ],
         alternative = [
             ['a=1 AND b=1 OR c=1',                                              'e0 AND e1 OR e2'],
-            ['a=1 AND (b[(c=1)][(d="\\")(()][[].," AND e=1)] OR f!=1) AND g=1', 'e0 AND (e1[(e2)][(e3 AND e4)] OR e5) AND e6']
+            ['a=1 AND (b[(c=1)][(d="\\")(()][[].," AND e=1)] OR f!=1) AND g=1', 'e0 AND (e1[(e2)][(e3 AND e4)] OR e5) AND e6'],
+            ['a[(b AND c)][d=1 AND e=1]',                                        'e0[(e1 AND e2)][e3 AND e4]']
         ],
         fails = [
             ['(a)b',            2211],

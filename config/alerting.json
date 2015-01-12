@@ -12,5 +12,6 @@
 
     "validateStrings": true,
     "validateConnectives": true,
-    "validateStatements": true
+    "validateStatements": true,
+    "elemMatch": false
 }
