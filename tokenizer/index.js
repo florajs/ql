@@ -108,14 +108,16 @@ module.exports = function factory(cfg) {
             setValues = [];
         }
 
-        assert((i = string.indexOf(cfg.roundBracket[1]+cfg.squareBracket[0])) === -1, 2211, {
-            context: string.substr(i-3>=0?i-3:i-2>=0?i-2:i-1>=0?i-1:i, i-3>=0?7:i-2>=0?6:5),
-            index: i
-        });
-        assert((i = string.indexOf(cfg.squareBracket[1]+cfg.roundBracket[0])) === -1, 2211, {
-            context: string.substr(i-3>=0?i-3:i-2>=0?i-2:i-1>=0?i-1:i, i-3>=0?7:i-2>=0?6:5),
-            index: i
-        });
+        if (cfg.validateConnectives) {
+            assert((i = string.indexOf(cfg.roundBracket[1] + cfg.squareBracket[0])) === -1, 2211, {
+                context: string.substr(i - 3 >= 0 ? i - 3 : i - 2 >= 0 ? i - 2 : i - 1 >= 0 ? i - 1 : i, i - 3 >= 0 ? 7 : i - 2 >= 0 ? 6 : 5),
+                index: i
+            });
+            assert((i = string.indexOf(cfg.squareBracket[1] + cfg.roundBracket[0])) === -1, 2211, {
+                context: string.substr(i - 3 >= 0 ? i - 3 : i - 2 >= 0 ? i - 2 : i - 1 >= 0 ? i - 1 : i, i - 3 >= 0 ? 7 : i - 2 >= 0 ? 6 : 5),
+                index: i
+            });
+        }
 
         for (i=0, l=string.length; i < l; i++) {
 
