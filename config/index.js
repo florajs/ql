@@ -39,7 +39,9 @@ function config(config) {
     }
     
     cfg = extend({}, cfg);
-    cfg = extend(cfg, config);
+    if (typeof config !== 'string') {
+        cfg = extend(cfg, config);
+    }
     
     validateConfig(cfg);
     

@@ -1,4 +1,5 @@
 var assert              = require('./error/assert'),
+    extend              = require('./config/extend'),
     tokenizer           = require('./tokenizer'),
     config              = require('./config'),
     replaceOperators    = require('./operators/replace'),
@@ -31,7 +32,7 @@ module.exports = {
      */
     
     setConfig: function(cfg) {
-        this.config = config(cfg);
+        this.config = extend()(this.config, typeof cfg === 'string'? config(cfg) : cfg);
     },
 
     /**
@@ -67,10 +68,3 @@ module.exports = {
         return query;
     }
 };
-
-
-
-//module.exports.setConfig('api');
-/*console.log(require('util').inspect(module.exports.parse("[memberships OR groups][id=4 AND type=3]"), {depth: null, colors: true}));
-console.log(require('util').inspect(module.exports.parse("memberships.id=4 AND memberships.type=3 OR groups.id=4 AND groups.type=3"), {depth: null, colors: true}));
-console.log(require('util').inspect(module.exports.parse("memberships[id=4 AND type=3] OR groups.id=4 AND groups.type=3"), {depth: null, colors: true}));*/
