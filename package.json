@@ -4,7 +4,7 @@
   "description": "Query Language with parser, tests, syntax generators, etc. for flora, alerting server, webpush",
   "main": "index.js",
   "scripts": {
-    "test": "/opt/nodejs/v0.8.8/bin/node ./node_modules/mocha/bin/mocha --reporter list"
+    "test": "grunt test"
   },
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
     "grunt": "0.4.x",
     "grunt-cli": "^0.1.13",
     "grunt-contrib-clean": "0.6.x",
-    "grunt-eslint": "9.0.x",
+    "grunt-eslint": "12.0.x",
     "grunt-mocha-istanbul": "^2.4.0",
     "grunt-mocha-test": "0.12.x",
     "istanbul": "0.3.x",
