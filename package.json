@@ -17,7 +17,6 @@
     "language",
     "parser",
     "Api",
-    "Alerting",
     "AQL"
   ],
   "author": "Thomas Lukacs",
