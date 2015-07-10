@@ -1,3 +1,5 @@
+'use strict';
+
 var assert              = require('./error/assert'),
     extend              = require('./config/extend'),
     tokenizer           = require('./tokenizer'),
