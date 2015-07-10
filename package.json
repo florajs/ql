@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://git.dc1.boerse-go.de/node-core/flora-ql.git"
+    "url": "https://github.com/godmodelabs/flora-ql.git"
   },
   "keywords": [
     "Flora",
@@ -21,7 +21,10 @@
     "AQL"
   ],
   "author": "Thomas Lukacs",
-  "license": "Commercial License",
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.10.0"
+  },
   "devDependencies": {
     "chai": "2.1.x",
     "eslint": "0.20.0",
