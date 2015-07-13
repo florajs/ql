@@ -25,17 +25,17 @@
     "node": ">=0.10.0"
   },
   "devDependencies": {
-    "chai": "2.1.x",
-    "eslint": "0.20.0",
+    "chai": "^3.0.0",
+    "eslint": "0.24.x",
     "grunt": "0.4.x",
     "grunt-cli": "^0.1.13",
     "grunt-contrib-clean": "0.6.x",
-    "grunt-eslint": "12.0.x",
+    "grunt-eslint": "16.0.x",
     "grunt-mocha-istanbul": "^2.4.0",
     "grunt-mocha-test": "0.12.x",
     "istanbul": "0.3.x",
     "load-grunt-tasks": "^3.1.0",
-    "mocha": "2.1.x",
+    "mocha": "2.2.x",
     "mocha-bamboo-reporter": "*"
   }
 }
