@@ -1,4 +1,8 @@
-# Flora Query Language
+Flora Query Language
+====================
+
+[![Build Status](https://travis-ci.org/godmodelabs/flora-ql.svg?branch=master)](https://travis-ci.org/godmodelabs/flora-ql)
+[![NPM version](https://badge.fury.io/js/flora-ql.svg)](https://www.npmjs.com/package/flora-ql)
 
 Standalone Query Language parser used at the FLexible Open Rest Api with solid test coverage. 
 Define your own powerful syntax to use for example for filtering through your data. 
@@ -6,7 +10,8 @@ It identifies the different parts of your input and returns these statements in
 a two dimensional array resolved in disjunctive normal form.
 
 
-## Features
+Features
+--------
 
 ### Statements
 
@@ -197,8 +202,8 @@ FloraQL.parse('user{external+internal}:type=2');
 ```
 
 
-
-## Developer Doc
+Developer Doc
+-------------
 
 
 ### Input
@@ -266,6 +271,8 @@ e0_1*e0_2_3_5*e0_2_4_5+e0_1*e0_2_3_6*e0_2_4_6
 ]  ]
 ```
 
-# License
 
-MIT
+License
+-------
+
+[MIT](LICENSE)
