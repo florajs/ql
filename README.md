@@ -3,6 +3,7 @@ Flora Query Language
 
 [![Build Status](https://travis-ci.org/godmodelabs/flora-ql.svg?branch=master)](https://travis-ci.org/godmodelabs/flora-ql)
 [![NPM version](https://badge.fury.io/js/flora-ql.svg)](https://www.npmjs.com/package/flora-ql)
+[![Dependencies](https://img.shields.io/david/godmodelabs/flora-ql.svg)](https://david-dm.org/godmodelabs/flora-ql)
 
 Standalone Query Language parser used at the FLexible Open Rest Api with solid test coverage. 
 Define your own powerful syntax to use for example for filtering through your data. 
