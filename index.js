@@ -19,42 +19,42 @@ module.exports = {
 
     /**
      * Current configuration of the parser.
-     * 
+     *
      * @type Config
      */
-    
+
     config: config(),
 
     /**
-     * Change the configuration of the parser. Accepts objects with single attributes by 
-     * extending the default values or the name of a .json config file located under 
+     * Change the configuration of the parser. Accepts objects with single attributes by
+     * extending the default values or the name of a .json config file located under
      * /config.
-     * 
+     *
      * @param {Config|string} cfg
      */
-    
-    setConfig: function(cfg) {
+
+    setConfig: function (cfg) {
         this.config = extend()(this.config, typeof cfg === 'string'? config(cfg) : cfg);
     },
 
     /**
-     * Insert string to be parsed here. Returns a two-dimensional array containing the 
+     * Insert string to be parsed here. Returns a two-dimensional array containing the
      * parsed statements. Throws ArgumentErrors if anything goes wrong.
-     * 
+     *
      * @param {string} query
      * @returns {Array}
      * @throws {ArgumentError}
      */
-    
+
     parse: function parse(query) {
         assert(typeof query === 'string' && query !== '', 2000);
-        
+
         var _config = config({
             and: '*',
             or: '+',
             lookDelimiter: '+'
         });
-        
+
         query = [query, {}];
         query = tokenizer(this.config)(query);
         //console.log(query);
