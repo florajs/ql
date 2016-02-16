@@ -24,6 +24,7 @@ module.exports = function factory(cfg) {
     
     function lookBehind(str, pos) {
         var i, j, isDelimiter,
+            firstOpFound = false,
             tmp = '', state = 'start';
         
         for (i=pos-1; i>=0; i--) {
@@ -34,7 +35,10 @@ module.exports = function factory(cfg) {
                 if (str[i] === cfg.roundBracket[0]) { tmp = str[i]+tmp; break; }
             }
             if (state === 'stmnt') {
-                if (str[i] === cfg.and) { continue; }
+                if (!firstOpFound && str[i] === cfg.and) {
+                    firstOpFound = true;
+                    continue;
+                }
                 for (j=delimiter.length; j--;) {
                     if (str[i] === delimiter[j]) {
                         isDelimiter = true;

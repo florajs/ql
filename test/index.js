@@ -126,6 +126,19 @@ describe('parse()', function() {
                         { attribute: ['user~2', 'groups~1', 'type'], operator: '=', value: 3 }
                     ]
                 ]
+            ],
+            ['categories.id=2241 AND (instruments.assetClass.id=2,4 OR tags.id=1637) AND sectors.id=1,9 AND date<="2016-01-07T10:58:27.000Z"',
+                [   [   { "attribute": [ "categories", "id" ], "operator": "=", "value": 2241 },
+                        { "attribute": [ "instruments", "assetClass", "id" ], "operator": "=", "value": [ 2, 4 ] },
+                        { "attribute": [ "sectors", "id" ], "operator": "=", "value": [ 1, 9 ] },
+                        { "attribute": [ "date" ],  "operator": "<=",  "value": "2016-01-07T10:58:27.000Z" }
+                    ],
+                    [   { "attribute": [ "categories", "id" ], "operator": "=", "value": 2241 },
+                        { "attribute": [ "tags", "id" ], "operator": "=", "value": 1637 },
+                        { "attribute": [ "sectors", "id" ], "operator": "=", "value": [ 1, 9 ] },
+                        { "attribute": [ "date" ], "operator": "<=", "value": "2016-01-07T10:58:27.000Z" }
+                    ]
+                ]
             ]
         ],
         fails = [

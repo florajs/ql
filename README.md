@@ -272,8 +272,12 @@ e0_1*e0_2_3_5*e0_2_4_5+e0_1*e0_2_3_6*e0_2_4_6
 ]  ]
 ```
 
+## CHANGELOG
 
-License
--------
+### 2.4.1
+- Bugfix: multiple ANDs behind/ahead a bracket
+
+
+# License
 
 [MIT](LICENSE)

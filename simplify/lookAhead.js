@@ -24,8 +24,9 @@ module.exports = function factory(cfg) {
 
     function lookAhead(str, pos) {
         var i, l, j, isDelimiter,
+            firstOpFound = false,
             tmp = '', state = 'stmnt';
-        
+
         for (i=pos, l=str.length; i<l; i++) {
             isDelimiter = false;
             
@@ -34,7 +35,10 @@ module.exports = function factory(cfg) {
                 if (str[i] === cfg.roundBracket[1]) { tmp += str[i]; break; }
             }
             if (state === 'stmnt') {
-                if (str[i] === cfg.and) { continue; }
+                if (!firstOpFound && str[i] === cfg.and) {
+                    firstOpFound = true;
+                    continue;
+                }
                 for (j=delimiter.length; j--;) {
                     if (str[i] === delimiter[j]) {
                         isDelimiter = true;
@@ -47,7 +51,7 @@ module.exports = function factory(cfg) {
             }
             tmp += str[i];
         }
-    
+
         if (tmp[0] === cfg.roundBracket[0]) {
             return [tmp, tmp.substr(1, tmp.length-2).split(cfg.or)];
         } else {
