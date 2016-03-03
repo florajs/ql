@@ -34,34 +34,39 @@ module.exports = function factory(cfg) {
         /** @member {Config} */
         this.config     = cfg;
 
-        if (!this.value) { return; }
-        if (!util.isArray(this.value)) { this.value = [this.value]; }
-        for (var i=this.value.length, tmp; i--;) {
-            if (this.value[i] === 'undefined') {
-                this.value[i] = undefined;
+        /*
+         * Parse value
+         */
 
-            } else if (this.value[i][0] === cfg.string ||
-                this.value[i] === 'true' ||
-                this.value[i] === 'false' ||
-                this.value[i] === 'null') {
-                try {
-                    this.value[i] = JSON.parse(this.value[i]);
-                } catch (e) {
-                    this.value[i] = null;
-                }
+        if (this.value) {
+            if (!util.isArray(this.value)) { this.value = [this.value]; }
+            for (var i=this.value.length, tmp; i--;) {
+                if (this.value[i] === 'undefined') {
+                    this.value[i] = undefined;
 
-            } else {
-                tmp = parseFloat(this.value[i]);
-                if (isNaN(tmp)) {
-                    if (cfg.validateStrings) {
-                        throw new ArgumentError(2214, {value: this.value[i]});
+                } else if (this.value[i][0] === cfg.string ||
+                    this.value[i] === 'true' ||
+                    this.value[i] === 'false' ||
+                    this.value[i] === 'null') {
+                    try {
+                        this.value[i] = JSON.parse(this.value[i]);
+                    } catch (e) {
+                        this.value[i] = null;
                     }
+
                 } else {
-                    this.value[i] = tmp;
+                    tmp = parseFloat(this.value[i]);
+                    if (isNaN(tmp)) {
+                        if (cfg.validateStrings) {
+                            throw new ArgumentError(2214, {value: this.value[i]});
+                        }
+                    } else {
+                        this.value[i] = tmp;
+                    }
                 }
             }
+            if (this.value.length === 1) { this.value = this.value[0]; }
         }
-        if (this.value.length === 1) { this.value = this.value[0]; }
     }
 
     /**

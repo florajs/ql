@@ -139,32 +139,92 @@ describe('parse()', function() {
                         { "attribute": [ "date" ], "operator": "<=", "value": "2016-01-07T10:58:27.000Z" }
                     ]
                 ]
+            ],
+
+            ['abc="1"  AND def="2"',
+                [   [   { "attribute": [ "abc" ], "operator": "=", "value": "1" },
+                        { "attribute": [ "def" ], "operator": "=", "value": "2" }
+                    ]
+                ]
+            ],
+            ['abc=1  AND def=2',
+                [   [   { "attribute": [ "abc" ], "operator": "=", "value": 1 },
+                        { "attribute": [ "def" ], "operator": "=", "value": 2 }
+                    ]
+                ]
+            ],
+            ['abc=1 AND  def=2',
+                [   [   { "attribute": [ "abc" ], "operator": "=", "value": 1 },
+                        { "attribute": [ "def" ], "operator": "=", "value": 2 }
+                    ]
+                ]
+            ],
+            ['abc =1 AND def =2',
+                [   [   { "attribute": [ "abc" ], "operator": "=", "value": 1 },
+                        { "attribute": [ "def" ], "operator": "=", "value": 2 }
+                    ]
+                ]
+            ],
+            ['abc= 1 AND def= 2',
+                [   [   { "attribute": [ "abc" ], "operator": "=", "value": 1 },
+                        { "attribute": [ "def" ], "operator": "=", "value": 2 }
+                    ]
+                ]
+            ],
+            ['abc= "1" AND def= "2"',
+                [   [   { "attribute": [ "abc" ], "operator": "=", "value": "1" },
+                        { "attribute": [ "def" ], "operator": "=", "value": "2" }
+                    ]
+                ]
+            ],
+            [' abc  =  "1"   AND   def  =   "2"',
+                [   [   { "attribute": [ "abc" ], "operator": "=", "value": "1" },
+                        { "attribute": [ "def" ], "operator": "=", "value": "2" }
+                    ]
+                ]
+            ],
+            [' abc  =  1   AND   def  =   2',
+                [   [   { "attribute": [ "abc" ], "operator": "=", "value": 1 },
+                        { "attribute": [ "def" ], "operator": "=", "value": 2 }
+                    ]
+                ]
             ]
         ],
         fails = [
+            // Invalid query string
             [false,                 2000],
             [4,                     2000],
             ['',                    2000],
+
+            // Unmatched opening bracket :bracket
             ['(',                   2203],
             ['(aaa',                2203],
             ['[',                   2203],
             ['[aaa',                2203],
+
+            // Unmatched closing bracket :bracket
             [')',                   2204],
             ['aaa)',                2204],
             [']',                   2204],
             ['aaa]',                2204],
+
+            // Missing left-hand side:position
             [' AND aaa',            2208],
             ['( AND aaa) OR bbb',   2208],
             ['[ AND aaa] OR bbb',   2208],
-            ['aaa AND ',            2209],
-            ['(aaa AND ) OR bbb',   2209],
-            ['[aaa AND ] OR bbb',   2209],
             [' OR aaa',             2208],
             ['( OR aaa) OR bbb',    2208],
             ['[ OR aaa] OR bbb',    2208],
+
+            // Missing right-hand side:position
+            ['aaa AND ',            2209],
+            ['(aaa AND ) OR bbb',   2209],
+            ['[aaa AND ] OR bbb',   2209],
             ['aaa OR ',             2209],
             ['(aaa OR ) OR bbb',    2209],
             ['[aaa OR ] OR bbb',    2209],
+
+            // Invalid empty bracket:position
             ['()',                  2210],
             ['[]',                  2210],
             ['[()]',                2210],
@@ -172,17 +232,39 @@ describe('parse()', function() {
             ['aaa OR []',           2210],
             ['() OR aaa',           2210],
             ['[] OR aaa',           2210],
-            ['(bbb AND ccc)aaa',    2211],
-            ['aaa(bbb AND ccc)',    2216],
+
+            // Missing connective near ':context' (pos: :index)
+            ['(bbb AND ccc)aaa',                         2211],
+            ['a=1 b=2',                                  2211],
+            ['a=1 2',                                    2211],
+            ['a b=1',                                    2211],
+            ['aa b=1',                                   2211],
+            ['1 b=1',                                    2211],
+            ['11 b=1',                                   2211],
+            ['a="a" b=2',                                2211],
+            ['a="a" b="b"',                              2211],
+            ['(memberships OR groups)[id=4 AND type=3]', 2211],
+            ['[memberships OR groups](id=4 AND type=3)', 2211],
+
+            // Missing opening quotation mark for string closing near ':context' (pos: :index)
             ['aaa=string"',         2212],
+
+            // Missing closing quotation mark for string starting near ':context' (pos: :index)
             ['aaa="string',         2213],
+
+            // Invalid value type, missing string quotation marks for ':value'?
             ['aaa=string',          2214],
             ['aaa=hello world',     2214],
+
+            // Missing attribute in statement ':stmnt'
             ['=123',                2215],
+
+            // Missing operator in statement ':stmnt'
+            ['aaa(bbb AND ccc)',    2216],
             ['aaa123',              2216],
-            ['aaa=',                2217],
-            ['(memberships OR groups)[id=4 AND type=3]', 2211],
-            ['[memberships OR groups](id=4 AND type=3)', 2211]
+
+            // Missing value in statement ':stmnt'
+            ['aaa=',                2217]
         ];
 
     function factory(config, input, output) {
@@ -211,7 +293,7 @@ describe('parse()', function() {
         return function() {
             try {
                 floraQL.setConfig(config);
-                floraQL.parse(input);
+                console.log(require('util').inspect(floraQL.parse(input), {depth: 10}));
             } catch(e) {
                 assert.equal(e.code, code);
                 return;

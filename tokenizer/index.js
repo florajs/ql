@@ -95,12 +95,12 @@ module.exports = function factory(cfg) {
 
             var id = getIdentifier();
             var stmntLength = stackAttribute.length+stackOperator.length+setValues.join('').length+(setValues.length > 0? (setValues.length-1)*cfg.setDelimiter.length : 0);
-
             string = string.substr(0, i - stmntLength) + id + string.substr(i, string.length);
 
             i -= l - string.length;
             l = string.length;
 
+            //console.log('new stmnt', stackAttribute, stackOperator, setValues);
             stmnts[id] = new Stmnt(stackAttribute, stackOperator, setValues);
 
             stackAttribute = '';
@@ -120,8 +120,30 @@ module.exports = function factory(cfg) {
         }
 
         for (i=0, l=string.length; i < l; i++) {
+            //console.log(i+' START '+state+' \''+string[i]+'\' \''+string.substr(i)+'\'');
 
-            if (state === 'attribute') {
+            if (state === 'connective') {
+                if (isAhead(string, i, cfg.and) ||
+                    isAhead(string, i, cfg.or) ||
+                    isAhead(string, i, cfg.roundBracket[1]) ||
+                    isAhead(string, i, cfg.squareBracket[1])) {
+                    state = 'attribute';
+                    i--;
+
+                } else if (string[i] === ' ') {
+                    string = string.substr(0, i) + string.substr(i+1);
+                    i--;
+                    l--;
+
+                } else {
+                    // Missing connective
+                    throw new ArgumentError(2211, {
+                        context: string.substr(i, i-3>=0?5:i-2>=0?4:3),
+                        index: i
+                    });
+                }
+
+            } else if (state === 'operator') {
                 // Check if operator is coming
                 operatorAhead = null;
                 for (j = 0, lj = cfg.operators.length; j < lj; j++) {
@@ -130,7 +152,34 @@ module.exports = function factory(cfg) {
                         break;
                     }
                 }
-                //console.log('START-'+string[i]+'-'+string.substr(i));
+
+                if (operatorAhead ||
+                    isAhead(string, i, cfg.squareBracket[0])) {
+                    state = 'attribute';
+                    i--;
+
+                } else if (string[i] === ' ') {
+                    string = string.substr(0, i) + string.substr(i+1);
+                    i--;
+                    l--;
+
+                } else {
+                    // Missing connective
+                    throw new ArgumentError(2211, {
+                        context: string.substr(i, i-3>=0?5:i-2>=0?4:3),
+                        index: i
+                    });
+                }
+
+            } else if (state === 'attribute') {
+                // Check if operator is coming
+                operatorAhead = null;
+                for (j = 0, lj = cfg.operators.length; j < lj; j++) {
+                    if (isAhead(string, i, cfg.operators[j])) {
+                        operatorAhead = cfg.operators[j];
+                        break;
+                    }
+                }
 
                 // Attribute ends with operator, add to stack and expect incoming value
                 if (operatorAhead) {
@@ -246,6 +295,16 @@ module.exports = function factory(cfg) {
                     // Skip connective
                     i += cfg.or.length - 1;
 
+                // Attribute has whitespace, remove it
+                } else if (string[i] === ' ') {
+                    //console.log('Attribute has whitespace');
+                    string = string.substr(0, i) + string.substr(i+1);
+                    i--;
+                    l--;
+                    if (stackAttribute.length > 0) {
+                        state = 'operator';
+                    }
+
                 // Attribute ongoing, add char to stack
                 } else {
                     //console.log('Attribute ongoing, add char to stack');
@@ -329,6 +388,18 @@ module.exports = function factory(cfg) {
                     state = 'string';
                     stackValue += string[i];
 
+                // Value has whitespace, remove it, expect operator
+                } else if (string[i] === ' ') {
+                    //console.log('Value has whitespace', string);
+                    string = string.substr(0, i) + string.substr(i+1);
+                    if (stackValue.length > 0) {
+                        resolve();
+                        state = 'connective';
+                    } else {
+                        i--;
+                        l--;
+                    }
+
                 // Value ongoing, add char to stack
                 } else {
                     stackValue += string[i];
@@ -354,8 +425,9 @@ module.exports = function factory(cfg) {
                 });
             }
         }
+
         resolve();
-        
+
         return [string, stmnts];
     }
     

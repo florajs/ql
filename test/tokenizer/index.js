@@ -75,14 +75,27 @@ describe('tokenizer()', function() {
             ['a=1*(b[(c=1)][(d=1*e=1)]+f=1)*g=1',   'e0*(e1[(e2)][(e3*e4)]+e5)*e6'],
             ['a[(b=1+c=1)][d=1*e=1]',               'e0[(e1+e2)][e3*e4]'],
 
+            // whitespaces
+
+            ['a=1* b=1',                                                            'e0*e1'],
+            ['a=1 *b=1',                                                            'e0*e1'],
+            ['a=1 * b=1',                                                           'e0*e1'],
+            ['a=1  *b=1',                                                           'e0*e1'],
+            ['a=1*  b=1',                                                           'e0*e1'],
+            ['a=1  *  b=1',                                                         'e0*e1'],
+            ['  a  =  1  *  b  =  1  ',                                             'e0*e1'],
+            ['  a  [  b  =  1  ]  ',                                                'e0[e1]'],
+            ['  a  [  (  b  =  1  )  ]  ',                                          'e0[(e1)]'],
+            ['  a  [  (  b  =  1  +  c  =  1  )  ]  [  d  =  1  *  e  =  1  ]  ',   'e0[(e1+e2)][e3*e4]'],
+
             // all the things!
 
-            ['a=1*(b[(c=1)][(d="\\")(()][[].,"*e=1)]+f!=1)*g=1', 'e0*(e1[(e2)][(e3*e4)]+e5)*e6']
+            ['a=1*(b[(c=1)][(d="\\")(()][[].,"*e=1)]+f!=1)*g=1',                    'e0*(e1[(e2)][(e3*e4)]+e5)*e6']
         ],
         alternative = [
-            ['a=1 AND b=1 OR c=1',                                              'e0 AND e1 OR e2'],
-            ['a=1 AND (b[(c=1)][(d="\\")(()][[].," AND e=1)] OR f!=1) AND g=1', 'e0 AND (e1[(e2)][(e3 AND e4)] OR e5) AND e6'],
-            ['a[(b AND c)][d=1 AND e=1]',                                        'e0[(e1 AND e2)][e3 AND e4]']
+            ['a=1 AND b=1 OR c=1',                                                  'e0 AND e1 OR e2'],
+            ['a=1 AND (b[(c=1)][(d="\\")(()][[].," AND e=1)] OR f!=1) AND g=1',     'e0 AND (e1[(e2)][(e3 AND e4)] OR e5) AND e6'],
+            ['a[(b AND c)][d=1 AND e=1]',                                           'e0[(e1 AND e2)][e3 AND e4]']
         ],
         fails = [
             ['(a)b',            2211],
@@ -93,7 +106,8 @@ describe('tokenizer()', function() {
             ['a(b AND c)',      2216],
             ['a=s"',            2212],
             ['a="s',            2213],
-            ['a=s',             2214]
+            ['a=s',             2214],
+            ['a=1 b=2',         2211]
         ];
 
     function factory(config, input, output) {
@@ -122,7 +136,7 @@ describe('tokenizer()', function() {
             try {
                 fn(config)([input, {}]);
             } catch(e) {
-                //console.error(e.message);
+                //console.log(e.message);
                 assert.equal(e.code, code);
                 return;
             }
