@@ -5,10 +5,7 @@ var validateQuery   = require('../validate/query'),
     replace         = require('../simplify/replace')(),
     simplifyF       = require('../simplify'),
     resolveF        = require('./resolve'),
-    relationF       = require('./relation'),
-    identifyF       = require('../simplify/identify'),
-    lookAheadF      = require('../simplify/lookAhead'),
-    lookBehindF     = require('../simplify/lookBehind');
+    identifyF       = require('../simplify/identify');
 
 /**
  * 
@@ -24,21 +21,10 @@ module.exports = function factory(cfg) {
      * different configurations to help resolving square brackets.  
      */
     
-    var relation = relationF(cfg),
-        resolve = resolveF(cfg),
+    var resolve = resolveF(cfg),
         simplify = simplifyF(cfg),
         identify = identifyF(config({
             roundBracket: cfg.squareBracket
-        })),
-        lookAhead = lookAheadF(config({
-            and: '',
-            roundBracket: cfg.squareBracket,
-            lookDelimiter: [cfg.or, cfg.and].concat(cfg.roundBracket)
-        })),
-        lookBehind = lookBehindF(config({
-            and: '',
-            roundBracket: cfg.squareBracket,
-            lookDelimiter: [cfg.or, cfg.and].concat(cfg.roundBracket)
         }));
     
     /**
@@ -59,49 +45,61 @@ module.exports = function factory(cfg) {
             validateQuery(query);
             sentence = query[0];
         }
-        
-        sentence = identify(sentence, function(sentence, bracket, pos) {
-            assert(typeof bracket !== 'undefined', 2210, { position: '' });
-            
-            var origin = bracket,
-                ahead = lookAhead(sentence, pos+1),
-                behind = lookBehind(sentence, pos+1);
-            
-            bracket = simplify(bracket)[0];
-            
-            if (ahead && ahead[0] !== '') {
-                bracket = relation(bracket, ahead[1].join(cfg.or));
-            }
-            if (behind && behind[0] !== '') {
-                if (config && config.elemMatch) {
-                    (function (behind) {
-                        for (var i = 0, l = behind.length; i < l; i++) {
-                            if (behind[i] in query[1]) {
-                                query[1][behind[i]].elemMatch();
-                            }
-                        }
-                    })([].concat.apply([], behind[1].map(function (e) {
-                        return e.match(/e[0-9]+/g);
-                    })));
-                }
 
-                bracket = relation(behind[1].join(cfg.or), bracket);
+        // Find square brackets, wrap the content and any expressions before and after them in round brackets
+        // Create identifers for expressions before the bracket (Square Bracket Index Hack)
+        sentence = identify(sentence, function(sentence, bracket, pos) {
+            var wrapped = cfg.roundBracket[0]+bracket+cfg.roundBracket[1];
+            var entries, substr;
+            var offsetBehind = 0;
+            var offsetAhead = 0;
+
+            for (var i=pos-bracket.length-2, bracketLevel=0; i>=0; i--) {
+                if (sentence[i] === cfg.squareBracket[1]) { bracketLevel++; }
+                else if (bracketLevel !== 0 && sentence[i] === cfg.squareBracket[0]) { bracketLevel--; }
+                else if (bracketLevel === 0 && !/[a-z_0-9]/.test(sentence[i]||'')) { break; }
+                offsetBehind++;
             }
- 
-            if (behind[0] || ahead[0]) {
-                bracket = cfg.squareBracket[0]+bracket+cfg.squareBracket[1];
-            } else {
-                bracket = cfg.roundBracket[0]+bracket+cfg.roundBracket[1];
+            if (offsetBehind) {
+                /* -- Square Bracket Index Hack --
+                 * every statement in front of square brackets will get a
+                 * unique, numerical identifier appended to their attribute, e.g.
+                 * a[b OR c] -> a~0[b OR c]
+                 */
+                substr = sentence.substr(pos-bracket.length-1-offsetBehind, offsetBehind);
+                entries = substr.split(/\(|\)|]|\[|\+|\*| AND | OR /g);
+                for (i=entries.length; i--;) {
+                    if (!entries[i]) { continue; }
+                    if (entries[i] in query[1]) {
+                        query[1][entries[i]].elemMatch();
+                    }
+                }
+                // -- Square Bracket Index Hack End --
+
+                wrapped = cfg.roundBracket[0]+substr+cfg.relate+wrapped+cfg.roundBracket[1];
             }
-            
+
+            for (i=pos+1, bracketLevel=0; i<sentence.length; i++) {
+                if (sentence[i] === cfg.squareBracket[0]) { bracketLevel++; }
+                else if (bracketLevel !== 0 && sentence[i] === cfg.squareBracket[1]) { bracketLevel--; }
+                else if (bracketLevel === 0 && !/[e0-9]/.test(sentence[i]||'')) { break; }
+                offsetAhead++;
+            }
+            if (offsetAhead) {
+                wrapped = cfg.roundBracket[0]+wrapped+cfg.relate+sentence.substr(pos+1, offsetAhead)+cfg.roundBracket[1];
+            }
+
             return replace(
                 sentence,
-                pos-origin.length-1-behind[0].length,
-                pos+1+ahead[0].length,
-                bracket
+                pos-bracket.length-1-offsetBehind,
+                pos+1+offsetAhead,
+                wrapped
             );
         });
-        
+
+        // Clear square brackets with simplify()
+        sentence = simplify(sentence)[0];
+
         return resolve([sentence, query[1]]);
     }
     

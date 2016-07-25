@@ -92,7 +92,7 @@ module.exports = function factory(cfg) {
     /**
      * Simple shallow clone of the statement.
      * 
-     * @returns {module.Stmnt}
+     * @returns {Stmnt}
      */
     
     Stmnt.prototype.clone = function clone() {
@@ -108,8 +108,8 @@ module.exports = function factory(cfg) {
      * Merge a provided second Stmnt with itself into a new one. 
      * It will not change the current Stmnt.
      * 
-     * @param {module.Stmnt} b
-     * @returns {module.Stmnt}
+     * @param {Stmnt} b
+     * @returns {Stmnt}
      */
     
     Stmnt.prototype.merge = function merge(b) {
@@ -117,9 +117,9 @@ module.exports = function factory(cfg) {
 
         if (b.attribute !== null && b.attribute !== '') {
             if (b.attribute.indexOf(b.config.glue) === 0) {
-                clone.attribute += clone.config.glue+b.attribute.substr(b.config.glue.length);
+                clone.attribute = this.attribute+clone.config.glue+b.attribute.substr(b.config.glue.length);
             } else {
-                clone.attribute += clone.config.glue+b.attribute;
+                clone.attribute = this.attribute+clone.config.glue+b.attribute;
             }
 
         }
@@ -136,14 +136,12 @@ module.exports = function factory(cfg) {
      * elemMatch is active, instead of multiple entries.
      *
      * @see https://docs.boerse-go.de/pages/viewpage.action?pageId=36339864
-     * @param {boolean} disable
+     * @param {boolean} [disable]
      */
 
     Stmnt.prototype.elemMatch = function elemMatch(disable) {
-        if (!disable) {
-            // elemMatch already active
-            if (this.attribute.indexOf(this.config.relate) !== -1) { return; }
-
+        if (!disable ) {
+            if (this.attribute.split('.').pop().indexOf(this.config.relate) !== -1) { return; }
             this.attribute += this.config.relate+currentElemMatchId++;
         } else {
             this.attribute = this.attribute.split(this.config.relate)[0];

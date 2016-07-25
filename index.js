@@ -57,15 +57,17 @@ module.exports = {
 
         query = [query, {}];
         query = tokenizer(this.config)(query);
-        //console.log(query);
+        //console.log('[tokenizer]', query);
         query = replaceOperators(this.config)(query, _config);
-        //console.log(query);
-        query = clearSquare(_config)(query, this.config);
-        //console.log(query);
-        query = simplify(_config)(query);
-        //console.log(query);
+        //console.log('[replaceOperators]', query);
+        if (true || this.config.flatten) {
+            query = clearSquare(_config)(query, this.config);
+            //console.log('[clearSquare]', query);
+            query = simplify(_config)(query);
+            //console.log('[simplify]', query);
+        }
         query = beautify(_config)(query, this.config);
-        //console.log(query);
+        //console.log('[beautify]', query);
 
         return query;
     }

@@ -25,12 +25,13 @@ var extend          = require('./extend')(),
  * @returns {Config}
  */
 
-function config(config) {
-    var cfg;
+function config() {
+    var configs = [].slice.call(arguments);
+    var cfg, current;
     
-    if (typeof config === 'string') {
+    if (typeof configs[0] === 'string') {
         try {
-            cfg = require('./'+config);
+            cfg = require('./'+configs[0]);
         } catch(e) {
             cfg = defaults;
         }
@@ -39,10 +40,12 @@ function config(config) {
     }
     
     cfg = extend({}, cfg);
-    if (typeof config !== 'string') {
-        cfg = extend(cfg, config);
+
+    while(current = configs.shift()) {
+        if (typeof current === 'string') { continue; }
+        cfg = extend(cfg, current);
     }
-    
+
     validateConfig(cfg);
     
     cfg.operators = cfg.operators.sort(function(a, b) {

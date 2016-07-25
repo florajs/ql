@@ -13,5 +13,6 @@
     "validateStrings": true,
     "validateConnectives": true,
     "validateStatements": true,
-    "elemMatch": false
+    "elemMatch": false,
+    "flatten": true
 }

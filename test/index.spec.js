@@ -76,19 +76,36 @@ describe('parse()', function() {
             ],
             ['xyz[a=1 AND (zxy[e AND f][b=2 OR c=3])]',
                 [   [   { attribute: ['xyz~3', 'a'], operator: '=', value: 1},
-                        { attribute: ['xyz~3', 'zxy~2', 'e~0', 'b'], operator: '=', value: 2},
-                        { attribute: ['xyz~3', 'zxy~2', 'f~1', 'b'], operator: '=', value: 2}  ],
+                        { attribute: ['xyz~3', 'zxy~2', 'e~1', 'b'], operator: '=', value: 2},
+                        { attribute: ['xyz~3', 'zxy~2', 'f~0', 'b'], operator: '=', value: 2}  ],
                     [   { attribute: ['xyz~3', 'a'], operator: '=', value: 1},
-                        { attribute: ['xyz~3', 'zxy~2', 'e~0', 'c'], operator: '=', value: 3},
-                        { attribute: ['xyz~3', 'zxy~2', 'f~1', 'c'], operator: '=', value: 3}  ]   ]
+                        { attribute: ['xyz~3', 'zxy~2', 'e~1', 'c'], operator: '=', value: 3},
+                        { attribute: ['xyz~3', 'zxy~2', 'f~0', 'c'], operator: '=', value: 3}  ]   ]
             ],
             ['xyz[a=1 AND (zxy[e AND f][b="hel lo" OR c=true])]',
                 [   [   { attribute: ['xyz~3', 'a'], operator: '=', value: 1},
-                        { attribute: ['xyz~3', 'zxy~2', 'e~0', 'b'], operator: '=', value: 'hel lo'},
-                        { attribute: ['xyz~3', 'zxy~2', 'f~1', 'b'], operator: '=', value: 'hel lo'}  ],
+                        { attribute: ['xyz~3', 'zxy~2', 'e~1', 'b'], operator: '=', value: 'hel lo'},
+                        { attribute: ['xyz~3', 'zxy~2', 'f~0', 'b'], operator: '=', value: 'hel lo'}  ],
                     [   { attribute: ['xyz~3', 'a'], operator: '=', value: 1},
-                        { attribute: ['xyz~3', 'zxy~2', 'e~0', 'c'], operator: '=', value: true},
-                        { attribute: ['xyz~3', 'zxy~2', 'f~1', 'c'], operator: '=', value: true}  ]   ]
+                        { attribute: ['xyz~3', 'zxy~2', 'e~1', 'c'], operator: '=', value: true},
+                        { attribute: ['xyz~3', 'zxy~2', 'f~0', 'c'], operator: '=', value: true}  ]   ]
+            ],
+            ['aA.hhasdhhXx[(b_=1 OR c0[d_0=" OR " AND e=1]) AND (f=1 OR g=1)]',
+                [   [   { attribute: ['aA', 'hhasdhhXx~1', 'b_'], operator: '=', value: 1 },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'f'], operator: '=', value: 1 }
+                    ],
+                    [   { attribute: ['aA', 'hhasdhhXx~1', 'c0~0', 'd_0'], operator: '=', value: ' OR ' },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'c0~0', 'e'], operator: '=', value: 1 },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'f'], operator: '=', value: 1 }
+                    ],
+                    [   { attribute: ['aA', 'hhasdhhXx~1', 'b_'], operator: '=', value: 1 },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'g'], operator: '=', value: 1 }
+                    ],
+                    [   { attribute: ['aA', 'hhasdhhXx~1', 'c0~0', 'd_0'], operator: '=', value: ' OR ' },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'c0~0', 'e'], operator: '=', value: 1 },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'g'], operator: '=', value: 1 }
+                    ]
+                ]
             ],
             ['(x=2 OR a=1 AND aA.hhasdhhXx[(b_=1 OR c0[d_0=" OR " AND e=1]) AND (f=1;5 OR g=")\\"(")]) AND h=1',
                 [   [   { attribute: ['x'], operator: '=', value: 2 },
@@ -100,14 +117,14 @@ describe('parse()', function() {
                         { attribute: ['h'], operator: '=', value: 1 }
                     ],
                     [   { attribute: ['a'], operator: '=', value: 1 },
-                        { attribute: ['aA', 'hhasdhhXx~1', 'b_'], operator: '=', value: 1 },
-                        { attribute: ['aA', 'hhasdhhXx~1', 'g'], operator: '=', value: ')"(' },
-                        { attribute: ['h'], operator: '=', value: 1 }
-                    ],
-                    [   { attribute: ['a'], operator: '=', value: 1 },
                         { attribute: ['aA', 'hhasdhhXx~1', 'c0~0', 'd_0'], operator: '=', value: ' OR ' },
                         { attribute: ['aA', 'hhasdhhXx~1', 'c0~0', 'e'], operator: '=', value: 1 },
                         { attribute: ['aA', 'hhasdhhXx~1', 'f'], operator: '=', value: 1 },
+                        { attribute: ['h'], operator: '=', value: 1 }
+                    ],
+                    [   { attribute: ['a'], operator: '=', value: 1 },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'b_'], operator: '=', value: 1 },
+                        { attribute: ['aA', 'hhasdhhXx~1', 'g'], operator: '=', value: ')"(' },
                         { attribute: ['h'], operator: '=', value: 1 }
                     ],
                     [   { attribute: ['a'], operator: '=', value: 1 },
@@ -119,11 +136,11 @@ describe('parse()', function() {
                 ]
             ],
             ['user[(memberships OR groups)][id=4 AND type=3]',
-                [   [   { attribute: ['user~2', 'memberships~0', 'id'], operator: '=', value: 4 },
-                        { attribute: ['user~2', 'memberships~0', 'type'], operator: '=', value: 3 }
+                [   [   { attribute: ['user~2', 'memberships~1', 'id'], operator: '=', value: 4 },
+                        { attribute: ['user~2', 'memberships~1', 'type'], operator: '=', value: 3 }
                     ],
-                    [   { attribute: ['user~2', 'groups~1', 'id'], operator: '=', value: 4 },
-                        { attribute: ['user~2', 'groups~1', 'type'], operator: '=', value: 3 }
+                    [   { attribute: ['user~2', 'groups~0', 'id'], operator: '=', value: 4 },
+                        { attribute: ['user~2', 'groups~0', 'type'], operator: '=', value: 3 }
                     ]
                 ]
             ],
@@ -186,6 +203,44 @@ describe('parse()', function() {
             [' abc  =  1   AND   def  =   2',
                 [   [   { "attribute": [ "abc" ], "operator": "=", "value": 1 },
                         { "attribute": [ "def" ], "operator": "=", "value": 2 }
+                    ]
+                ]
+            ],
+            ['(categories.id=2084,1165 OR (categories.id=2241)) AND instruments.id=133962,119083,119231 AND (tags.id=2258 OR instruments.assetClass.id=3)',
+                [   [   { "attribute": [ "categories", "id"], "operator": "=", "value": [ 2084, 1165 ] },
+                        { "attribute": [ "instruments", "id" ], "operator": "=", "value": [ 133962, 119083, 119231 ] },
+                        { "attribute": [ "tags", "id" ], "operator": "=", "value": 2258 }
+                    ],
+                    [   { "attribute": [ "categories", "id" ], "operator": "=", "value": 2241 },
+                        { "attribute": [ "instruments", "id" ], "operator": "=", "value": [ 133962, 119083, 119231 ] },
+                        { "attribute": [ "tags", "id" ], "operator": "=", "value": 2258 }
+                    ],
+                    [   { "attribute": [ "categories", "id" ], "operator": "=", "value": [ 2084, 1165 ] },
+                        { "attribute": [ "instruments", "id" ], "operator": "=", "value": [ 133962, 119083, 119231 ] },
+                        { "attribute": [ "instruments", "assetClass", "id" ], "operator": "=", "value": 3 }
+                    ],
+                    [   { "attribute": [ "categories", "id" ], "operator": "=", "value": 2241 },
+                        { "attribute": [ "instruments", "id" ], "operator": "=", "value": [ 133962, 119083, 119231 ] },
+                        { "attribute": [ "instruments", "assetClass", "id" ], "operator": "=", "value": 3 }
+                    ]
+                ]
+            ],
+            ['instruments.id=133962,119083,119231 AND (tags.id=2258 OR instruments.assetClass.id=3) AND (categories.id=2084,1165 OR (categories.id=2241))',
+                [   [   { "attribute": [ "instruments", "id" ], "operator": "=", "value": [ 133962, 119083, 119231 ] },
+                        { "attribute": [ "tags", "id" ], "operator": "=", "value": 2258 },
+                        { "attribute": [ "categories", "id"], "operator": "=", "value": [ 2084, 1165 ] }
+                    ],
+                    [   { "attribute": [ "instruments", "id" ], "operator": "=", "value": [ 133962, 119083, 119231 ] },
+                        { "attribute": [ "instruments", "assetClass", "id" ], "operator": "=", "value": 3 },
+                        { "attribute": [ "categories", "id" ], "operator": "=", "value": [ 2084, 1165 ] }
+                    ],
+                    [   { "attribute": [ "instruments", "id" ], "operator": "=", "value": [ 133962, 119083, 119231 ] },
+                        { "attribute": [ "tags", "id" ], "operator": "=", "value": 2258 },
+                        { "attribute": [ "categories", "id" ], "operator": "=", "value": 2241 }
+                    ],
+                    [   { "attribute": [ "instruments", "id" ], "operator": "=", "value": [ 133962, 119083, 119231 ] },
+                        { "attribute": [ "instruments", "assetClass", "id" ], "operator": "=", "value": 3 },
+                        { "attribute": [ "categories", "id" ], "operator": "=", "value": 2241 }
                     ]
                 ]
             ]

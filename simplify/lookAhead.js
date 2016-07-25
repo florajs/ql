@@ -10,7 +10,7 @@ var util            = require('util'),
 module.exports = function factory(cfg) {
     validateConfig(cfg);
     
-    var delimiter = util.isArray(cfg.lookDelimiter)? cfg.lookDelimiter : [cfg.lookDelimiter];
+    var delimiters = util.isArray(cfg.lookDelimiter)? cfg.lookDelimiter : [cfg.lookDelimiter];
 
     /**
      * Find any terms ahead of the provided position. Stops if 
@@ -23,41 +23,118 @@ module.exports = function factory(cfg) {
      */
 
     function lookAhead(str, pos) {
-        var i, l, j, isDelimiter,
-            firstOpFound = false,
-            tmp = '', state = 'stmnt';
+        var i, isDelimiter, isEOF,
+            level = 0,
+            parts = [''],
+            part = '',
+            whole = '',
+            delimiter = '',
+            firstOp = str[pos] || '',
+            firstDelimiters = delimiters.map(function(value) { return value[0];}).join(''),
+            state = 'stmnt';
 
-        for (i=pos, l=str.length; i<l; i++) {
+        if (str[pos] === cfg.roundBracket[0] || pos === str.length-1) {
+            return ['', [''], ''];
+        }
+
+        for (i=pos; i<=str.length; i++) {
+            isEOF = i === str.length;
             isDelimiter = false;
-            
-            if (state === 'brckt') {
-                if (str[i] === cfg.roundBracket[0]) { tmp = '';      break; }
-                if (str[i] === cfg.roundBracket[1]) { tmp += str[i]; break; }
-            }
+
             if (state === 'stmnt') {
-                if (!firstOpFound && str[i] === cfg.and) {
-                    firstOpFound = true;
-                    continue;
+                if (isEOF) {
+                    if (part) { parts.push(part); whole += part; }
+
+                } else if (firstDelimiters.indexOf(str[i]) !== -1) {
+                    delimiter = delimiters[firstDelimiters.indexOf(str[i])];
+                    state = 'delimiter';
+                    level = 1;
+                    if (part) { parts.push(part); whole += part; }
+                    part = '';
+                    part += str[i];
+
+                } else if (str[i] === cfg.roundBracket[1]) {
+                    if (part) { parts.push(part); whole += part; }
+                    break;
+
+                } else if (str[i] === cfg.roundBracket[0]) {
+                    state = 'brckt';
+                    level = 1;
+                    part += str[i];
+
+                } else if (str[i] === cfg.and[0] || str[i] === cfg.relate[0]) {
+                    state = 'op';
+                    level = 1;
+                    if (part) { parts.push(part); whole += part; }
+                    part = '';
+                    part += str[i];
+
+                } else {
+                    part += str[i];
                 }
-                for (j=delimiter.length; j--;) {
-                    if (str[i] === delimiter[j]) {
-                        isDelimiter = true;
-                        break;
-                    }
+
+            }  else if (state === 'brckt') {
+                if (isEOF) {
+                    throw new Error('Damn');
+
+                } else if (str[i] === cfg.roundBracket[1]) {
+                    level--;
+
+                } else if (str[i] === cfg.roundBracket[0]) {
+                    level++;
                 }
-                if (isDelimiter) { break; }
-                if (str[i] === cfg.roundBracket[1]) { break; }
-                if (str[i] === cfg.roundBracket[0]) { state = 'brckt'; }
+
+                part += str[i];
+
+                if (level === 0) {
+                    state = 'stmnt';
+                }
+
+            } else if (state === 'op') {
+                if (isEOF) {
+                    throw new Error('Damn');
+
+                } else if (str[i] === cfg.and[level] || str[i] === cfg.relate[level]) {
+                    level++;
+                    part += str[i];
+
+                } else if (part === cfg.and || part === cfg.relate) {
+                    state = 'stmnt';
+                    if (whole) { whole += part; }
+                    part = '';
+                    i--;
+
+                } else {
+                    state = 'stmnt';
+                    part = parts[parts.length-1]+part+str[i];
+                    whole = whole.substr(0, parts.pop().length)
+                }
+
+            } else if (state === 'delimiter') {
+                if (isEOF) {
+                    throw new Error('Damn');
+
+                } else if (str[i] === delimiter[level]) {
+                    level++;
+                    part = str[i]+part;
+
+                } else if (part === delimiter) {
+                    break;
+
+                } else {
+                    state = 'stmnt';
+                    part = parts[parts.length-1]+part+str[i];
+                    whole = whole.substr(0, parts.pop().length)
+                }
             }
-            tmp += str[i];
         }
 
-        if (tmp[0] === cfg.roundBracket[0]) {
-            return [tmp, tmp.substr(1, tmp.length-2).split(cfg.or)];
-        } else {
-            return [tmp, [tmp]];
+        if (parts.length > 1) {
+            parts.shift();
         }
+
+        return [whole, parts, firstOp];
     }
     
     return lookAhead;
-}
+};

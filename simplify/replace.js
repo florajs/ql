@@ -1,8 +1,9 @@
 /**
+ * @param {Config} [cfg]
  * @returns {replace}
  */
 
-module.exports = function factory() {
+module.exports = function factory(cfg) {
 
     /**
      * Replace any parts of the source string with a new part. 

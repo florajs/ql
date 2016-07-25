@@ -274,6 +274,9 @@ e0_1*e0_2_3_5*e0_2_4_5+e0_1*e0_2_3_6*e0_2_4_6
 
 ## CHANGELOG
 
+### 2.5.1
+- Bugfix: [API-945]
+
 ### 2.5.0
 - Feature: Allow whitespaces anywhere
 

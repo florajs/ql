@@ -9,7 +9,7 @@ module.exports = function (grunt) {
                     reporter: 'spec',
                     quiet: false
                 },
-                src: ['test/**/*.js']
+                src: ['test/**/*.spec.js']
             },
             bamboo: {
                 options: {
