@@ -4,7 +4,6 @@
   "description": "Query Language with parser, tests, syntax generators, etc. for flora, alerting server, webpush",
   "main": "index.js",
   "scripts": {
-    "bamboo": "mocha -R mocha-bamboo-reporter",
     "test": "eslint . && mocha test/*",
     "lint": "eslint ."
   },
@@ -33,7 +32,6 @@
     "eslint-config-prettier": "^3.1.0",
     "eslint-plugin-prettier": "^3.0.0",
     "mocha": "^5.2.0",
-    "mocha-bamboo-reporter": "^1.1.0",
     "pre-commit": "^1.2.2",
     "prettier": "^1.14.3"
   }
