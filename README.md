@@ -1,5 +1,4 @@
-Flora Query Language
-====================
+# Flora Query Language
 
 [![Build Status](https://travis-ci.org/godmodelabs/flora-ql.svg?branch=master)](https://travis-ci.org/godmodelabs/flora-ql)
 [![NPM version](https://badge.fury.io/js/flora-ql.svg)](https://www.npmjs.com/package/flora-ql)
@@ -10,9 +9,7 @@ Define your own powerful syntax to use for example for filtering through your da
 It identifies the different parts of your input and returns these statements in 
 a two dimensional array resolved in disjunctive normal form.
 
-
-Features
---------
+## Features
 
 ### Statements
 
@@ -114,7 +111,6 @@ FloraQL.parse('type>9000 AND name="Bruce Wayne" AND incognito=true');
  */
 ```
 
-
 ### Attribute grouping / scoping
 
 If you got multiple statements with similar attributes, you can shorten your query 
@@ -166,7 +162,6 @@ try {
 }
 ```
 
-
 ### Highly customizable syntax
 
 Special characters used in the queries are defined by a .json file under /config. 
@@ -202,17 +197,16 @@ FloraQL.parse('user{external+internal}:type=2');
  */
 ```
 
-
-Developer Doc
--------------
-
+## Developer Doc
 
 ### Input
+
 ```
 article[id=1 AND (author[firstname AND lastname][str="true" OR master=true])]
 ```
-    
+
 ### tokenizer()
+
 ```
 e0[e1 AND (e2[e3 AND e4][e5 OR e6])]
 
@@ -275,12 +269,13 @@ e0_1*e0_2_3_5*e0_2_4_5+e0_1*e0_2_3_6*e0_2_4_6
 ## CHANGELOG
 
 ### 2.5.0
+
 - Feature: Allow whitespaces anywhere
 
 ### 2.4.1
+
 - Bugfix: multiple ANDs behind/ahead a bracket
 
-
-# License
+## License
 
 [MIT](LICENSE)

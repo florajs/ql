@@ -1,13 +1,11 @@
-'use strict';
-
-var assert              = require('./error/assert'),
-    extend              = require('./config/extend'),
-    tokenizer           = require('./tokenizer'),
-    config              = require('./config'),
-    replaceOperators    = require('./operators/replace'),
-    clearSquare         = require('./clearSquare'),
-    simplify            = require('./simplify'),
-    beautify            = require('./beautify');
+const assert = require('./error/assert');
+const extend = require('./config/extend');
+const tokenizer = require('./tokenizer');
+const config = require('./config');
+const replaceOperators = require('./operators/replace');
+const clearSquare = require('./clearSquare');
+const simplify = require('./simplify');
+const beautify = require('./beautify');
 
 /**
  * @typedef {[
@@ -16,13 +14,11 @@ var assert              = require('./error/assert'),
  */
 
 module.exports = {
-
     /**
      * Current configuration of the parser.
      *
      * @type Config
      */
-
     config: config(),
 
     /**
@@ -33,8 +29,8 @@ module.exports = {
      * @param {Config|string} cfg
      */
 
-    setConfig: function (cfg) {
-        this.config = extend()(this.config, typeof cfg === 'string'? config(cfg) : cfg);
+    setConfig: function(cfg) {
+        this.config = extend()(this.config, typeof cfg === 'string' ? config(cfg) : cfg);
     },
 
     /**
@@ -49,7 +45,7 @@ module.exports = {
     parse: function parse(query) {
         assert(typeof query === 'string' && query !== '', 2000);
 
-        var _config = config({
+        const _config = config({
             and: '*',
             or: '+',
             lookDelimiter: '+'
@@ -57,15 +53,10 @@ module.exports = {
 
         query = [query, {}];
         query = tokenizer(this.config)(query);
-        //console.log(query);
         query = replaceOperators(this.config)(query, _config);
-        //console.log(query);
         query = clearSquare(_config)(query, this.config);
-        //console.log(query);
         query = simplify(_config)(query);
-        //console.log(query);
         query = beautify(_config)(query, this.config);
-        //console.log(query);
 
         return query;
     }

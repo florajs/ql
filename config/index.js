@@ -1,6 +1,6 @@
-var extend          = require('./extend')(),
-    validateConfig  = require('../validate/config'),
-    defaults        = require('./default');
+const extend = require('./extend')();
+const validateConfig = require('../validate/config');
+const defaults = require('./default');
 
 /**
  * @typedef {{
@@ -18,37 +18,36 @@ var extend          = require('./extend')(),
  */
 
 /**
- * Retrieve a config from a .json file located under /config by its 
+ * Retrieve a config from a .json file located under /config by its
  * name or extend the default config with custom settings.
- * 
+ *
  * @param {Config|string} config
  * @returns {Config}
  */
-
 function config(config) {
-    var cfg;
-    
+    let cfg;
+
     if (typeof config === 'string') {
         try {
-            cfg = require('./'+config);
-        } catch(e) {
+            cfg = require('./' + config);
+        } catch (e) {
             cfg = defaults;
         }
     } else {
         cfg = defaults;
     }
-    
+
     cfg = extend({}, cfg);
     if (typeof config !== 'string') {
         cfg = extend(cfg, config);
     }
-    
+
     validateConfig(cfg);
-    
+
     cfg.operators = cfg.operators.sort(function(a, b) {
         return a.length < b.length;
     });
-    
+
     return cfg;
 }
 
