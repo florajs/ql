@@ -13,7 +13,7 @@ module.exports = function factory(cfg) {
     validateConfig(cfg);
 
     /*
-     * We can reuse the methods available under /simplify with 
+     * We can reuse the methods available under /simplify with
      * different configurations to help resolving square brackets.
      */
 
