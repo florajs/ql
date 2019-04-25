@@ -68,6 +68,7 @@ module.exports = function factory(cfg) {
         let openBrackets = 0;
         let operatorAhead = null;
         let setValues = [];
+        let rangeValues = [];
         let stmnts = {};
 
         let ii = 0;
@@ -88,7 +89,11 @@ module.exports = function factory(cfg) {
 
         function resolve() {
             if (stackValue) {
-                setValues.push(stackValue);
+                if (rangeValues.length === 1) {
+                    rangeValues.push(stackValue);
+                } else {
+                    setValues.push(stackValue);
+                }
                 stackValue = '';
             } else if (!stackAttribute) {
                 return;
@@ -99,18 +104,21 @@ module.exports = function factory(cfg) {
                 stackAttribute.length +
                 stackOperator.length +
                 setValues.join('').length +
-                (setValues.length > 0 ? (setValues.length - 1) * cfg.setDelimiter.length : 0);
+                (setValues.length > 0 ? (setValues.length - 1) * cfg.setDelimiter.length : 0) +
+                rangeValues.join('').length +
+                (rangeValues.length > 0 ? (rangeValues.length - 1) * cfg.rangeDelimiter.length : 0);
             string = string.substr(0, i - stmntLength) + id + string.substr(i, string.length);
 
             i -= l - string.length;
             l = string.length;
 
-            //console.log('new stmnt', stackAttribute, stackOperator, setValues);
-            stmnts[id] = new Stmnt(stackAttribute, stackOperator, setValues);
+            // console.log('new stmnt', stackAttribute, stackOperator, setValues, rangeValues);
+            stmnts[id] = new Stmnt(stackAttribute, stackOperator, setValues, rangeValues);
 
             stackAttribute = '';
             stackOperator = '';
             setValues = [];
+            rangeValues = [];
         }
 
         if (cfg.validateConnectives) {
@@ -356,6 +364,18 @@ module.exports = function factory(cfg) {
                     setValues.push(stackValue);
                     stackValue = '';
                     i += cfg.setDelimiter.length - 1;
+
+                    // Value ends with range delimiter
+                } else if (stackValue.length > 0 && isAhead(string, i, cfg.rangeDelimiter)) {
+                    if (rangeValues.length > 0) {
+                        throw new ArgumentError(2218, {
+                            context: string.substr(i),
+                            index: i
+                        });
+                    }
+                    rangeValues.push(stackValue);
+                    stackValue = '';
+                    i += cfg.rangeDelimiter.length - 1;
 
                     // Value ends with opening bracket
                 } else if (

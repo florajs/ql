@@ -12,6 +12,7 @@ const defaults = require('./default');
  *     string:          string,
  *     lookDelimiter:   string|Array,
  *     setDelimiter:    string,
+ *     rangeDelimiter:  string,
  *     roundBracket:    Array,
  *     squareBracket:   Array
  * }} Config

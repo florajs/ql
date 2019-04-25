@@ -38,16 +38,26 @@ module.exports = function factory(cfg) {
                     if (cfg.validateStatements) {
                         assert(term.attribute !== null && term.attribute !== '', 2215, { stmnt: term.toString() });
                         assert(term.operator !== null && term.operator !== '', 2216, { stmnt: term.toString() });
-                        assert(term.value === null || term.value === '' || term.value.length !== 0, 2217, {
-                            stmnt: term.toString()
-                        });
+                        assert(
+                            term.value === null ||
+                                term.value === '' ||
+                                term.value.length !== 0 ||
+                                (term.range && term.range.length === 2),
+                            2217,
+                            {
+                                stmnt: term.toString()
+                            }
+                        );
                     }
 
-                    result[result.length - 1].push({
+                    const res = {
                         attribute: (term.attribute || '').split(config.glue),
-                        operator: term.operator,
-                        value: term.value
-                    });
+                        operator: term.operator
+                    };
+                    if (term.range && term.range.length === 2) res.range = term.range;
+                    else res.value = term.value;
+
+                    result[result.length - 1].push(res);
                 } else {
                     throw new ArgumentError(2202);
                 }
