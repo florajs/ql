@@ -14,6 +14,26 @@ module.exports = function factory(cfg) {
 
     let currentElemMatchId = 0;
 
+    function parseValue(value) {
+        if (value === 'undefined') return undefined;
+
+        if (value[0] === cfg.string || value === 'true' || value === 'false' || value === 'null') {
+            try {
+                return JSON.parse(value);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        const tmp = parseFloat(value);
+        if (isNaN(tmp)) {
+            if (cfg.validateStrings) {
+                throw new ArgumentError(2214, { value });
+            }
+        }
+        return tmp;
+    }
+
     /**
      * Class to store and parse a statement of a
      * query string.
@@ -21,16 +41,19 @@ module.exports = function factory(cfg) {
      * @param {string} [attribute]
      * @param {string} [operator]
      * @param {Array} [values]
+     * @param {Array} [range]
      * @class
      * @constructor
      */
-    function Stmnt(attribute, operator, values) {
+    function Stmnt(attribute, operator, values, range) {
         /** @member {string} */
         this.attribute = attribute || null;
         /** @member {string} */
         this.operator = operator || null;
         /** @member {Array|string} */
         this.value = values || null;
+        /** @member {Array|string} */
+        this.range = range || null;
         /** @member {Config} */
         this.config = cfg;
 
@@ -41,34 +64,20 @@ module.exports = function factory(cfg) {
             if (!util.isArray(this.value)) {
                 this.value = [this.value];
             }
-            for (let i = this.value.length, tmp; i--; ) {
-                if (this.value[i] === 'undefined') {
-                    this.value[i] = undefined;
-                } else if (
-                    this.value[i][0] === cfg.string ||
-                    this.value[i] === 'true' ||
-                    this.value[i] === 'false' ||
-                    this.value[i] === 'null'
-                ) {
-                    try {
-                        this.value[i] = JSON.parse(this.value[i]);
-                    } catch (e) {
-                        this.value[i] = null;
-                    }
-                } else {
-                    tmp = parseFloat(this.value[i]);
-                    if (isNaN(tmp)) {
-                        if (cfg.validateStrings) {
-                            throw new ArgumentError(2214, { value: this.value[i] });
-                        }
-                    } else {
-                        this.value[i] = tmp;
-                    }
-                }
+            for (let i = this.value.length; i--; ) {
+                this.value[i] = parseValue(this.value[i]);
             }
             if (this.value.length === 1) {
                 this.value = this.value[0];
             }
+        }
+
+        /*
+         * Parse range
+         */
+        if (this.range && util.isArray(this.range) && this.range.length === 2) {
+            this.range[0] = parseValue(this.range[0]);
+            this.range[1] = parseValue(this.range[1]);
         }
     }
 

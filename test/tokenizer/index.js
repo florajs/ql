@@ -88,6 +88,11 @@ describe('tokenizer()', function() {
             ['  a  [  (  b  =  1  )  ]  ',                                          'e0[(e1)]'],
             ['  a  [  (  b  =  1  +  c  =  1  )  ]  [  d  =  1  *  e  =  1  ]  ',   'e0[(e1+e2)][e3*e4]'],
 
+            // ranges
+
+            ['a=10..20',        'e0'],
+            ['a="10".."20"',    'e0'],
+
             // all the things!
 
             ['a=1*(b[(c=1)][(d="\\")(()][[].,"*e=1)]+f!=1)*g=1',                    'e0*(e1[(e2)][(e3*e4)]+e5)*e6']
@@ -107,7 +112,10 @@ describe('tokenizer()', function() {
             ['a=s"',            2212],
             ['a="s',            2213],
             ['a=s',             2214],
-            ['a=1 b=2',         2211]
+            ['a=1 b=2',         2211],
+            ['a=..3',           2214],
+            // ['a=3..',           2214], // TODO: same as 'a=1,'
+            ['a=1..2..3',       2218],
         ];
 
     function factory(config, input, output) {
