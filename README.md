@@ -252,6 +252,10 @@ e0_1*e0_2_3_5*e0_2_4_5+e0_1*e0_2_3_6*e0_2_4_6
 
 ## CHANGELOG
 
+### 3.1.0
+
+- Feature: Implement ranges
+
 ### 2.5.0
 
 - Feature: Allow whitespaces anywhere
