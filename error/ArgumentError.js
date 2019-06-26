@@ -19,7 +19,7 @@ function ArgumentError(code, data) {
 
     if (typeof data === 'object') {
         for (let k in data) {
-            if (!data.hasOwnProperty(k)) {
+            if (!Object.prototype.hasOwnProperty.call(data, k)) {
                 continue;
             }
             this.message = this.message.replace(new RegExp(':' + k, 'g'), data[k] + '');
