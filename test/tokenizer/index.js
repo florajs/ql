@@ -116,6 +116,7 @@ describe('tokenizer()', function() {
             ['a=..3',           2214],
             // ['a=3..',           2214], // TODO: same as 'a=1,'
             ['a=1..2..3',       2218],
+            ['a=2018-01-01',    2214]
         ];
 
     function factory(config, input, output) {
