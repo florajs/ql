@@ -90,7 +90,7 @@ describe('parse()', function() {
                         { attribute: ['xyz~3', 'zxy~2', 'e~0', 'c'], operator: '=', value: true},
                         { attribute: ['xyz~3', 'zxy~2', 'f~1', 'c'], operator: '=', value: true}  ]   ]
             ],
-            ['(x=2 OR a=1 AND aA.hhasdhhXx[(b_=1 OR c0[d_0=" OR " AND e=1]) AND (f=1;5 OR g=")\\"(")]) AND h=1',
+            ['(x=2 OR a=1 AND aA.hhasdhhXx[(b_=1 OR c0[d_0=" OR " AND e=1]) AND (f=1 OR g=")\\"(")]) AND h=1',
                 [   [   { attribute: ['x'], operator: '=', value: 2 },
                         { attribute: ['h'], operator: '=', value: 1 }
                     ],
