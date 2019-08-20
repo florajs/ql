@@ -25,13 +25,12 @@ module.exports = function factory(cfg) {
             }
         }
 
-        const tmp = parseFloat(value);
-        if (isNaN(tmp)) {
+        if (isNaN(value)) {
             if (cfg.validateStrings) {
                 throw new ArgumentError(2214, { value });
             }
         }
-        return tmp;
+        return parseFloat(value);
     }
 
     /**
