@@ -70,6 +70,7 @@ module.exports = function factory(cfg) {
         let setValues = [];
         let rangeValues = [];
         let stmnts = {};
+        let awaitValue = false;
 
         let ii = 0;
 
@@ -361,6 +362,7 @@ module.exports = function factory(cfg) {
 
                     // Value ends with set delimiter
                 } else if (stackValue.length > 0 && isAhead(string, i, cfg.setDelimiter)) {
+                    awaitValue = true;
                     setValues.push(stackValue);
                     stackValue = '';
                     i += cfg.setDelimiter.length - 1;
@@ -373,6 +375,7 @@ module.exports = function factory(cfg) {
                             index: i
                         });
                     }
+                    awaitValue = true;
                     rangeValues.push(stackValue);
                     stackValue = '';
                     i += cfg.rangeDelimiter.length - 1;
@@ -439,6 +442,7 @@ module.exports = function factory(cfg) {
                     // Value ongoing, add char to stack
                 } else {
                     stackValue += string[i];
+                    awaitValue = false;
                 }
             } else if (state === 'string') {
                 // String closes with quotation mark, go to value state and look for delimiters
@@ -458,6 +462,11 @@ module.exports = function factory(cfg) {
                     index: lastQuotationMark + 1
                 });
             }
+        }
+
+        if (awaitValue && stackValue === '') {
+            // Missing value
+            throw new ArgumentError(2219, { context: string, index: i });
         }
 
         resolve();
