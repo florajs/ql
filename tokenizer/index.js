@@ -408,6 +408,7 @@ module.exports = function factory(cfg) {
                     resolve();
                     isNewSentence = false;
                     state = 'attribute';
+                    awaitValue = false;
 
                     // Value ongoing, found a string quotation mark
                 } else if (stackValue.length > 0 && isAhead(string, i, cfg.string)) {
@@ -464,7 +465,7 @@ module.exports = function factory(cfg) {
             }
         }
 
-        if (awaitValue && stackValue === '') {
+        if (state === 'value' && awaitValue && stackValue === '') {
             // Missing value
             throw new ArgumentError(2219, { context: string, index: i });
         }
