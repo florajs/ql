@@ -252,6 +252,15 @@ e0_1*e0_2_3_5*e0_2_4_5+e0_1*e0_2_3_6*e0_2_4_6
 
 ## CHANGELOG
 
+### 3.2.1
+
+- Bugfix: Detect dangling sets and ranges. Fixes #3.
+- Bugfix: Fix non-string values not being validated and silently converted with parseFloat
+
+### 3.2.0
+
+- Update dependencies
+
 ### 3.1.0
 
 - Feature: Implement ranges
