@@ -29,7 +29,7 @@ module.exports = {
      * @param {Config|string} cfg
      */
 
-    setConfig: function(cfg) {
+    setConfig: function (cfg) {
         this.config = extend()(this.config, typeof cfg === 'string' ? config(cfg) : cfg);
     },
 

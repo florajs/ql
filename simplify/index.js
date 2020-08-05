@@ -51,7 +51,7 @@ module.exports = function factory(cfg) {
             { position: '' }
         );
 
-        sentence = identify(sentence, function(sentence, bracket, pos) {
+        sentence = identify(sentence, function (sentence, bracket, pos) {
             assert(typeof bracket !== 'undefined', 2210, { position: '' });
 
             let expanded;

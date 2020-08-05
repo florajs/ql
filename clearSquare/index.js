@@ -64,7 +64,7 @@ module.exports = function factory(cfg) {
             sentence = query[0];
         }
 
-        sentence = identify(sentence, function(sentence, bracket, pos) {
+        sentence = identify(sentence, function (sentence, bracket, pos) {
             assert(typeof bracket !== 'undefined', 2210, { position: '' });
 
             const origin = bracket;
@@ -78,7 +78,7 @@ module.exports = function factory(cfg) {
             }
             if (behind && behind[0] !== '') {
                 if (config && config.elemMatch) {
-                    (function(behind) {
+                    (function (behind) {
                         for (let i = 0, l = behind.length; i < l; i++) {
                             if (behind[i] in query[1]) {
                                 query[1][behind[i]].elemMatch();
@@ -87,7 +87,7 @@ module.exports = function factory(cfg) {
                     })(
                         [].concat.apply(
                             [],
-                            behind[1].map(function(e) {
+                            behind[1].map(function (e) {
                                 return e.match(/e[0-9]+/g);
                             })
                         )

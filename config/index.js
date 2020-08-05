@@ -45,7 +45,7 @@ function config(config) {
 
     validateConfig(cfg);
 
-    cfg.operators = cfg.operators.sort(function(a, b) {
+    cfg.operators = cfg.operators.sort(function (a, b) {
         return a.length < b.length;
     });
 
