@@ -27,8 +27,6 @@ describe('tokenizer()', function() {
             ['a=1.2*b=true',                        'e0*e1'],
             ['a=true*b=false',                      'e0*e1'],
             ['a=false*b=null',                      'e0*e1'],
-            ['a=null*b=undefined',                  'e0*e1'],
-            ['a=undefined*b="hello world"',         'e0*e1'],
             ['a="hello world"*b="hällö wôrld"',     'e0*e1'],
             ['a="hällö wôrld"*b="\\")(()][[].,"',   'e0*e1'],
 
@@ -123,7 +121,8 @@ describe('tokenizer()', function() {
             ['a=1,',            2219],
             ['a=3..',           2219],
             ['a=1..2..3',       2218],
-            ['a=2018-01-01',    2214]
+            ['a=2018-01-01',    2214],
+            ['a=undefined',     2220]
         ];
 
     function factory(config, input, output) {

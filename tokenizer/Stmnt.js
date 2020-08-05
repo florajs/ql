@@ -15,7 +15,7 @@ module.exports = function factory(cfg) {
     let currentElemMatchId = 0;
 
     function parseValue(value) {
-        if (value === 'undefined') return undefined;
+        if (value === 'undefined') throw new ArgumentError(2220, { value });
 
         if (value[0] === cfg.string || value === 'true' || value === 'false' || value === 'null') {
             try {

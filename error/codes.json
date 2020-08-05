@@ -34,5 +34,6 @@
     "2216": "Missing operator in statement ':stmnt'",
     "2217": "Missing value in statement ':stmnt'",
     "2218": "Invalid range in near ':context' (pos: :index)",
-    "2219": "Missing value near ':context' (pos: :index)"
+    "2219": "Missing value near ':context' (pos: :index)",
+    "2220": "Invalid value type, cannot be undefined"
 }
