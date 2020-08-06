@@ -4,7 +4,8 @@
   "description": "Query Language with parser, tests, syntax generators, etc. for flora, alerting server, webpush",
   "main": "index.js",
   "scripts": {
-    "test": "eslint . && mocha test/*",
+    "pretest": "npm run lint",
+    "test": "mocha \"test/**/*.spec.js\"",
     "lint": "eslint ."
   },
   "pre-commit": "test",

@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 
-const fn = require('../../lib/escape');
+const fn = require('../lib/escape');
 
 describe('lib/escape()', function () {
     var i,

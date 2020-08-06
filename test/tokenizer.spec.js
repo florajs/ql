@@ -2,8 +2,8 @@
 
 const assert = require('assert');
 
-const config = require('../../config');
-const fn = require('../../tokenizer');
+const config = require('../config');
+const fn = require('../tokenizer');
 
 describe('tokenizer()', function () {
     var i,

@@ -4,7 +4,7 @@ const assert = require('assert');
 
 const contains = require('../lib/contains');
 const config = require('../config');
-const floraQL = require('../');
+const floraQL = require('..');
 
 describe('parse()', function () {
     var i,

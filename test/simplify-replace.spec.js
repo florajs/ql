@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 
-const fn = require('../../simplify/replace')();
+const fn = require('../simplify/replace')();
 
 describe('simplify/replace()', function () {
     var i,

@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 
-const fn = require('../../lib/contains');
+const fn = require('../lib/contains');
 
 describe('lib/contains()', function () {
     var i,

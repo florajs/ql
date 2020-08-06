@@ -2,44 +2,44 @@
 
 const assert = require('assert');
 
-const contains = require('../../lib/contains');
-const config = require('../../config');
-const fn = require('../../simplify/lookBehind');
+const contains = require('../lib/contains');
+const config = require('../config');
+const fn = require('../simplify/lookAhead');
 
-describe('simplify/lookBehind()', function () {
+describe('simplify/lookAhead()', function () {
     var i,
         l,
         tests = [
             [
-                ['e*(e1+e2)', 9],
+                ['(e1+e2)*e', 7],
                 ['e', ['e']]
             ],
             [
-                ['eee*(e1+e2)', 11],
+                ['(e1+e2)*eee', 7],
                 ['eee', ['eee']]
             ],
             [
-                ['aaa+eee*(e1+e2)', 16],
-                ['eee', ['eee']]
+                ['(e1+e2)*aaa+eee', 7],
+                ['aaa', ['aaa']]
             ],
             [
-                ['(aaa+eee)*(e1+e2)', 18],
+                ['(e1+e2)*(aaa+eee)', 7],
                 ['(aaa+eee)', ['aaa', 'eee']]
             ],
             [
-                ['(aaa*aaa+eee)*(e1+e2)', 21],
+                ['(e1+e2)*(aaa*aaa+eee)', 7],
                 ['(aaa*aaa+eee)', ['aaa*aaa', 'eee']]
             ],
             [
-                ['a+(aaa*aaa+eee)*(e1+e2)', 23],
+                ['(e1+e2)*(aaa*aaa+eee)+a', 7],
                 ['(aaa*aaa+eee)', ['aaa*aaa', 'eee']]
             ],
             [
-                ['((aaa*aaa)+eee)*(e1+e2)', 23],
+                ['(e1+e2)*((aaa*aaa)+eee)', 7],
                 ['', ['']]
             ],
             [
-                ['eee+(e1+e2)', 11],
+                ['(e1+e2)+aaa', 7],
                 ['', ['']]
             ]
         ];
@@ -55,6 +55,6 @@ describe('simplify/lookBehind()', function () {
     }
 
     for (i = 0, l = tests.length; i < l; i++) {
-        it('should look behind ' + tests[i][0], factory(config(), tests[i][0], tests[i][1]));
+        it('should look ahead ' + tests[i][0], factory(config(), tests[i][0], tests[i][1]));
     }
 });

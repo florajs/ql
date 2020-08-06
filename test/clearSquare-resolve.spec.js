@@ -2,10 +2,10 @@
 
 const assert = require('assert');
 
-const contains = require('../../lib/contains');
-const config = require('../../config');
-const Stmnt = require('../../tokenizer/Stmnt')(config());
-const fn = require('../../clearSquare/resolve');
+const contains = require('../lib/contains');
+const config = require('../config');
+const Stmnt = require('../tokenizer/Stmnt')(config());
+const fn = require('../clearSquare/resolve');
 
 describe('clearSquare/resolve()', function () {
     const tests = [

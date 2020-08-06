@@ -2,8 +2,8 @@
 
 const assert = require('assert');
 
-const config = require('../../config');
-const fn = require('../../simplify');
+const config = require('../config');
+const fn = require('../simplify');
 
 describe('simplify()', function () {
     var i,

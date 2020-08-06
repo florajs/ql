@@ -2,8 +2,8 @@
 
 const assert = require('assert');
 
-const config = require('../../config');
-const fn = require('../../clearSquare/relation');
+const config = require('../config');
+const fn = require('../clearSquare/relation');
 
 describe('clearSquare/relation()', function () {
     var i,

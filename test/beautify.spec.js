@@ -2,9 +2,9 @@
 
 const assert = require('assert');
 
-const contains = require('../../lib/contains');
-const config = require('../../config');
-const fn = require('../../beautify');
+const contains = require('../lib/contains');
+const config = require('../config');
+const fn = require('../beautify');
 
 describe('beautify()', function () {
     var i,

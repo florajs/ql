@@ -2,8 +2,8 @@
 
 const assert = require('assert');
 
-const config = require('../../config');
-const fn = require('../../operators/replace');
+const config = require('../config');
+const fn = require('../operators/replace');
 
 describe('operators/replace()', function () {
     var i,

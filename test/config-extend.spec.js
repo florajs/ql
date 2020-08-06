@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 
-const fn = require('../../config/extend')();
+const fn = require('../config/extend')();
 
 describe('config/extend()', function () {
     var i,
