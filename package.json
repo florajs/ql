@@ -8,6 +8,18 @@
     "test": "mocha \"test/**/*.spec.js\"",
     "lint": "eslint ."
   },
+  "files": [
+    "index.js",
+    "lib/",
+    "beautify/",
+    "clearSquare/",
+    "config/",
+    "error/",
+    "operators/",
+    "simplify/",
+    "tokenizer/",
+    "validate/"
+  ],
   "pre-commit": "test",
   "repository": {
     "type": "git",
