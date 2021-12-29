@@ -1,5 +1,3 @@
-/* global describe, it */
-
 const assert = require('assert');
 
 const contains = require('../lib/contains');
