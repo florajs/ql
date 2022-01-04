@@ -21,18 +21,13 @@
     "validate/"
   ],
   "pre-commit": "test",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/godmodelabs/flora-ql.git"
-  },
+  "repository": "florajs/ql",
   "keywords": [
-    "Flora",
-    "FloraQL",
+    "florajs",
     "query",
     "language",
     "parser",
-    "Api",
-    "AQL"
+    "api"
   ],
   "author": "Thomas Lukacs",
   "license": "MIT",

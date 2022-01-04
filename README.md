@@ -1,6 +1,6 @@
-# Flora Query Language
+# flora-ql
 
-![](https://github.com/godmodelabs/flora-ql/workflows/ci/badge.svg)
+![](https://github.com/florajs/ql/workflows/ci/badge.svg)
 [![NPM version](https://img.shields.io/npm/v/flora-ql.svg?style=flat)](https://www.npmjs.com/package/flora-ql)
 [![NPM downloads](https://img.shields.io/npm/dm/flora-ql.svg?style=flat)](https://www.npmjs.com/package/flora-ql)
 
