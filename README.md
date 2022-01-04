@@ -1,8 +1,8 @@
-# flora-ql
+# @florajs/ql
 
 ![](https://github.com/florajs/ql/workflows/ci/badge.svg)
-[![NPM version](https://img.shields.io/npm/v/flora-ql.svg?style=flat)](https://www.npmjs.com/package/flora-ql)
-[![NPM downloads](https://img.shields.io/npm/dm/flora-ql.svg?style=flat)](https://www.npmjs.com/package/flora-ql)
+[![NPM version](https://img.shields.io/npm/v/@florajs/ql.svg?style=flat)](https://www.npmjs.com/package/@florajs/ql)
+[![NPM downloads](https://img.shields.io/npm/dm/@florajs/ql.svg?style=flat)](https://www.npmjs.com/package/@florajs/ql)
 
 Standalone Query Language parser used at the FLexible Open Rest Api with solid test coverage. Define your own powerful syntax to use for example for filtering through your data. It identifies the different parts of your input and returns these statements in a two dimensional array resolved in disjunctive normal form.
 
@@ -13,7 +13,7 @@ Standalone Query Language parser used at the FLexible Open Rest Api with solid t
 A valid statement consists of three parts. An attribute, an operator and the value. Attributes can be made up of multiple fields, connected with a dot for example.
 
 ```js
-const FloraQL = require('flora-ql');
+const FloraQL = require('@florajs/ql');
 
 FloraQL.setConfig('api');
 
@@ -50,7 +50,7 @@ FloraQL.parse('user.description="I am the batman"');
 Statements can be connected with AND and OR connectives. For the use of OR, it is necessary to support round brackets. Deeply nested constructions are supported as well and will be resolved.
 
 ```js
-const FloraQL = require('flora-ql');
+const FloraQL = require('@florajs/ql');
 
 FloraQL.setConfig('api');
 
@@ -90,7 +90,7 @@ FloraQL.parse('id=321 AND (user.id=109369 OR user.id=109370)');
 The parser does not necessarily need to understand different operator types. Thus you can use any operator you define. The values will be parsed, numbers will become numbers, strings will remain strings and boolean/null/undefined will become their corresponding data type. You can then use strictly equal operations on the value of every statement.
 
 ```js
-const FloraQL = require('flora-ql');
+const FloraQL = require('@florajs/ql');
 
 FloraQL.setConfig('api');
 
@@ -111,7 +111,7 @@ If you got multiple statements with similar attributes, you can shorten your que
 In case you can think of a better terminology, please let us know. :)
 
 ```js
-const FloraQL = require('flora-ql');
+const FloraQL = require('@florajs/ql');
 
 FloraQL.setConfig('api');
 
@@ -139,7 +139,7 @@ FloraQL.parse('user[external OR internal].type=2');
 Every operation is synchronous and will throw a custom error object named ArgumentError if something is invalid. The message will provide additional information if possible about the error type and position inside the query string. Every Error type has a unique Error code as 'code' parameter and is available under /error/codes.json.
 
 ```js
-const FloraQL = require('flora-ql');
+const FloraQL = require('@florajs/ql');
 
 FloraQL.setConfig('api');
 
@@ -156,7 +156,7 @@ try {
 Special characters used in the queries are defined by a .json file under /config. There are already two predefined sets, called 'api' and 'alerting' and a default configuration. You can either use one of them by passing the name as string to setConfig() or provide an object with custom values which will extend the default configuration.  
 
 ```js
-const FloraQL = require('flora-ql');
+const FloraQL = require('@florajs/ql');
 
 FloraQL.setConfig({
     "operators": ["!=", "<=", ">=", "=", "<", ">"], // list of valid operators

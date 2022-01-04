@@ -1,5 +1,5 @@
 {
-  "name": "flora-ql",
+  "name": "@florajs/ql",
   "version": "3.2.3",
   "description": "Query Language with parser, tests, syntax generators, etc. for flora, alerting server, webpush",
   "main": "index.js",
@@ -22,6 +22,7 @@
   ],
   "pre-commit": "test",
   "repository": "florajs/ql",
+  "homepage": "https://github.com/florajs/ql",
   "keywords": [
     "florajs",
     "query",
@@ -36,7 +37,7 @@
   },
   "devDependencies": {
     "chai": "^4.3.4",
-    "eslint": "^8.5.0",
+    "eslint": "^8.6.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "mocha": "^9.1.3",
