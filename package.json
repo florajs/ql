@@ -30,18 +30,26 @@
     "parser",
     "api"
   ],
-  "author": "Thomas Lukacs",
+  "author": {
+    "name": "stock3 AG",
+    "email": "it@stock3.com"
+  },
+  "contributors": [
+    {
+      "name": "Thomas Lukacs"
+    }
+  ],
   "license": "MIT",
   "engines": {
     "node": ">=12"
   },
   "devDependencies": {
-    "chai": "^4.3.4",
-    "eslint": "^8.6.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "mocha": "^9.1.3",
+    "chai": "^4.3.7",
+    "eslint": "^8.46.0",
+    "eslint-config-prettier": "^8.10.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "mocha": "^10.2.0",
     "pre-commit": "^1.2.2",
-    "prettier": "^2.5.1"
+    "prettier": "^3.0.1"
   }
 }
