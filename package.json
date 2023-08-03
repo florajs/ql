@@ -41,7 +41,7 @@
   ],
   "license": "MIT",
   "engines": {
-    "node": ">=12"
+    "node": ">=16"
   },
   "devDependencies": {
     "chai": "^4.3.7",
