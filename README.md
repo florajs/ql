@@ -25,7 +25,7 @@ FloraQL.parse('id=321');
  */
 
 FloraQL.parse('user.id=109369');
-/* 
+/*
  * [ [
  *     { attribute: ['user', 'id'], operator: '=', value: 109369 }
  * ] ]
@@ -66,7 +66,7 @@ FloraQL.parse('id=321 OR user.id=109369');
 /*
  * [ [
  *     { attribute: ['id'], operator: '=', value: 321 }
- *   ], 
+ *   ],
  *   [
  *     { attribute: ['user', 'id'], operator: '=', value: 109369 }
  * ] ]
@@ -77,9 +77,9 @@ FloraQL.parse('id=321 AND (user.id=109369 OR user.id=109370)');
  * [ [
  *     { attribute: ['id'], operator: '=', value: 321 },
  *     { attribute: ['user', 'id'], operator: '=', value: 109369 }
- *   ], 
+ *   ],
  *   [
- *     { attribute: ['id'], operator: '=', value: 321 }, 
+ *     { attribute: ['id'], operator: '=', value: 321 },
  *     { attribute: ['user', 'id'], operator: '=', value: 109370 }
  * ] ]
  */
@@ -97,7 +97,7 @@ FloraQL.setConfig('api');
 FloraQL.parse('type>9000 AND name="Bruce Wayne" AND incognito=true');
 /*
  * [ [
- *     { attribute: ['type'], operator: '>', value: 9000 }, 
+ *     { attribute: ['type'], operator: '>', value: 9000 },
  *     { attribute: ['name'], operator: '=', value: "Bruce Wayne" },
  *     { attribute: ['incognito'], operator: '=', value: true }
  * ] ]
@@ -118,7 +118,7 @@ FloraQL.setConfig('api');
 FloraQL.parse('user[type>9000 AND name="Bruce Wayne"]');
 /*
  * [ [
- *     { attribute: ['user', 'type'], operator: '>', value: 9000 }, 
+ *     { attribute: ['user', 'type'], operator: '>', value: 9000 },
  *     { attribute: ['user', 'name'], operator: '=', value: "Bruce Wayne" }
  * ] ]
  */
@@ -127,7 +127,7 @@ FloraQL.parse('user[external OR internal].type=2');
 /*
  * [ [
  *     { attribute: ['user', 'external', 'type'], operator: '=', value: 2 }
- *   ], 
+ *   ],
  *   [
  *     { attribute: ['user', 'internal', 'type'], operator: '=', value: 2 }
  * ] ]
@@ -147,13 +147,13 @@ try {
     FloraQL.parse('name="Bruce Wayne');
 } catch(e) {
     // e.code    -> 2213
-    // e.message -> Missing closing quotation mark for string starting at 'me="Bru' (pos: 6) 
+    // e.message -> Missing closing quotation mark for string starting at 'me="Bru' (pos: 6)
 }
 ```
 
 ### Highly customizable syntax
 
-Special characters used in the queries are defined by a .json file under /config. There are already two predefined sets, called 'api' and 'alerting' and a default configuration. You can either use one of them by passing the name as string to setConfig() or provide an object with custom values which will extend the default configuration.  
+Special characters used in the queries are defined by a .json file under /config. There are already two predefined sets, called 'api' and 'alerting' and a default configuration. You can either use one of them by passing the name as string to setConfig() or provide an object with custom values which will extend the default configuration.
 
 ```js
 const FloraQL = require('@florajs/ql');
@@ -174,7 +174,7 @@ FloraQL.parse('user{external+internal}:type=2');
 /*
  * [ [
  *     { attribute: ['user', 'external', 'type'], operator: '=', value: 2 }
- *   ], 
+ *   ],
  *   [
  *     { attribute: ['user', 'internal', 'type'], operator: '=', value: 2 }
  * ] ]
@@ -249,29 +249,6 @@ e0_1*e0_2_3_5*e0_2_4_5+e0_1*e0_2_3_6*e0_2_4_6
       {"attribute":["article","author","lastname","master"],"operator":"=","value":[null,2,true,4]}
 ]  ]
 ```
-
-## CHANGELOG
-
-### 3.2.1
-
-- Bugfix: Detect dangling sets and ranges. Fixes #3.
-- Bugfix: Fix non-string values not being validated and silently converted with parseFloat
-
-### 3.2.0
-
-- Update dependencies
-
-### 3.1.0
-
-- Feature: Implement ranges
-
-### 2.5.0
-
-- Feature: Allow whitespaces anywhere
-
-### 2.4.1
-
-- Bugfix: multiple ANDs behind/ahead a bracket
 
 ## License
 
