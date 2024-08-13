@@ -1,5 +1,5 @@
-const assert = require('assert');
-
+const { describe, it } = require('node:test');
+const assert = require('node:assert');
 const contains = require('../lib/contains');
 const config = require('../config');
 const fn = require('../simplify/lookBehind');

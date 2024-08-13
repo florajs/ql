@@ -7,7 +7,6 @@ const validateConfig = require('../validate/config');
  * @param {Config} cfg
  * @returns {lookBehind}
  */
-
 module.exports = function factory(cfg) {
     validateConfig(cfg);
 
@@ -22,7 +21,6 @@ module.exports = function factory(cfg) {
      * @param {number} pos
      * @returns {[string, Array]}
      */
-
     function lookBehind(str, pos) {
         let isDelimiter;
         let firstOpFound = false;

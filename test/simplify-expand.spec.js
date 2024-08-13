@@ -1,5 +1,5 @@
-const assert = require('assert');
-
+const { describe, it } = require('node:test');
+const assert = require('node:assert');
 const config = require('../config');
 const fn = require('../simplify/expand');
 

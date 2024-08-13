@@ -3,11 +3,9 @@ const validateConfig = require('../validate/config');
 const escape = require('../lib/escape');
 
 /**
- *
  * @param {Config} cfg
  * @returns {resolve}
  */
-
 module.exports = function factory(cfg) {
     validateConfig(cfg);
 
@@ -19,7 +17,6 @@ module.exports = function factory(cfg) {
      * @param {Query} query
      * @returns {Query}
      */
-
     function resolve(query) {
         validateQuery(query);
 

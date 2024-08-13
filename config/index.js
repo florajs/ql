@@ -31,7 +31,7 @@ function config(config) {
     if (typeof config === 'string') {
         try {
             cfg = require('./' + config);
-        } catch (e) {
+        } catch {
             cfg = defaults;
         }
     } else {

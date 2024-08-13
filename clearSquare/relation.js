@@ -5,7 +5,6 @@ const validateConfig = require('../validate/config');
 const simplifyF = require('../simplify');
 
 /**
- *
  * @param {Config} cfg
  * @returns {relation}
  */

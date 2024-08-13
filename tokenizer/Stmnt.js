@@ -4,11 +4,9 @@ const validateConfig = require('../validate/config');
 const ArgumentError = require('../error/ArgumentError');
 
 /**
- *
  * @param {Config} cfg
  * @returns {Stmnt}
  */
-
 module.exports = function factory(cfg) {
     validateConfig(cfg);
 
@@ -20,7 +18,7 @@ module.exports = function factory(cfg) {
         if (value[0] === cfg.string || value === 'true' || value === 'false' || value === 'null') {
             try {
                 return JSON.parse(value);
-            } catch (e) {
+            } catch {
                 return null;
             }
         }

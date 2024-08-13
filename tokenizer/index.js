@@ -5,18 +5,15 @@ const ArgumentError = require('../error/ArgumentError');
 const assert = require('../error/assert');
 
 /**
- *
  * @param {Config} cfg
  * @returns {tokenizer}
  */
-
 module.exports = function factory(cfg) {
     validateConfig(cfg);
 
     let Stmnt = StmntF(cfg);
 
     /**
-     *
      * @param str1
      * @param pos
      * @param str2
@@ -27,7 +24,6 @@ module.exports = function factory(cfg) {
     }
 
     /**
-     *
      * @param str1
      * @param pos
      * @param str2

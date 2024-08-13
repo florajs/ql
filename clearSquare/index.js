@@ -11,7 +11,6 @@ const lookAheadF = require('../simplify/lookAhead');
 const lookBehindF = require('../simplify/lookBehind');
 
 /**
- *
  * @param {Config} cfg
  * @returns {clearSquare}
  */

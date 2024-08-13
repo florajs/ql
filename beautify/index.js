@@ -4,11 +4,9 @@ const assert = require('../error/assert');
 const ArgumentError = require('../error/ArgumentError');
 
 /**
- *
  * @param {Config} cfg
  * @returns {beautify}
  */
-
 module.exports = function factory(cfg) {
     /**
      * Take an internal Query object and generate a two-dimensional

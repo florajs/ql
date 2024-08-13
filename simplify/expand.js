@@ -20,7 +20,6 @@ module.exports = function factory(cfg) {
      * @param {boolean} isBackwards
      * @returns {string}
      */
-
     function expand(exp, bracket, isBackwards) {
         if (!exp) {
             return bracket;
