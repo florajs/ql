@@ -1,5 +1,3 @@
-const util = require('util');
-
 const validateConfig = require('../validate/config');
 const ArgumentError = require('../error/ArgumentError');
 
@@ -58,7 +56,7 @@ module.exports = function factory(cfg) {
          * Parse value
          */
         if (this.value) {
-            if (!util.isArray(this.value)) {
+            if (!Array.isArray(this.value)) {
                 this.value = [this.value];
             }
             for (let i = this.value.length; i--; ) {
@@ -72,7 +70,7 @@ module.exports = function factory(cfg) {
         /*
          * Parse range
          */
-        if (this.range && util.isArray(this.range) && this.range.length === 2) {
+        if (this.range && Array.isArray(this.range) && this.range.length === 2) {
             this.range[0] = parseValue(this.range[0]);
             this.range[1] = parseValue(this.range[1]);
         }

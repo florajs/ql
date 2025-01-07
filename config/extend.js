@@ -1,5 +1,3 @@
-const util = require('util');
-
 /**
  * @returns {extend}
  */
@@ -14,7 +12,7 @@ module.exports = function factory() {
     function extend(target, source) {
         target = target || {};
         for (let prop in source) {
-            if (util.isArray(source[prop])) {
+            if (Array.isArray(source[prop])) {
                 target[prop] = source[prop] || target[prop];
             } else if (typeof source[prop] === 'object') {
                 target[prop] = extend(target[prop], source[prop]);

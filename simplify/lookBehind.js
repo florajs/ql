@@ -1,5 +1,3 @@
-const util = require('util');
-
 const validateConfig = require('../validate/config');
 
 /**
@@ -10,7 +8,7 @@ const validateConfig = require('../validate/config');
 module.exports = function factory(cfg) {
     validateConfig(cfg);
 
-    const delimiter = util.isArray(cfg.lookDelimiter) ? cfg.lookDelimiter : [cfg.lookDelimiter];
+    const delimiter = Array.isArray(cfg.lookDelimiter) ? cfg.lookDelimiter : [cfg.lookDelimiter];
 
     /**
      * Find any terms behind of the provided position. Stops if
