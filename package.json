@@ -4,6 +4,7 @@
   "description": "Query Language with parser, tests, syntax generators, etc. for flora, alerting server, webpush",
   "main": "index.js",
   "scripts": {
+    "prepare": "git config --local core.hooksPath .githooks",
     "pretest": "npm run lint",
     "test": "node --test",
     "lint": "eslint ."
@@ -20,7 +21,6 @@
     "tokenizer/",
     "validate/"
   ],
-  "pre-commit": "test",
   "repository": "florajs/ql",
   "homepage": "https://github.com/florajs/ql",
   "keywords": [
@@ -48,7 +48,6 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "globals": "^15.9.0",
-    "pre-commit": "^1.2.2",
     "prettier": "^3.3.3"
   }
 }
