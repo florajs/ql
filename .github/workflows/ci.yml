@@ -4,16 +4,13 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - 'docs/**'
-      - '*.md'
 
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: ['18', '20', '22']
+        node: ['18', '20', '22', '24']
     steps:
       - uses: actions/checkout@v4
       - name: Setup node ${{ matrix.node }}
