@@ -16,14 +16,14 @@ function ArgumentError(code, data) {
     this.name = this.constructor.name;
     this.code = code || 1001;
     this.message = codes[code in codes ? code : 1001];
-    this.data = {}
+    this.info = {}
     
     if (typeof data === 'object') {
         for (let k in data) {
             if (!Object.prototype.hasOwnProperty.call(data, k)) {
                 continue;
             }
-            this.data[k] = data[k]
+            this.info[k] = data[k]
             this.message = this.message.replace(new RegExp(':' + k, 'g'), data[k] + '');
         }
     }
