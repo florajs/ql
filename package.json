@@ -20,7 +20,10 @@
     "tokenizer/",
     "validate/"
   ],
-  "repository": "florajs/ql",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/florajs/ql.git"
+  },
   "homepage": "https://github.com/florajs/ql",
   "keywords": [
     "florajs",
