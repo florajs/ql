@@ -43,7 +43,7 @@ module.exports = function factory(cfg) {
                     firstOpFound = true;
                     continue;
                 }
-                for (let j = delimiter.length; j--; ) {
+                for (let j = delimiter.length; j--;) {
                     if (str[i] === delimiter[j]) {
                         isDelimiter = true;
                         break;

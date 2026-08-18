@@ -59,7 +59,7 @@ module.exports = function factory(cfg) {
             if (!Array.isArray(this.value)) {
                 this.value = [this.value];
             }
-            for (let i = this.value.length; i--; ) {
+            for (let i = this.value.length; i--;) {
                 this.value[i] = parseValue(this.value[i]);
             }
             if (this.value.length === 1) {
