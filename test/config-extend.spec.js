@@ -36,4 +36,24 @@ describe('config/extend()', function () {
     for (i = 0, l = tests.length; i < l; i++) {
         it('should extend object #' + (i + 1), factory(tests[i][0], tests[i][1]));
     }
+
+    Object.entries({
+        'nested constructor property': { constructor: { prototype: { polluted: 'yes' } } },
+        'own proto property': JSON.parse('{"__proto__":{"polluted":"yes"}}')
+    }).forEach(function ([description, payload]) {
+        it('should not pollute Object.prototype via ' + description, function () {
+            fn({}, payload);
+
+            assert.strictEqual(Object.hasOwn(Object.prototype, 'polluted'), false);
+            assert.strictEqual({}.polluted, undefined);
+        });
+    });
+
+    it('should ignore inherited (non-own) properties of the source', function () {
+        const base = { a: 'from-prototype' };
+        const source = Object.create(base);
+        source.b = 'own';
+
+        assert.deepEqual(fn({}, source), { b: 'own' });
+    });
 });

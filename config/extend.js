@@ -12,10 +12,12 @@ module.exports = function factory() {
     function extend(target, source) {
         target = target || {};
         for (let prop in source) {
+            if (!Object.hasOwn(source, prop)) continue;
+            const targetValue = Object.hasOwn(target, prop) ? target[prop] : undefined;
             if (Array.isArray(source[prop])) {
-                target[prop] = source[prop] || target[prop];
+                target[prop] = source[prop] || targetValue;
             } else if (typeof source[prop] === 'object') {
-                target[prop] = extend(target[prop], source[prop]);
+                target[prop] = extend(targetValue, source[prop]);
             } else {
                 target[prop] = source[prop];
             }
